@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="../css/style.css">-->
+    <!-- 引入组件库 -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+
+
+    <style>
+        body{
+
+
+        }
+        #tip{
+            width: 100%;
+            background-color: #f5f5f5;
+            padding-left:30px;
+            line-height: 40px;
+        }
+
+        .tip{
+            font-weight: bold;
+
+
+        }
+
+
+
+        #commnet{
+            margin-left: 5%;
+            width: 970px;
+            height: 700px;
+        }
+
+        .first{
+            position: absolute;
+            margin-left: 50px;
+            margin-top: -37px;
+        }
+
+        .one{
+            margin-top: 20px;
+        }
+
+        .second{
+            width: 876px;
+            height:50px;
+            margin-left: 54px;
+            background-color: #f5f6f7;
+            padding-top: 16px;
+        }
+
+        .glyphicon{
+            font-size: 20px;
+            color: #bebfbf;
+            margin-left: 25px;
+            margin-top: 13px;
+        }
+
+        .title{
+            font-size: 15px;
+            color: #666666;
+        }
+
+        a:hover{
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .comment{
+            width: 933px;
+            margin-left: 30px;
+            border-bottom: 2px solid #820408;
+            background-color: white;
+        }
+
+         .third{
+             margin-top: 15px;
+             margin-bottom: 15px;
+         }
+
+        .i{
+            margin-left: 55px;
+        }
+
+        .operate{
+            margin-right: 17px;
+        }
+
+        .operate a{
+            font-size: 15px;
+            color: #069ee9;
+        }
+
+        .forth{
+             margin-left: 50px;
+         }
+
+        .forth span{
+            margin-left: 500px;
+        }
+
+        .sixth{
+            margin-left: 0px;
+        }
+
+        .sixth span{
+            margin-left: 473px;
+        }
+
+        .reply-text{
+            width: 880px;
+        }
+
+        .reply-text1{
+            width: 851px;
+        }
+
+        .tips{
+            margin-top: 5px;
+            margin-left: 153px;
+            margin-bottom: 5px;
+        }
+
+        .tips span{
+            padding-top: 5px;
+            color: #bebfc9;
+        }
+
+        .five{
+            margin-top: 16px;
+            width: 881px;
+            margin-left: 50px;
+            background-color: #f8f9f9;
+        }
+
+        .fifth{
+            margin-left: 20px;
+            padding-top: 20px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .show-comment{
+            margin-top: 8px;
+            margin-bottom: 5px;
+        }
+
+        .cate{
+            font-size: 15px;
+            color: orange;
+            font-weight: bold;
+        }
+
+        .models tr td{
+            text-align: center;
+            width: 200px;
+            height: 38px;
+        }
+
+
+    </style>
+</head>
+<body>
+<div id="app">
+
+   <div id="tip">
+       <span class="tip"> 首页</span> > <span class="tip">文章管理</span> > <span class="tip">评论管理</span>
+   </div>
+
+    <div id="center">
+          <h4 class="page-header" style="padding-left: 30px;text-align: center">最新评论</h4>
+          <div id="commnet">
+               <div class="comment" v-for="(comment,index) in comments" @key="index">
+                   <div class="one">
+                       <img src="../img/3.png" class="img-circle" width="40px" height="40px"/>
+                       <div class="first" style="font-size: 18px">
+                           <span style="font-weight:bold">{{comment.username}}</span> <span style="color: #bebfbf;">评论了你的文章</span>
+                           <span class="pull-right" style="margin-left: 544px;padding-top: 1px;color: #bebfbf">{{comment.commentTime}}</span>
+                       </div>
+                   </div>
+                   <div class="two">
+                       <div style="margin-left: 54px;width: 100%;margin-bottom: 5px">
+                           {{comment.content}}
+                       </div>
+                       <div class="second">
+                           <i class="fa fa-link" aria-hidden="true" style="margin-left: 15px"></i>
+                          &nbsp;<a class="title" @click="showArticleDetail(comment.artId)">{{comment.title}}</a>
+                       </div>
+                   </div>
+                   <div class="three">
+                       <div class="third">
+                           <div class="i">
+                               <a @click="showComment(index)"><i class="fa fa-commenting-o" style="font-size: 15px" aria-hidden="true"></i></a>&nbsp;&nbsp;<span>2</span>&nbsp;&nbsp;
+                               <a><i class="fa fa-thumbs-o-up" style="font-size: 15px" aria-hidden="true"></i></a>&nbsp;&nbsp;<span>2</span>
+
+                               <div class="operate pull-right">
+                                   <a class="replys" :id="index+'reply'" @click="reply(index)">回复</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                   <a data-toggle="modal" data-target="#myModal">举报</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                   <a @click="delComment(comment.id)">删除</a>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="four" :id="index+'write'">
+                       <div class="forth">
+                           <textarea class="reply-text" rows="3" v-model="newComment.content" placeholder="写下您的回复"></textarea>
+                           <div class="tips"><span>最多不超1000字</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                               <button class="btn btn-primary btn-sm" style="width: 100px"  @click="commit(index)">提交</button></div>
+                       </div>
+                   </div>
+                   <div class="five" :id="index+'show'">
+                       <div class="fifth" v-for="(rcomment,rindex) in comment.replyComments" @key="rindex">
+                           <img src="../img/3.png" class="img-circle" width="25px" height="25px"/>
+                           <span style="color: #6bb10a;font-weight: bold">{{rcomment.username}}</span>
+                           <div class="pull-right" style="margin-right: 10px;font-size: 15px;color:#bebfbf ">
+                               <span>{{rcomment.commentTime}}</span>
+                           </div>
+                           <div class="show-comment">
+                               回复 <span style="color: #9f9f9f">@{{rcomment.custome_name}}</span>: {{rcomment.content}}
+                           </div>
+                           <div style="margin-left: 749px;padding-bottom: 10px">
+                               <a @click="reply1(rindex,index)">回复</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a @click="delComment(rcomment.id)" style="color: #069ee9">删除</a>
+                           </div>
+
+
+                           <div class="six" :id="rindex+'rwrite'+index">
+                               <div class="sixth">
+                                   <textarea class="reply-text1" rows="3" v-model="newCommnent1.content" placeholder="写下您的回复"></textarea>
+                                   <div class="tips"><span>最多不超1000字</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                       <button class="btn btn-primary btn-sm" style="width: 100px"  @click="rcommit(rindex,index)">提交</button></div>
+                               </div>
+                           </div>
+
+                       </div>
+                   </div>
+
+               </div>
+          </div>
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+                <div class="modal-body">
+                    <h4 style="font-weight: bold">举报</h4>
+
+                    <div style="font-weight: bold">请输入要举报的内容（必选）</div>
+                    <table class="models" style="margin-left:15px;margin-top: 10px">
+                        <tr>
+                            <td><input type="radio" name="cate" @click="complaint.type=1"> &nbsp;<span class="cate">内容涉黄</span></td>
+                            <td><input type="radio" name="cate" @click="complaint.type=2"> &nbsp;<span class="cate">政治相关</span></td>
+                            <td><input type="radio" name="cate" @click="complaint.type=3"> &nbsp;<span class="cate">内容抄袭</span></td>
+                            <td><input type="radio" name="cate" @click="complaint.type=4"> &nbsp;<span class="cate">涉嫌广告</span></td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" name="cate" @click="complaint.type=5"> &nbsp;<span class="cate">内容侵权</span></td>
+                            <td><input type="radio" name="cate" @click="complaint.type=6"> &nbsp;<span class="cate">侮辱谩骂</span></td>
+                            <td><input type="radio" name="cate" @click="complaint.type=7"> &nbsp;<span class="cate">其他方面</span></td>
+                        </tr>
+                    </table>
+                    <div style="margin-top: 10px">
+                        <span style="font-weight: bold">补充说明（选填）</span>
+                        <div style="margin-top: 10px">
+                            <textarea style="width: 561px" placeholder="请填写附加的补充内容" v-model="complaint.content"></textarea>
+                        </div>
+                    </div>
+                    <div style="margin-left: 467px;margin-top: 15px">
+                        <span>
+                            <button class="btn btn-sm btn-info form-inline" @click="rescind">取消</button>
+                            <button class="btn btn-sm btn-danger form-inline" @click="sure">确定</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+</body>
+<script>
+    $(".four").hide()
+    $(".five").hide()
+    $(".six").hide()
+
+    var vm = new Vue({
+        el:"#app",
+        data:{
+            complaint:{id:1,type:1,content:'',remark:''},
+            newComment:{},
+            newCommnent1:{},
+            comments:[
+                {id:1,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:00:00',parentId:0,customeId:1,username:'王五',title:'射雕英雄传',
+                  replyComments:[
+                      {id:2,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:06:00',parentId:1,customeId:1,username:'詹丹',custome_name:'王五'},
+                      {id:3,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:05:00',parentId:1,customeId:1,username:'李四',custome_name:'王五'},
+                      {id:4,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:05:00',parentId:1,customeId:1,username:'赵柳',custome_name:'天气'},
+                  ]
+                },
+                {id:1,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:00:00',parentId:0,customeId:1,username:'王五',title:'射雕英雄传',
+                    replyComments:[
+                        {id:2,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:06:00',parentId:1,customeId:1,username:'詹丹',custome_name:'王五'},
+                        {id:3,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:05:00',parentId:1,customeId:1,username:'李四',custome_name:'王五'},
+                        {id:4,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:05:00',parentId:1,customeId:1,username:'赵柳',custome_name:'天气'},
+                    ]
+                },
+            ]
+        },
+        methods: {
+            // 一级评论，显示评论框
+            reply(index){
+                $("#"+index+"write").toggle(function () {
+                })
+            },
+
+            // 二级评论，根据index 以及 rindex确定要展开的具体的回复框
+            reply1(rindex,index){
+                $("#"+rindex+"rwrite"+index).toggle(function () {})
+            },
+
+            // 展示评论列表
+            showComment(index){
+                $("#"+index+"show").toggle(function () {
+                    
+                })
+            },
+
+            // 根据文章标题舔砖到文章的具体页面
+            showArticleDetail(id){
+                window.location.href="article-detail.html?id="+id;
+            },
+
+            // 删除评论(将其子品论也删除)
+            delComment(id){
+              alert(id);
+            },
+
+            // 取消投诉，取消后，将模态框进行隐藏
+            rescind(){
+                $('#myModal').modal('hide')
+            },
+            // 发送投诉信息
+            sure(){
+                // 将complaint对象出入数据库中，举报成功后将模态框关闭
+                $('#myModal').modal('hide')
+            },
+
+            // 提交回复
+            commit(index) {
+                // 将comment进行提交
+
+                // （通过sql语句查询已该条评论id作为父id，并且评论人id为userid的人，num是否为1）
+                $("#"+index+"reply").text("已经回复")
+                $("#"+index+"reply").css({"color":"grey"})
+
+
+                // 将回复插入到数据库中，并且插入到评论数组中最前位置
+                var comment = {id:2,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:06:00',parentId:1,customeId:1,username:'詹丹'};
+                this.comments[index].replyComments.unshift(comment)
+                this.newComment = {},  // 将评论框进行置空
+                // 显示列表框
+                $("#"+index+"show").show()
+
+
+            },
+
+
+            // 下方进行评论
+            rcommit(rindex,index){
+
+                  var comment = {id:2,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:06:00',parentId:1,customeId:1,username:'仇晓',custome_name:'NCV'};
+                  // unshift向数组中进行头添加
+                  this.comments[index].replyComments.unshift(comment)
+
+                  $('#'+rindex+"rwrite"+index).hide()  // 隐藏评论框
+                  this.newCommnent1={}  // 将评论框置空
+            }
+
+        }
+    })
+</script>
+</html>

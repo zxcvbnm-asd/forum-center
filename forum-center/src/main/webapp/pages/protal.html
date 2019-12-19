@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>河工程java论坛</title>
+    <link rel="stylesheet" href="../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="../css/protal.css"/>
+    <link rel="stylesheet" href="../css/bootstrap.min.css"/>
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../js/vue.js"></script>
+    <script src="../plugins/elementui/index.js"></script>
+    <script type="text/javascript" src="../js/axios-0.18.0.js"></script>
+
+    <style>
+        #searching{
+            position: absolute;
+            margin-top: 343px;
+            margin-left: 428px;
+        }
+
+
+    </style>
+
+</head>
+<body>
+   <div id="app">
+      <div id="header">
+           <img src="../images/3.png">
+           <img src="../images/logo_right.jpg" class="pull-right" style="margin-right:120px">
+          <div class="pic"  v-if="user!=''">
+
+                  <img :src="user.avatarName" width="20px" height="20px" class="img-circle" style="margin-left: 5px;margin-bottom: 5px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                  <span v-cloak class='item' style="font-size: 13px"  data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">{{user.username}}</span>
+          </div>
+      </div>
+      <div id="nav">
+              <table>
+                  <tr>
+                      <td class="ss">  <span class="item first" href="#"  data-toggle="modal" data-target="#myModal" @click="showBrief">论坛简介</span></td>
+                      <td class="ss">
+                          <a class="item first" href="#">
+                              <el-dropdown @command="handleCommand">
+                              <span class="el-dropdown-link">
+                                分&nbsp;&nbsp;&nbsp;&nbsp;类<i class="el-icon-arrow-down el-icon--right"></i>
+                              </span>
+                                  <el-dropdown-menu slot="dropdown">
+                                      <div v-for="category in categories">
+                                        <el-dropdown-item :command="category.id"  v-cloak>{{category.cname}}</el-dropdown-item>
+                                      </div>
+                                  </el-dropdown-menu>
+                              </el-dropdown>
+                          </a>
+                      </td>
+                      <td class="ss" v-if="user==''">  <a class="item first" href="#"  @click="login"  v-cloak>登   陆</a></td>
+                      <td class="ss" v-if="user.username!='' && user.status==0 ">  <a class="item first" href="#"  v-cloak>开通会员</a></td>
+                      <td class="ss" v-if="user.username!='' && user.status==1 ">
+                          <el-tooltip class="item" effect="dark" :content="'会员到期的时间为:'+user.endTime" placement="bottom">
+                              <span  v-cloak>会员信息</span>
+                          </el-tooltip>
+                      </td>
+                      <td class="ss" v-if="user!=''">  <span  v-cloak class="item first" href="#" @click="center">个人中心</span></td>
+
+                  </tr>
+              </table>
+      </div>
+       <div id="searching">
+           <div class="panel form-inline">
+           <input type="text" class="form-control find" v-model="queryString"placeholder="输入标题名查找相关文章" style="width: 400px">
+           <button class="btn btn-primary btn-sm" style="width: 100px;height: 33px" @click="searchArticles">查询</button>
+           </div>
+       </div>
+       <div id="curous">
+           <div class="window">
+               <div v-for="carousel in carousels">
+                    <a href="http://www.baidu.com"><img :src="carousel.imgUrl"></a>
+               </div>
+
+           </div>
+       </div>
+       <div id="javaee">
+           <h3>&nbsp;&nbsp;&nbsp;JAVAEE</h3>
+           <div class="list-group">
+               <div v-for="(article,id) in articles[0]" :key="id">
+                   <a href="#" class="list-group-item" @click.prevent="showDetail(article.id)"><span>{{id+1}}、</span>{{article.title}}  <span class="badge">{{article.num}}</span></a>
+               </div>
+           </div>
+       </div>
+       <div id="javase">
+           <h3>&nbsp;&nbsp;&nbsp;JAVASE</h3>
+           <div class="list-group">
+               <div v-for="(article,id) in articles[0]" :key="id">
+                   <a href="#" class="list-group-item" @click.prevent="showDetail(article.id)"><span>{{id+1}}、</span>{{article.title}}  <span class="badge">{{article.num}}</span></a>
+               </div>
+           </div>
+       </div>
+       <div id="database">
+           <h3>&nbsp;&nbsp;&nbsp;DATABASE</h3>
+           <div class="list-group">
+               <div v-for="(article,id) in articles[0]" :key="id">
+                   <a href="#" class="list-group-item" @click.prevent="showDetail(article.id)"><span>{{id+1}}、</span>{{article.title}}  <span class="badge">{{article.num}}</span></a>
+               </div>
+           </div>
+       </div>
+       <div id="html">
+           <h3>&nbsp;&nbsp;&nbsp;WEBPAGE</h3>
+           <div class="list-group">
+               <div v-for="(article,id) in articles[0]" :key="id">
+                   <a href="#" class="list-group-item" @click.prevent="showDetail(article.id)"><span>{{id+1}}、</span>{{article.title}}  <span class="badge">{{article.num}}</span></a>
+               </div>
+           </div>
+       </div>
+       <div id="footer">
+           <div class="erweima">
+               <img src="../images/erweima.jpg" width="100" height="100">
+           </div>
+           <div class="erweima2">
+               <img src="../images/erweima2.jpg" width="100" height="100">
+           </div>
+            <div class="attention">
+                <p>河北工程大学LIUWEIDONG 版权所有</p>
+                <p>地址: 河北省邯郸经济技术开发区太极路19号 邮编: 067402</p>
+                <p>管理员邮箱: 1198423961@qq.com</p>
+                <p>注：本网站纯属虚构</p>
+            </div>
+       </div>
+
+
+       <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+           <div class="modal-dialog" role="document">
+               <div class="modal-content">
+                   <div class="modal-header">
+                       <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" @click="close">&times;</span></button>
+                       <h4 class="modal-title" id="myModalLabel">简介</h4>
+                   </div>
+                   <div class="modal-body" id="demo">
+                        <p  class="demo" id="demo0"></p>
+                        <p  class="demo" id="demo1"></p>
+                        <p  class="demo" id="demo2"></p>
+                   </div>
+               </div>
+           </div>
+       </div>
+
+       <div class="collapse" id="collapseExample" style="position: absolute;margin-left: 1159px;margin-top:-319px;z-index: 1">
+           <div  style="width: 110px;height: 70px; background-color: #ecf0f1;border-radius: 5% 5% 5% 5%">
+               <div style="padding-left: 10px;padding-top: 10px;"><a href="user/edit_password.html" style="color: #8f0008;font-weight: bold"> 修改密码</a></div>
+               <div style="padding-left: 10px;margin-top: 10px;"><a style="font-weight: bold" href="#" @click="layout">退出</a></div>
+           </div>
+       </div>
+
+   </div>
+</body>
+  <script>
+      var i = 0;
+
+
+      $("#mark").hide();
+      function helper(arr,j){
+          if(j == arr.length){
+              return;
+          }
+          i = 0;
+          var interval1 = setInterval(function () {
+              $("#demo" + j).text(arr[j].substring(0, ++i));
+              if (i == arr[j].length) {
+                  clearInterval(interval1);
+                  this.helper(arr,j+1);
+              }
+          },100)
+      }
+
+      var vm = new Vue({
+          el:"#app",
+          data:{
+              dialogTableVisible: false,
+              user:{
+                  id:1,
+                  username:'阿三',
+                  avatarName:'./images/0.jpg',
+                  status:1,          // 会员状态 0 不是会员  1 是会员
+                  endTime:'2019-12-4',  // 会员到期时间
+              },
+
+              queryString:'', // 绑定查询条件
+
+              categories:[
+                  {id:1,cname:'JAVASE'},
+                  {id:2,cname:'JAVAEE'},
+                  {id:3,cname:'WEBPAGE'},
+              ],
+
+
+              articles:[  // 文章的四个分类
+                  [
+                      {id:1,title:'this is my house',num:100},
+                      {id:2,title:'this is my house',num:120},
+                      {id:3,title:'this is my house',num:140},
+                      {id:4,title:'this is my house',num:160},
+                      {id:1,title:'this is my house',num:100},
+                      {id:2,title:'this is my house',num:120},
+                      {id:3,title:'this is my house',num:140},
+                      {id:4,title:'this is my house',num:160},
+                  ],
+                  [],
+              ],
+
+              carousels:[               // 轮播图
+                  {id:1,imgUrl:'../images/kaituozhe.jpg'},
+                  {id:2,imgUrl:'../images/4.jpg'},
+                  {id:3,imgUrl:'../images/computer3.jpg'},
+              ]
+
+          },
+
+          created(){
+              setInterval(function(){
+                  var imgs = $(".window img");
+                  $(imgs[2]).fadeOut(1000, function(){
+                      $(this).show().prependTo(".window");
+                  })
+              }, 3000);
+          },
+
+
+
+          methods:{
+              login(){
+                  window.location.href='user/login.html'
+              },
+              show(){
+                  alert("hahah");
+              },
+
+              // 按照条件进行文章查询
+              searchArticles(){
+                  if(this.queryString == ''){
+                      this.$message.error("查询条件不能为空")
+                      return false
+                  }
+                  window.location.href='search-article.html?query='+this.queryString
+              },
+
+              // 跳转到文章详情页面
+              showDetail(id){
+                  window.location.href='article.html?id='+id
+              },
+
+              // elementui 的下拉选择，弹出command的值
+              handleCommand(command) {
+                 //this.$message('click on item ' + command);
+                  // 此时command代表分类的id,可以根据分类的id查找到相关的文章
+                  //alert(command)
+                  window.location.href='special.html?id='+command
+              },
+
+              // 用户退出
+              layout(){
+
+                  // 发送ajax,参数为用户id，通过id使session 失效
+
+                  // 将user置空
+                  this.user=''
+                  $('.collapse').collapse('hide')
+
+              },
+              showBrief() {
+                  $("#demo0").empty();
+                  $("#demo1").empty();
+                  $("#demo2").empty();
+                  var i = 0;
+                  var str = new Array(2);
+                  str[0] = "全场战罢，詹姆斯27中14独砍全场最高的30分，在球队开局不利、进攻生涩的危急时刻,他屡次奋不顾身地直冲篮下为湖人开辟通往胜利的康庄大道。另需留意的是，算上今天的6个篮板，詹姆斯还成为了现役第四位生涯总篮板数达到9000个的球员,作为一个非内线球员,这样的成就是令人难以想象的。"
+                  str[1] = "虽然由于次节收官阶段执行不力,湖人最终未能在上半场结束时反超比分，但在次节詹姆斯自主进攻的那个阶段，你能够明显看出灰熊根本没人能够对得上他。三节后半段，湖人掀起一波反攻高潮，在经历了大半场的苦命追赶后终于成功将比分反超，而反超一球正是源自于詹姆斯的一记底角三分。"
+                  str[2] = "湖人之所以开局不利,连续背靠背客场自然是原因之一,而另一方面也是因为灰熊的外线实在太过精准,首节7次外线出手,灰熊竟无一投失，除瓦兰外,灰熊首发其余四人在首节皆有三分进账。"
+                  helper(str, 0);
+              },
+              close(){
+                 /* $("#demo0").empty();
+                  $("#demo1").empty();
+                  $("#demo2").empty();*/
+              },
+              center(){
+                  window.location.href=''
+              }
+          }
+      })
+  </script>
+</html>

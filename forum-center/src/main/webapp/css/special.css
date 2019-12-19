@@ -1,0 +1,266 @@
+body{
+    position: relative;
+
+}
+
+
+nav{
+    background-color:#8f0008
+}
+
+#header{
+    background-color: #8f0008;
+    width: 1347px;
+    height: 120px;
+}
+
+
+
+.item{
+    color: #ffffe7;
+    font-weight: bold;
+    font-size: 15px;
+
+}
+
+
+#nav table tr td a:hover{
+    text-decoration: none;
+    color:#ffffe7;
+}
+
+
+td {
+    text-align: center;
+    width: 200px;
+    height: 38px;
+}
+
+table{
+    margin-left: 90px;
+}
+
+
+
+.window  img{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+
+
+
+
+#footer{
+    position: absolute;
+    width: 1347px;
+    height: 145px;
+    background-color: #8f0008;
+
+}
+h3{
+    border-bottom: 2px #ffd401 solid;
+    color: #990000;
+}
+
+.list-group a{
+    border-bottom-color: red ;
+    font-weight: bold;
+    color: #2b669a;
+}
+.attention{
+    width: 500px;
+    height: 130px;
+    margin-left: 500px;
+    margin-top: 20px;
+    color: #ffffe7;
+    font-weight: bold;
+}
+
+.erweima{
+    position: absolute;
+    margin-left: 120px;
+    margin-top: 20px;
+}
+.erweima2{
+    position: absolute;
+    margin-left: 1000px;
+    margin-top: 20px;
+}
+
+
+
+table tr td:hover{
+    cursor: pointer;
+}
+
+
+
+.pic{
+    position: absolute;
+    z-index:1;
+    margin-left: 1255px;
+    margin-top: -104px;
+    cursor: pointer;
+}
+
+
+
+
+[v-cloak]{
+    display: none;
+}
+
+a{
+    text-decoration: none;
+}
+
+
+
+
+
+.containers{
+    display: flex;
+}
+
+#aside{
+    flex: 1.8;
+    background-color: #f6f6f6;
+    height: 800px;
+}
+
+#main{
+    flex: 6.4;
+
+    height: 800px;
+}
+
+#box{
+    width: 180px;
+    margin-left: 30px;
+    margin-top: 20px;
+
+}
+
+#box .list-group{
+    width: 90%;
+    margin-left: 5%;
+    background-color: #f6f4f0;
+}
+
+#tip{
+    width: 90%;
+    margin-left: 5%;
+    height: 40px;
+    background-color: #efefef;
+    font-size: 18px;
+    padding-left: 25px;
+    font-family: DFKai-SB;
+
+}
+
+#tip .glyphicon{
+    padding-top: 10px;
+    color: #64854c;
+}
+
+
+#box .list-group li{
+    cursor: pointer;
+}
+
+#aside img{
+    margin-top: 10px;
+    margin-left: 20px;
+    opacity: 0.5;
+}
+
+#raside{
+    flex: 1.8;
+    background-color: #f6f6f6;
+    height: 800px;
+}
+
+#box2 .list-group a:hover{
+    background-color: #dff0d8;
+}
+#box2 .list-group a {
+    color: #8f0008;
+}
+
+#box2 .group2 a {
+    color: blue;
+    background-color:white;
+}
+
+#box2 .group2 a:hover{
+    background-color: #f2dede;
+}
+
+#search{
+    margin-top: 40px;
+}
+
+.form-control{
+    width: 500px;
+    margin-left: 110px;
+}
+
+#search button{
+    margin-left: 626px;
+    margin-top: -56px;
+}
+
+#content{
+    margin-top: 20px;
+    width: 98%;
+    height: 600px;
+    margin-left: 1%;
+    background-color: #f6f6f6;
+}
+
+.media{
+    margin-left: 19px;
+    margin-top: 12px;
+    width: 400px;
+    height: 100px;
+    float: left;
+}
+
+.pagination-container{
+    position: absolute;
+    margin-left: 300px;
+    margin-top: 20px;
+}
+
+.login:hover{
+    color: blue;
+}
+
+.tic_img{
+    width:80px;
+    height:82px
+}
+.media-heading{
+    font-family: DFKai-SB;
+    font-weight: bold;
+    color: black;
+}
+
+.media-heading a:hover{
+    text-decoration: none;
+}
+
+.media-body span{
+    font-family: DFKai-SB;
+    font-weight: bold;
+}
+
+.writer a{
+    color: purple;
+}
+
+.labels{
+    color: orange;
+}

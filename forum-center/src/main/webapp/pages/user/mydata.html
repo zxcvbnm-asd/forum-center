@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+
+    <!-- 引入组件库 -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+
+    <style>
+        body{
+            background-color: white;
+            overflow: hidden;
+           /* background-image: url("../img/9.png");
+            background-size: 1148px 617px;*/
+
+        }
+        .center{
+            width: 500px;
+            margin-left: 250px;
+            margin-top: 5px;
+            height: 450px;
+
+
+
+        }
+
+        .head-img{
+            margin-left: 70px;
+        }
+        .head-img img{
+            margin-left: 80px;
+            width: 80px;
+            height: 80px;
+        }
+
+        .head-img span{
+            margin-left: 80px;
+            font-size: 15px;
+            font-weight: bold;
+            color: blue;
+        }
+        h4{
+
+            color: #8f0008;
+            font-weight: bold;
+        }
+        table tr td{
+            text-align: center;
+            line-height: 80px;
+        }
+
+        table tr th{
+
+            text-align: center;
+            line-height: 80px;
+        }
+
+        .tip {
+            margin-left: 30px;
+            font-family: DFKai-SB;
+        }
+
+    </style>
+</head>
+<body>
+     <div id="app">
+         <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb">
+             <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+             <el-breadcrumb-item>我的资料</el-breadcrumb-item>
+             <el-breadcrumb-item>查看资料</el-breadcrumb-item>
+         </el-breadcrumb>
+         <h3 class="tip">个人资料:</h3>
+         <hr>
+         <div class="center">
+             <table class="table table-striped table-bordered table-hover">
+                 <tr>
+                     <th>头像</th>
+                     <td><img  class="img-circle" :src="user.avatarName" width="25px" height="25px"/> </td>
+                 </tr>
+                 <tr>
+                     <th>昵称</th>
+                     <td> {{user.username}}</td>
+                 </tr>
+                 <tr>
+                     <th>年龄</th>
+                     <td> {{user.age}}</td>
+                 </tr>
+                 <tr>
+                     <th>性别</th>
+                     <td> {{user.sex==0?'女':'男'}}</td>
+                 </tr>
+                 <tr>
+                     <th>电话</th>
+                     <td> {{user.mobile}}</td>
+                 </tr>
+                 <tr>
+                     <th>邮箱</th>
+                     <td>{{user.email}}</td>
+                 </tr>
+                 <tr>
+                     <th>学院</th>
+                     <td>{{user.collage}}</td>
+                 </tr>
+                 <tr>
+                     <th>专业</th>
+                     <td>{{user.major}}</td>
+                 </tr>
+                 <tr>
+                     <th>班级</th>
+                     <td>{{user.cla}}</td>
+                 </tr>
+             </table>
+
+         </div>
+     </div>
+</body>
+<script>
+    var vm = new Vue({
+        el:"#app",
+        data:{
+            user:{},
+        },
+
+        created(){
+            //发送请求获取当前登录用户的用户名
+            axios.get('/user/getUserById.do?id=1').then((response)=>{
+                if(response.data.flag){
+                    this.user = response.data.data;
+                }else{
+                    this.$message.error(response.data.message)
+                }
+            });
+        }
+    })
+</script>
+</html>

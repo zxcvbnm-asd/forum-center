@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>传智健康</title>
+    <meta name="description" content="传智健康">
+    <meta name="keywords" content="传智健康">
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <!-- 引入组件库 -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+    <style>
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+        .datatable td, .datatable th {
+            padding: 12px 0;
+            min-width: 0;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+            position: relative;
+            text-align: left;
+        }
+
+        .app-container{
+            width: 500px;
+            height: 500px;
+        }
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 178px;
+            height: 178px;
+            line-height: 178px;
+            text-align: center;
+        }
+        .avatar {
+            width: 178px;
+            height: 178px;
+            display: block;
+        }
+
+        body{
+            background-color: white;
+        }
+
+        el-upload:hover{
+            background-color: yellow;
+        }
+        el-breadcrumb{
+            background-color: #f5f5f5;
+        }
+
+        .tip{
+            padding-left: 20px;
+        }
+
+    </style>
+</head>
+<body>
+<div id="app">
+
+        <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb" style="background-color: #f5f5f5;line-height: 30px">
+            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item>我的资料</el-breadcrumb-item>
+            <el-breadcrumb-item>编辑资料</el-breadcrumb-item>
+        </el-breadcrumb>
+
+    <div class="app-container">
+        <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
+            <el-form-item label="编辑头像"><br>
+                <el-upload
+                        class="avatar-uploader"
+                        action="https://jsonplaceholder.typicode.com/posts/"
+                        :show-file-list="false"
+                        :on-success="handleAvatarSuccess"
+                        :before-upload="beforeAvatarUpload"
+                style="margin-left: 100px">
+                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+
+                </el-upload>
+                <span class="tip" style="margin-left: 120px;color: #808ea0">点击可更改头像</span>
+            </el-form-item>
+
+            <el-form-item label="用户名">
+                <el-input v-model="user.username"></el-input>
+            </el-form-item>
+            <el-form-item label="年龄">
+                <el-input v-model="user.age"></el-input>
+            </el-form-item>
+            <el-form-item label="性别">
+                <template>
+                    <el-radio v-model="user.sex" label="1">男</el-radio>
+                    <el-radio v-model="user.sex" label="0">女</el-radio>
+                </template>
+            </el-form-item>
+            <el-form-item label="邮箱">
+                <el-input v-model="user.email"></el-input>
+            </el-form-item>
+            <el-form-item label="电话">
+                <el-input v-model="user.mobile"></el-input>
+            </el-form-item>
+            <el-form-item label="学院">
+                <el-input v-model="user.collage"></el-input>
+            </el-form-item>
+            <el-form-item label="专业">
+                <el-input v-model="user.major"></el-input>
+            </el-form-item>
+            <el-form-item label="班级">
+                <el-input v-model="user.cla"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="onSubmit">确定更改</el-button>
+                <el-button type="danger">取消</el-button>
+            </el-form-item>
+        </el-form>
+
+        </el-upload>
+        <el-dialog :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="">
+        </el-dialog>
+    </div>
+</div>
+</body>
+
+<script>
+    var vue = new Vue({
+        el: '#app',
+        data:{
+            labelPosition: 'right',
+            user: {
+                username: 'liueweidong',
+                age: '25',
+                sex:'0',
+                email:'11982',
+                mobile:'1886288',
+                collage:'信电',
+                cla:'7班',
+                major:'电气',
+                avatarName:'../img/9.png'
+            },
+            imageUrl: ''
+
+        },
+        created() {
+
+        },
+        methods: {
+            handleRemove(file, fileList) {
+                console.log(file, fileList);
+            },
+            handlePictureCardPreview(file) {
+                this.dialogImageUrl = file.url;
+                this.dialogVisible = true;
+            },
+            //文件上传成功后的钩子，response为服务端返回的值，file为当前上传的文件封装成的js对象
+            handleAvatarSuccess(response, file) {
+                this.imageUrl="http://q0ftk89nh.bkt.clouddn.com/"+response.data;
+                this.$message({
+                    message:response.message,
+                    type:response.flag?"success":"error"
+                })
+                // 设置模型数据图片名称，以便后续保存到数据库中
+                this.formData.img=response.data;
+
+            },
+
+            //上传图片之前执行
+            beforeAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isJPG) {
+                    this.$message.error('上传套餐图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传套餐图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
+            },
+            //添加
+            handleAdd() {
+                axios.post("/setmeal/add.do?checkgroupIds=" + this.checkgroupIds, this.formData).then((res) => {
+                    this.dialogFormVisible = false
+                    if (res.data.flag) {
+                        this.$message({
+                            message: res.data.message,
+                            type: "success"
+                        })
+                    } else {
+                        this.$message(res.data.message)
+                    }
+                }).finally(() => {
+                    this.findPage();
+                })
+            },
+        }
+    })
+</script>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap-theme.min.css">
+    <!-- 引入组件库 -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+    <style>
+        body {
+            background-color: white;
+
+        }
+
+        #center {
+            width: 98%;
+            height: 750px;
+            margin-left: 10px;
+            border: 1px #ecf0f1 solid;
+            margin-top: 0px;
+
+        }
+
+
+
+        el-collapse-item {
+            color: red;
+        }
+
+
+        li:hover {
+            color: red;
+        }
+
+        #center .announce{
+            width: 100%;
+            line-height:30px;
+            margin-top: 15px;
+        }
+
+        .announce{
+            cursor: pointer;
+            font-size: 20px;
+            border-bottom: 1px #e7ebee dashed;
+            font-family: DFKai-SB;
+
+
+        }
+
+        .announce:hover{
+            color: blue;
+        }
+
+        .modal-title{
+            color: black;
+        }
+
+        .modal-body{
+            color: black;
+            font-size: 18px;
+        }
+
+        .modal-footer{
+            color: black;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .modal-footer span{
+            margin: 0;
+        }
+
+        .color{
+            color: #808ea0;
+        }
+
+        .page-header{
+           padding-left: 25px;
+            margin-top: 15px;
+            font-family: DFKai-SB;
+            font-size: 30px;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+<div id="app">
+    <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb"
+                   style="background-color: #f5f5f5;line-height: 30px">
+        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item>消息接收</el-breadcrumb-item>
+        <el-breadcrumb-item>公告</el-breadcrumb-item>
+    </el-breadcrumb>
+    <div id="center">
+        <h3 class="page-header">公告表</h3>
+        <div class="announce" v-for="(ann,id) in anns" :key="id">
+            <span :class="[{'color':ann.status==1}]" data-toggle="modal" :data-target="'#'+id" style="margin-left: 15px;">
+                <span class="glyphicon glyphicon-asterisk" style="font-size: 15px;color: #8f0008">
+                </span> {{ann.title}}
+                <span class="pull-right" style="margin-right: 10px">{{ann.time}}</span>
+            </span>
+
+            <!-- Modal -->
+            <div class="modal fade" :id="id" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="text-align: center">
+                            <button type="button" class="close" data-dismiss="modal"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title">公告</h3>
+                        </div>
+                        <div class="modal-body">
+                           {{ann.content}}
+                        </div>
+                        <div class="modal-footer">
+                            <div>时间：{{ann.time}}</div>
+                            <div style="margin-top: 5px">河北工程大学JAVA论坛中心</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    var vm = new Vue({
+        el: "#app",
+        data: {
+           anns:[
+               {id:1,title:'系统维护公告',content:'由于系统出现故障，将要进行维护，给您带来不变还请谅解',time:'2012-12-25',status:0},
+               {id:2,title:'净网公告',content:'近期将展开净网行动',time:'2012-12-26',status:0},
+               {id:3,title:'审核公告',content:'审核流程如下',time:'2012-12-27',status:1},
+           ]
+        },
+
+        methods: {
+
+        }
+    })
+</script>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>河工程java论坛</title>
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="../../css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../../css/special.css"/>
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script type="text/javascript" src="../../js/axios-0.18.0.js"></script>
+
+    <style>
+
+
+    </style>
+</head>
+<body>
+<div id="app">
+    <div id="header">
+        <img src="../../images/3.png">
+        <img src="../../images/logo_right.jpg" class="pull-right" style="margin-right:120px">
+        <div class="pic"  v-if="user!=''">
+
+            <img src="../../images/0.jpg" width="20px" height="20px" class="img-circle" style="margin-left: 5px;margin-bottom: 5px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            <span v-cloak class='item' style="font-size: 13px"  data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">{{user.name}}</span>
+        </div>
+        <div class="collapse" style="margin-left: 1233px;margin-top: -81px;position: absolute" id="collapseExample">
+            <div  style="width: 110px;height: 70px; background-color: #ecf0f1;border-radius: 5% 5% 5% 5%">
+                <div style="padding-left: 10px;padding-top: 10px;"><a href="../user/edit_password.html" style="color: #8f0008;font-weight: bold"> 修改密码</a></div>
+                <div style="padding-left: 10px;margin-top: 10px;"><a style="font-weight: bold" href="#" @click="layout">退出</a></div>
+            </div>
+        </div>
+        <div class="pic" v-if="user==''">
+            <a href="../user/login.html" class="login" style="text-decoration: none;color: skyblue;font-weight: bold; font-size: 15px">登&nbsp;&nbsp;&nbsp;陆</a>
+        </div>
+    </div>
+
+    <div class="containers">
+        <div id="aside">
+            <div id="box">
+                <div id="tip">
+                    <span class="glyphicon glyphicon-th-list"></span>
+                    <span style="padding-bottom: 20px">分类菜单</span>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item " v-for="category in categories">
+                        <a @click="find(category.id)">{{category.cname}}</a>
+                    </li>
+
+
+                </ul>
+            </div>
+            <img src="../../images/li.jpg" width="200px" height="350px">
+        </div>
+
+
+
+        <div id="main">
+            <div id="search">
+                <input type="text" class="form-control" placeholder="请输入查询的文章标题或者作者名"/>
+                <button class="btn btn-primary">搜索</button>
+
+                <div id="content">
+                    <div></div>
+                    <div class="media" v-for="article in articles">
+                        <div class="media-left">
+                            <a href="#" @click="articleDetail(article.id)">
+                                <img class="tic_img" :src="article.coverUrl"  alt="...">
+                            </a>
+                        </div>
+                        <div class="media-body">
+                            <h4 class="media-heading"><a href="#" @click="articleDetail(article.id)"> {{article.title}}</a></h4>
+                            <span>标签：
+                                 <span class="labels" v-for="label in article.labels">{{label}}&nbsp;</span>
+                             </span><br>
+                            <span>阅读量:<code style="font-size: 14px">{{article.num}}</code></span><br>
+                            <span>作者：<span class="writer"><a href="#" @click="showWriter(article.writerId)">{{article.writer}}</a></span></span>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+            <div class="pagination-container">
+                <el-pagination
+                        class="pagiantion"
+                        @current-change="handleCurrentChange"
+                        :current-page="pagination.currentPage"
+                        :page-size="pagination.pageSize"
+                        layout="total, prev, pager, next, jumper"
+                        :total="pagination.total">
+                </el-pagination>
+            </div>
+        </div>
+        <div id="raside">
+            <div id="box2">
+                <h4 style="border-bottom: 3px #96b97d solid; padding-bottom: 4px;color: #761c19">热点话题</h4>
+                <div class="list-group">
+                    <a href="#" class="list-group-item" v-for="topic in topics">
+                        {{topic.topic}}
+                    </a>
+                </div>
+
+                <h4 style="border-bottom: 3px #96b97d solid; padding-bottom: 4px;color: green">图书推荐</h4>
+                <div class="list-group group2">
+                    <a href="#" class="list-group-item disabled" v-for="book in books">{{book.bname}}</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer">
+        <div class="erweima">
+            <img src="../../images/erweima.jpg" width="100" height="100">
+        </div>
+        <div class="erweima2">
+            <img src="../../images/erweima2.jpg" width="100" height="100">
+        </div>
+        <div class="attention">
+            <p>河北工程大学LIUWEIDONG 版权所有</p>
+            <p>地址: 河北省邯郸经济技术开发区太极路19号 邮编: 067402</p>
+            <p>管理员邮箱: 1198423961@qq.com</p>
+            <p>注：本网站纯属虚构</p>
+        </div>
+
+    </div>
+
+
+
+
+
+</div>
+</body>
+<script>
+
+
+
+    $("#mark").hide();
+
+
+    var vm = new Vue({
+        el:"#app",
+        data:{
+            dialogTableVisible: false,
+            /*   user:{
+                   id:1,
+                   name:'阿三',
+                   flag:false,
+                   status:1,          // 会员状态 0 不是会员  1 是会员
+                   time:'2019-12-4',  // 会员到期时间
+               },*/
+            user:'',  // 用户数据模型
+            categories:[    // 分类信息
+                {id:1,cname:'oracle'},
+                {id:2,cname:'mysql'},
+                {id:3,cname:'redis'},
+                {id:3,cname:'sqlServer'},
+                {id:3,cname:'mongeDB'},
+            ],
+
+            articles:[  // 查询的文章信息
+                {id:1,title:'mysql入门与放弃',labels:['mysql','数据库'],num:396,writer:'阿三',writerId:2,coverUrl:'./images/0.jpg'},
+                {id:2,title:'mysql入门与放弃',labels:['java','javase'],num:396,writer:'的概念',writerId:2,coverUrl:'./images/0.jpg'},
+                {id:3,title:'mysql入门与放弃',labels:['spring','javaee'],num:1000,writer:'凶手你',writerId:2,coverUrl:'./images/0.jpg'},
+                {id:4,title:'mysql入门与放弃',labels:['html','WEBPage'],num:396,writer:'vhfui',writerId:2,coverUrl:'./images/0.jpg'},
+            ],
+
+            topics:[  // 热门话题
+                {id:1,topic:'你发头阿拉时发v'},
+                {id:2,topic:'你发头阿拉时发v'},
+                {id:3,topic:'你发头阿拉时发v'},
+                {id:4,topic:'你发头阿拉时发v'},
+                {id:5,topic:'你发头阿拉时发v'},
+
+            ],
+
+            books:[ // 推荐图书
+                {id:1,bname:'射雕英雄传'},
+                {id:2,bname:'射雕英雄传'},
+                {id:3,bname:'射雕英雄传'},
+            ],
+            pagination: {//分页相关模型数据
+                currentPage: 1,//当前页码
+                pageSize:10,//每页显示的记录数
+                total:0,//总记录数
+                queryString:null//查询条件
+            },
+
+        },
+
+        created(){
+            setInterval(function(){
+                var imgs = $(".window img");
+                $(imgs[2]).fadeOut(1000, function(){
+                    $(this).show().prependTo(".window");
+                })
+            }, 3000);
+        },
+
+
+
+        methods:{
+            // 登陆时跳转页面
+            login(){
+                window.location.href='../user/login.html'
+            },
+
+            // 按照分类id查询某一分类下的所有文章
+            find(id){
+                //alert(id);
+            },
+
+            // 查看文章具体详情
+            articleDetail(id){
+                window.location.href='article.html?id='+id
+            },
+            // 根据作者id查看作者详细信息
+            showWriter(writerId){
+                alert(writerId);
+                window.location.href='../fan-atten/attention_detail.html'
+            },
+            // elementui 的下拉选择，弹出command的值
+            handleCommand(command) {
+                //this.$message('click on item ' + command);
+                // 此时command代表分类的id,可以根据分类的id查找到相关的文章
+            },
+
+            // 用户退出
+            layout(){
+
+                // 发送ajax,参数为用户id，通过id使session 失效
+
+                // 将user置空
+                this.user=''
+                $('.collapse').collapse('hide')
+
+            },
+            // 切换页码
+            handleCurrentChange: function (currentPage) {
+                this.pagination.currentPage = currentPage;
+            },
+
+
+        }
+    })
+</script>
+</html>

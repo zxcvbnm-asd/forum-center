@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <!-- 引入组件库 -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+    <style>
+        body{
+            background-color: white;
+            overflow: hidden;
+
+        }
+
+        .demonstration{
+            margin-left: 50px;
+            font-size: 15px;
+            font-weight: bold;
+
+        }
+        el-date-picker{
+            width: 500px;
+        }
+
+        .el-table .warning-row {
+            background: oldlace;
+        }
+
+        .el-table .success-row {
+            background: #f0f9eb;
+        }
+
+        #center{
+            width: 100%;
+            height: 530px;
+            margin-top: 0px;
+            margin-left: 5px;
+            border: 1px #dddddd solid;
+        }
+
+        .table tr th{
+            background-color: #afd9ee;
+        }
+        .table tr td{
+            background-color:palegreen;
+        }
+        #querytime{
+            height: 430px;
+            width: 100%;
+        }
+
+        .btn-info{
+            margin-left: 550px;
+        }
+
+        #box{
+            width: 100%;
+            margin-top: 0px;
+            margin-left: 5px;
+            border: 1px #dddddd solid;
+            background-color: #dddddd;
+        }
+
+        .btn-warning{
+            margin-left: 10px;
+        }
+
+        #mycharts{
+              margin: 200px auto;
+
+          }
+        #mychart{
+            margin: 200px auto;
+
+        }
+    </style>
+</head>
+<body>
+
+
+     <div id="app">
+         <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb" style="background-color: #f5f5f5;line-height: 20px;margin: 0">
+             <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+             <el-breadcrumb-item>文章管理</el-breadcrumb-item>
+             <el-breadcrumb-item>文章统计</el-breadcrumb-item>
+         </el-breadcrumb>
+
+         <div id="center">
+             <el-tabs v-model="activeName" @tab-click="handleClick" style="">
+                 <el-tab-pane label="数据查询" name="first">
+                     <div id="querytime">
+                         <div class="block">
+                             <el-date-picker
+                                     v-model="value1"
+                                     type="daterange"
+                                     range-separator="-"
+                                     start-placeholder="开始日期"
+                                     end-placeholder="结束日期"
+                                     style="width: 280px;line-height: 20px;">
+                             </el-date-picker>
+                             <button class="btn btn-primary" style="width: 100px;height: 40px;margin-bottom: 3px">查询</button>
+                             <button class="btn btn-info" style="width: 100px;height: 40px;margin-bottom: 3px">导出excel</button>
+                             <table class="table table-hover table-bordered table-striped"  >
+                                   <tr>
+                                       <th>时间</th>
+                                       <th>阅读量</th>
+                                   </tr>
+                                   <tr v-for="item in tableData" >
+                                       <td>{{item.date}}</td>
+                                       <td>{{item.name}}</td>
+                                   </tr>
+                             </table>
+                         </div>
+                     </div>
+                     <div class="pagination-container">
+                         <el-pagination
+                                 class="pagiantion"
+                                 @current-change="handleCurrentChange"
+                                 :current-page="pagination.currentPage"
+                                 :page-size="pagination.pageSize"
+                                 layout="total, prev, pager, next, jumper"
+                                 :total="pagination.total">
+                         </el-pagination>
+                     </div>
+                 </el-tab-pane>
+                 <el-tab-pane label="数据分析" name="second">
+                     <div id="box">
+
+                         <span>
+                         <button class="btn btn-warning" @click="showYearsDay">昨天数据</button>
+                         <button class="btn btn-warning" @click="showWeek">近一周数据</button>
+                         <button class="btn btn-warning" @click="showMonth">近一月数据</button>
+                        </span>
+                         <div id="mycharts" style="width: 600px;height:400px; margin-top: 30px"></div>
+                         <div id="mychart" style="width: 600px;height:400px; margin-top: 30px"></div>
+                     </div>
+                 </el-tab-pane>
+
+             </el-tabs>
+         </div>
+     </div>
+
+</body>
+
+<script src="../../js/echarts.js"></script>
+<script>
+
+    // 基于准备好的dom，初始化echarts实例
+
+    // 指定图表的配置项和数据
+
+
+    // 使用刚指定的配置项和数据显示图表。
+
+
+
+    var vm = new Vue({
+        el:"#app",
+        data:{
+            activeName: 'first',
+            value1:[],
+            tableData: [{    // 每页10条数据
+                date: '2016-05-02',
+                name: '王小虎',
+                address: '上海市普陀区金沙江路 1518 弄',
+            }, {
+                date: '2016-05-04',
+                name: '王小虎',
+                address: '上海市普陀区金沙江路 1518 弄'
+            },
+            ],
+            pagination: {//分页相关模型数据
+                currentPage: 1,//当前页码
+                pageSize:10,//每页显示的记录数
+                total:0,//总记录数
+                queryString:null//查询条件
+            },
+            data:['1','2','3','4','1','2','3','4','1','2','3','4','1','2','3','4','1','2','3','4','1','2','3','4'],
+            count:[20,40,50,60]
+        },
+        created(){
+
+        },
+        methods: {
+
+            showWeek(){
+              /*  axios.get("http://localhost:8080/show").then((res)=>{*/
+                    $("#mychart").hide()
+                    $("#mycharts").show()
+                    var myChart = echarts.init(document.getElementById('mycharts'));
+                    myChart.setOption({
+                        title: {
+                            text: '近一周阅读量统计'
+                        },
+                        tooltip: {},
+                        legend: {
+                            data:['阅读量']
+                        },
+                        xAxis: {
+                            data: ["MON","TUE","WED","THU","FIR","SAT","SUN"]
+                        },
+                        yAxis: {},
+                        series: [{
+                            name: '阅读量',
+                            type: 'bar',
+                            data: [52, 20, 36, 10, 10, 20,80]
+                        }]
+                    })
+              /*  })*/
+
+            },
+            showMonth(){
+              /*  axios.get("http://localhost:8080/show").then((res)=>{*/
+                    $("#mychart").hide()
+                    $("#mycharts").show()
+                    var myChart = echarts.init(document.getElementById('mycharts'));
+
+                    myChart.setOption({
+                        title: {
+                            text: '近一周阅读量统计'
+                        },
+                        tooltip: {},
+                        legend: {
+                            data:['阅读量']
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data:this.data   // 日期
+                        },
+                        yAxis: {
+                            type: 'value'
+                        },
+                        series: [{
+                            data: this.count,
+                            type: 'line'
+                        }]
+                    })
+               /* })*/
+
+            },
+            showYearsDay(){
+               /* axios.get("http://localhost:8080/show").then((res)=>{*/
+                    $("#mycharts").hide()
+                    $("#mychart").show()
+                    var myChart = echarts.init(document.getElementById('mychart'));
+                    myChart.setOption({
+                        title : {
+                            text: '昨天文章阅读量',
+                            x:'center'
+                        },
+                        tooltip : {
+                            trigger: 'item',
+                            formatter: "{a} <br/>{b} : {c} ({d}%)"
+                        },
+                        legend: {
+                            orient: 'vertical',
+                            left: 'left',
+                            data: ['上午阅读量','下午阅读量','晚上阅读量','夜间阅读量']
+                        },
+                        series : [
+                            {
+                                name: '访问来源',
+                                type: 'pie',
+                                radius : '55%',
+                                center: ['50%', '60%'],
+                                data:[
+                                    {value:335, name:'上午阅读量'},
+                                    {value:310, name:'下午阅读量'},
+                                    {value:234, name:'晚上阅读量'},
+                                    {value:135, name:'夜间阅读量'},
+                                ],
+                                itemStyle: {
+                                    emphasis: {
+                                        shadowBlur: 10,
+                                        shadowOffsetX: 0,
+                                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                    }
+                                }
+                            }
+                        ]
+                    })
+
+               /* })*/
+
+
+            },
+            tableRowClassName({row, rowIndex}) {
+                if (rowIndex === 1) {
+                    return 'warning-row';
+                } else if (rowIndex === 3) {
+                    return 'success-row';
+                }
+                return '';
+            },
+            handleClick(){
+                this.showYearsDay();
+            },
+            // 切换页码
+            handleCurrentChange:function(currentPage) {
+                this.pagination.currentPage = currentPage;
+                this.findPage();
+            },
+        }
+    })
+</script>
+</html>

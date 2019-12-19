@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap-theme.min.css">
+    <!-- 引入组件库 -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+    <style>
+        body{
+            background-color: white;
+            overflow: hidden;
+
+        }
+
+
+        el-date-picker{
+            width: 500px;
+        }
+
+        .el-table .warning-row {
+            background: oldlace;
+        }
+
+        .el-table .success-row {
+            background: #f0f9eb;
+        }
+
+        #center{
+            width: 100%;
+            margin-top: 0px;
+            margin-left: 5px;
+        }
+
+
+        #box{
+            width: 80%;
+            height: 500px;
+            margin-left: 10%;
+            border:1px solid #fff5d4;
+
+
+
+        }
+
+        #title{
+            text-align: center;
+            font-size: 25px;
+            letter-spacing: 1.5px;
+            font-weight: bold;
+            margin-top: 25px;
+        }
+
+        #time{
+            margin-right: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            font-family: DFKai-SB;
+        }
+
+        #content{
+            width: 80%;
+            margin-left: 10%;
+            margin-top: 60px;
+        }
+
+        #footer{
+            width: 250px;
+            margin-top: 40px;
+        }
+
+        #status{
+            margin-top: 140px;
+            text-align: center;
+        }
+
+        .btn{
+            width: 150px;
+        }
+
+        .label{
+            margin-left: 5px;
+        }
+
+    </style>
+</head>
+<body>
+
+
+     <div id="app">
+         <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb" style="background-color: #f5f5f5;line-height: 20px;margin: 0">
+             <h4>文章详情</h4>
+         </el-breadcrumb>
+
+         <div id="center">
+            <div id="box">
+                <div id="title" >{{article.title}}</div>
+                <div id="time" class="pull-right">{{article.pubTime}}</div>
+                <div id="content" v-html="article.content"></div>
+                <div id="footer" class="pull-right">
+                    <span class="label label-danger" v-for="label in article.labels">{{label}}</span>
+                    <div style="margin-top: 10px;font-weight: bold">
+                        阅读量：{{article.num}}
+                    </div>
+                </div>
+                <div id="status">
+                    <span v-if="article.status==1" style="font-size: 18px;font-weight: bold;color: green">正在审核中</span>
+                    <button v-if="article.status==2 || article.status==4" class="btn btn-danger">删&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;除</button>
+                    <button v-if="article.status==3" class="btn btn-success">发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布</button>
+
+                </div>
+            </div>
+
+         </div>
+     </div>
+
+</body>
+
+<script>
+
+
+
+    function getId(){
+        var qs = location.search.substr(1), // 获取url中"?"符后的字串
+            args = {}, // 保存参数数据的对象
+            items = qs.length ? qs.split("&") : [], // 取得每一个参数项,
+            len = items.length;
+        var id = items[0].split("=")[1];
+
+        return id;
+    }
+
+
+
+    var vm = new Vue({
+        el:"#app",
+        data:{
+            article:{
+                id:1,
+                content: '<h4>您好</h4>',
+                status:3,
+                labels:['java','javase','html','德玛西亚'],
+                pubTime:'2012-12-25',
+                title:'钢铁是怎样炼成的',
+                num:3000
+            }
+        },
+        created(){
+            var id = getId();
+            alert(id)
+        },
+        methods: {
+
+
+        }
+    })
+</script>
+</html>

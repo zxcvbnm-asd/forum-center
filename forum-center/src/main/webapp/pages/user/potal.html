@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: #000;
+            overflow: hidden;
+        }
+        .content{
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 200px;
+            height: 260px;
+            margin: auto;
+            /*perspective: 400px; DFKai-SB*/
+        }
+
+        #title{
+            position: absolute;
+            font-size: 40px;
+            color: yellow;
+            font-family: "Times New Roman",Times,serif;
+            text-align: center;
+            margin-left: 300px;
+            margin-top: 30px;
+            letter-spacing: 2px;
+        }
+        .threeD{
+                    transform-style: preserve-3d;
+                -ms-transform-style: preserve-3d;
+            -webkit-transform-style:preserve-3d;
+        }
+        .content>div{  
+                    transform-origin:100px 130px 0px;
+                -ms-transform-origin:100px 130px 0px;
+            -webkit-transform-origin:100px 130px 0px;
+                    animation: allRot2 20s linear infinite;
+                -ms-animation: allRot2 20s linear infinite;
+            -webkit-animation: allRot2 20s linear infinite;
+            width:100%;
+            height:100%;
+        }
+        .heart {
+                    transform-origin:100px 130px 0px;
+                -ms-transform-origin:100px 130px 0px;
+            -webkit-transform-origin:100px 130px 0px;
+                    transform:rotate(-45deg);
+                -ms-transform:rotate(-45deg);
+            -webkit-transform:rotate(-45deg);
+        }
+ 
+        @keyframes cubeRot {
+            0% {
+                        transform: rotate3d(1,1,0,0deg);
+                    -ms-transform: rotate3d(1,1,0,0deg);
+                -webkit-transform: rotate3d(1,1,0,0deg);
+            }
+            100%{
+                        transform: rotate3d(1,1,0,360deg);
+                    -ms-transform: rotate3d(1,1,0,360deg);
+                -webkit-transform: rotate3d(1,1,0,360deg);
+            }
+        }
+        @keyframes allRot {
+            0% {
+                        transform: rotate3d(1,1,0,0deg);
+                    -ms-transform: rotate3d(1,1,0,0deg);
+                -webkit-transform: rotate3d(1,1,0,0deg);
+            }
+            100%{
+                        transform: rotate3d(1,1,0,360deg);
+                    -ms-transform: rotate3d(1,1,0,360deg);
+                -webkit-transform: rotate3d(1,1,0,360deg);
+            }
+        }
+        @keyframes allRot2 {
+            0% {
+                        transform: rotate3d(1,1,0,0deg) rotateX(0deg) rotateY(0deg);
+                    -ms-transform: rotate3d(1,1,0,0deg) rotateX(0deg) rotateY(0deg);
+                -webkit-transform: rotate3d(1,1,0,0deg) rotateX(0deg) rotateY(0deg);
+            }
+            100%{
+                        transform: rotate3d(1,1,0,360deg) rotateX(360deg) rotateY(360deg);
+                    -ms-transform: rotate3d(1,1,0,360deg) rotateX(360deg) rotateY(360deg);
+                -webkit-transform: rotate3d(1,1,0,360deg) rotateX(360deg) rotateY(360deg);
+            }
+        }
+ 
+        .rib {
+            position: absolute;
+            width: 200px;
+            height: 260px;
+            border: solid red;
+            border-width: 2px 2px 0 0;
+            border-radius: 100% 100% 0/40% 100% 0;
+                    transition: all 1s;
+                -ms-transition: all 1s;
+            -webkit-transition: all 1s;
+        }
+ 
+        .cube {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 20px;
+            bottom: 0;
+            margin: auto;
+            width: 100px;
+            height: 100px;
+                    transform: translateZ(50px);
+                -ms-transform: translateZ(50px);
+            -webkit-transform: translateZ(50px);
+        }
+ 
+            .cube > div {
+                position: absolute;
+                width: 100px;
+                height: 100px;
+                        transform-origin: 50% 50% -50px;
+                    -ms-transform-origin: 50% 50% -50px;
+                -webkit-transform-origin: 50% 50% -50px;
+            }
+ 
+                .cube > div > img {
+                    width: 100px;
+                    height: 100px;
+                }
+                /*正面*/
+                .cube > div:nth-child(1) {
+                    top: 0px;
+                    left: 0px;
+                }
+                /*上面*/
+                .cube > div:nth-child(2) {
+                            transform: rotateX(90deg);
+                        -ms-transform: rotateX(90deg);
+                    -webkit-transform: rotateX(90deg);
+                }
+                /*右面*/
+                .cube > div:nth-child(3) {
+                            transform: rotateY(-90deg);
+                        -ms-transform: rotateY(-90deg);
+                    -webkit-transform: rotateY(-90deg);
+                }
+                /*左面*/
+                .cube > div:nth-child(4) {
+                            transform: rotateY(90deg);
+                        -ms-transform: rotateY(90deg);
+                    -webkit-transform: rotateY(90deg);
+                }
+                /*下面*/
+                .cube > div:nth-child(5) {
+                            transform: rotateX(-90deg);
+                        -ms-transform: rotateX(-90deg);
+                    -webkit-transform: rotateX(-90deg);
+                }
+ 
+                /*后面*/
+                .cube > div:nth-child(6) {
+                            transform: rotateY(180deg);
+                        -ms-transform: rotateY(180deg);
+                    -webkit-transform: rotateY(180deg);
+                }
+    </style>
+</head>
+<body>
+<div id="title">河工程JAVA论坛个人中心</div>
+    <div class="content">
+        <div class="threeD">
+            <div class ="threeD heart">
+            </div>
+            <div class="threeD cube">
+                <div><img src="../../img/9.png" alt="" /> </div>
+                <div><img src="../../img/9.png" alt="" /> </div>
+                <div><img src="../../img/9.png" alt="" /> </div>
+                <div><img src="../../img/9.png" alt="" /> </div>
+                <div><img src="../../img/9.png" alt="" /> </div>
+                <div><img src="../../img/9.png" alt="" /> </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="text/javascript">
+        var heart = document.getElementsByClassName("heart")[0];
+        var n = 36;
+        var m = 360 / n;
+ 
+        //获取随机颜色
+        var getRandomColor = function () {
+            return '#' + (function (color) {
+                return (color += '0123456789abcdef'[Math.floor(Math.random() * 16)]) && (color.length == 6) ? color : arguments.callee(color);
+            })('');
+        }
+        //创建n条半心形线段
+        for (var i = 0; i < n; i++) {
+            var div = document.createElement("div");
+            div.className = "rib";
+            div.style.borderColor = getRandomColor();
+            //画线
+            div.style.transform = "rotateY(" + m * i + "deg) rotateZ(45deg) translateX(30px)";  
+            heart.appendChild(div);
+        }
+        //每隔0.1秒随机上色,相比较每1秒上色，这样上色更柔和
+        setInterval(function () {
+            for (var i = 0; i < n;i++) {
+                document.getElementsByClassName('rib')[i].style.borderColor = getRandomColor();
+            }
+        }, 100)
+        
+    </script>
+</body>
+</html>

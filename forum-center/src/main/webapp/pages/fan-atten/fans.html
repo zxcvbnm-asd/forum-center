@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <!-- 引入组件库 -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+
+    <style>
+        body {
+            background-color: white;
+        }
+
+
+        #center{
+            width: 98%;
+            margin-left: 5px;
+            border: 1px #ecf0f1 solid;
+            margin-top: 5px;
+        }
+
+        #box{
+            width: 100%;
+            margin-left: 40px;
+        }
+
+        #tip{
+            width: 1000px;
+            line-height: 70px;
+            background-color: #f2fafb;
+        }
+
+        #tip span{
+            margin-left: 30px;
+        }
+
+        #count{
+            width: 1000px;
+            height: 150px;
+
+            margin-top: 30px;
+        }
+
+        #count:hover{
+            background-color: #f2f2f2;
+        }
+
+        #count div{
+
+          /*  height: 100px;*/
+            /*margin-left: 450px;*/
+            /*padding-top: 40px;*/
+
+            text-align: center;
+
+        }
+
+
+        #number{
+            font-size: 35px;
+            font-weight: bold;
+
+        }
+
+        #box3{
+            margin-top: 20px;
+        }
+
+        .picture{
+            width: 1000px;
+            line-height: 50px;
+            background-color: #e9eef4 ;
+            border-bottom: 1px #e9eef4 solid;
+        }
+
+        table{
+            background-color: #e9eef4;
+            width: 1000px;
+        }
+
+        td{
+            text-align: center;
+        }
+
+        #search{
+           text-align: left;
+        }
+
+        el-date-picker{
+            margin-right: 0;
+        }
+
+        button{
+            background-color:#e9eef4 ;
+            border: 1px #e9eef4 solid;
+        }
+
+        button:hover{
+           color: blue;
+        }
+
+        #mycharts{
+            width: 1000px;
+            height:400px;
+            margin-top: 30px;
+            margin-left: 40px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb"
+                   style="background-color: #f5f5f5;line-height: 30px">
+        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item>关注管理</el-breadcrumb-item>
+        <el-breadcrumb-item>我的粉丝</el-breadcrumb-item>
+    </el-breadcrumb>
+
+    <div id="center">
+        <div id="box">
+            <h3>粉丝统计</h3>
+            <div id="tip">
+                <span><li class="el-icon-warning"></li>&nbsp;&nbsp;&nbsp;&nbsp;昨日数据暂未更新</span>
+            </div>
+            <div id="count">
+                <div id="box2">
+                    <br><br>
+                    <span id="number">10000</span><br>
+                    <span>粉丝总量</span>
+                </div>
+            </div>
+
+            <div id="box3">
+                <div class="picture">粉丝增长趋势图</div>
+                <table>
+                    <tr>
+                        <td>时间:</td>
+                        <td><button style="outline: none" @click="search(7)">近一周</button></td>
+                        <td><button style="outline: none" @click="search(31)">一个月前</button></td>
+                        <td><button style="outline: none" @click="search(90)">三个月前</button></td>
+                        <td style="text-align: right;margin-right: 0" >
+                            <div class="block">
+                                <el-date-picker
+                                        v-model="value1"
+                                        type="daterange"
+                                        range-separator="-"
+                                        start-placeholder="开始日期"
+                                        end-placeholder="结束日期">
+                                </el-date-picker>
+                            </div>
+                        </td>
+                        <td id="search" style="text-align: left;margin-left: 0"><button class="btn btn-default" style="height: 38px" @click="search(0)">查询</button></td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+        <div id="mycharts"></div>
+    </div>
+
+</div>
+</body>
+
+<script src="../../js/echarts.js"></script>
+<script>
+
+    var vm = new Vue({
+        el: "#app",
+        data: {
+
+            dataList: [
+                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
+                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
+                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
+                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
+                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
+                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
+                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
+                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
+                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
+                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
+
+
+            ],
+            pagination: {//分页相关模型数据
+                currentPage: 1,//当前页码
+                pageSize: 10,//每页显示的记录数
+                total: 0,//总记录数
+                queryString: null//查询条件
+            },
+            value1:[],
+            timeList:['2019-6-1','2019-6-2','2019-6-1','2019-6-2','2019-6-1','2019-6-2'],
+            countList:[10,15,19,21,25,25]
+        },
+
+        mounted(){
+            this.search(7);
+        },
+        methods: {
+
+            search(data){
+                alert(data)
+
+                // 说明在日期框中选择的日期
+                if(data == 0){
+
+                }else if (data == 7){
+                    // 查询近一周的数量
+                }else if(data == 31){
+                    // 查询一个月的
+                }else if(data == 90){
+                    // 查询三个月
+                }
+
+                var myChart = echarts.init(document.getElementById('mycharts'));
+                myChart.setOption({
+                    title: {
+                        text: '粉丝数量统计'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data:['粉丝量']
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: this.timeList  //  日期
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: [{
+                        data:this.countList, // 数量
+                        type: 'line',
+                        smooth: true
+                    }]
+                })
+
+            },
+
+            // 查看详情
+            handleDetails(row) {
+                alert(row.id);
+            },
+
+            // 取消关注
+            cancelAttention(row) {
+
+            },
+
+            // 切换页码
+            handleCurrentChange: function (currentPage) {
+                this.pagination.currentPage = currentPage;
+            },
+        }
+    })
+</script>
+</html>

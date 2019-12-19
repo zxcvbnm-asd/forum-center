@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>河工程java论坛</title>
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="../../css/bootstrap.min.css"/>
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script type="text/javascript" src="../../js/axios-0.18.0.js"></script>
+
+    <style>
+        body{
+            position: relative;
+
+        }
+
+        nav{
+            background-color:#8f0008
+        }
+
+        #header{
+            background-color: #8f0008;
+            width: 1347px;
+            height: 120px;
+        }
+
+
+
+        .item{
+            color: #ffffe7;
+            font-weight: bold;
+            font-size: 15px;
+
+        }
+
+
+        #nav table tr td a:hover{
+            text-decoration: none;
+            color:#ffffe7;
+        }
+
+
+        td {
+            text-align: center;
+            width: 200px;
+            height: 38px;
+        }
+
+        table{
+            margin-left: 90px;
+        }
+
+
+
+        .window  img{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+
+
+
+
+        #footer{
+            position: absolute;
+            width: 1347px;
+            height: 145px;
+            background-color: #8f0008;
+
+        }
+        h3{
+            border-bottom: 2px #ffd401 solid;
+            color: #990000;
+        }
+
+        .list-group a{
+            border-bottom-color: red ;
+            font-weight: bold;
+            color: #2b669a;
+        }
+        .attention{
+            width: 500px;
+            height: 130px;
+            margin-left: 500px;
+            margin-top: 20px;
+            color: #ffffe7;
+            font-weight: bold;
+        }
+
+        .erweima{
+            position: absolute;
+            margin-left: 120px;
+            margin-top: 20px;
+        }
+        .erweima2{
+            position: absolute;
+            margin-left: 1000px;
+            margin-top: 20px;
+        }
+
+
+
+        table tr td:hover{
+            cursor: pointer;
+        }
+
+
+
+        .pic{
+            position: absolute;
+            z-index:1;
+            margin-left: 1255px;
+            margin-top: -104px;
+            cursor: pointer;
+        }
+
+
+
+
+        [v-cloak]{
+            display: none;
+        }
+
+        a{
+            text-decoration: none;
+        }
+
+
+
+
+
+        .containers{
+            display: flex;
+        }
+
+        #aside{
+            flex: 1.5;
+            background-image: url("../../images/z.jpg");
+            background-size: 200px 200px;
+            border-right: 1px #ecf0f1 solid;
+
+        }
+
+        #main{
+            flex: 7;
+
+
+        }
+
+        #raside{
+            flex: 1.5;
+            background-image: url("../../images/b.jpg");
+            background-size: 200px 200px;
+            border-left: 1px #ecf0f1 solid;
+           
+        }
+
+        .login:hover{
+            color: blue;
+        }
+
+        #content{
+            width: 96%;
+            margin-left: 2%;
+            border-top: 1px #ecf0f1 solid;
+        }
+
+        #title{
+            margin-top: 20px;
+            margin-left: 300px;
+            font-family: DFKai-SB;
+            font-size: 35px;
+        }
+
+        #time{
+            margin-top: 20px;
+            font-size: 20px;
+            font-family: DFKai-SB;
+            margin-left: 780px;
+        }
+
+        #text{
+            margin-top: 20px;
+            margin-left: 60px;
+        }
+
+        #writer{
+            margin-left: 800px;
+            margin-top: 25px;
+        }
+
+        #atten:hover{
+            text-decoration: none;
+            cursor: pointer;
+            color: orange;
+        }
+
+        #atten{
+            font-size: 18px;
+            position: absolute;
+            margin-top: 3px;
+            font-weight: bold;
+        }
+
+        #suport{
+            position: absolute;
+            margin-top: 0;
+            margin-left: -757px;
+            cursor: pointer;
+        }
+
+        .zi{
+            font-size: 25px;
+            color: red;
+        }
+
+        .zi1{
+            font-size: 25px;
+            color: grey;
+        }
+
+
+        #CN{
+            position: absolute;
+            margin-top: -20px;
+            margin-left: 24px;
+            font-weight: bold;
+        }
+
+        .first-con{
+            margin-left: 41px;
+            margin-top: 3px;
+            color: #4d4d4d;
+        }
+
+        a:hover{
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .back{
+            margin-left: 37px;
+            margin-top: 6px;
+            margin-bottom: 6px;
+        }
+
+        .head-pic{
+            width: 20px;
+            height: 20px;
+        }
+
+        .ss{
+            position: absolute;
+            margin-left: 26px;
+            margin-top: -20px;
+        }
+
+        .reply-content{
+            margin-left: 26px;
+            margin-top: 10px;
+            color: #814d67;
+        }
+
+        .cate{
+            font-size: 15px;
+            color: orange;
+            font-weight: bold;
+        }
+
+        .second-con{
+
+        }
+
+
+    </style>
+</head>
+<body>
+<div id="app">
+    <div id="header">
+        <img src="../../images/3.png">
+        <img src="../../images/logo_right.jpg" class="pull-right" style="margin-right:120px">
+        <div class="pic"  v-if="user!=''">
+
+            <img src="../../images/0.jpg" width="20px" height="20px" class="img-circle" style="margin-left: 5px;margin-bottom: 5px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            <span v-cloak class='item' style="font-size: 13px"  data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">{{user.name}}</span>
+        </div>
+        <div class="collapse" style="margin-left: 1233px;margin-top: -81px;position: absolute" id="collapseExample">
+            <div  style="width: 110px;height: 70px; background-color: #ecf0f1;border-radius: 5% 5% 5% 5%">
+                <div style="padding-left: 10px;padding-top: 10px;"><a href="../user/edit_password.html" style="color: #8f0008;font-weight: bold"> 修改密码</a></div>
+                <div style="padding-left: 10px;margin-top: 10px;"><a style="font-weight: bold" href="#" @click="layout">退出</a></div>
+            </div>
+        </div>
+        <div class="pic" v-if="user==''">
+            <a href="../user/login.html" class="login" style="text-decoration: none;color: skyblue;font-weight: bold; font-size: 15px">登&nbsp;&nbsp;&nbsp;陆</a>
+        </div>
+    </div>
+
+    <div class="containers">
+        <div id="aside">
+
+        </div>
+
+
+
+        <div id="main">
+           <div id="content">
+              <div></div>
+              <div id="title">{{article.title}}</div>
+           </div>
+            <div id="time">
+                {{article.pubTime}}
+            </div>
+            <div id="text" v-html="article.content">
+
+            </div>
+            <hr>
+            <div id="writer">
+                <a id="suport" @click="add"><span  :class="['glyphicon','glyphicon-thumbs-up', {'zi':flag},{'zi1':!flag}]" ></span> </a>
+                <a href="#" @click="writerDetail(writer.id)">
+                <img src="../../images/0.jpg" class="img-circle" width="30px" height="30px"/></a>&nbsp;&nbsp;&nbsp;<a ref="atten" id="atten" @click="isAttention">关注</a>
+            </div>
+            <hr>
+            <div id="comments" style="margin-bottom: 20px">
+                <div id="write-comment">
+
+                    <img src="../../images/la.jpg" class="img-circle" width="30px" height="30px" style="margin-top: -146px;margin-left: 10px">
+
+                    <textarea type="text" style="height: 100px;width:90%;margin-left: 5px" :placeholder="placeholder" v-model="comment.content"></textarea>
+                    <div id="pub">
+                        <div style="position:absolute;margin-left: 672px;margin-top: 11px;color: #b399b3">最多只能输入1000字</div>
+                        <button class="btn btn-sm btn-danger pull-right" style="margin-right: 50px;" @click="pubComment">发表评论</button>
+                        <a id="cancle" style="margin-left: 50px" @click="cancle">撤销回复</a>
+                    </div>
+
+                </div>
+                <div id="comment-list" style="margin-top: 45px">
+                    <div v-for="comment in comments" style="border-bottom: 1px grey dashed;margin-top: 10px">
+                        <div style="margin-left: 10px">
+                            <div>
+                                <div style="width: 96%">
+                                    <img  class="head-pic" src="../../images/0.jpg"><div id="CN">{{comment.customerName}}</div>
+                                    <span class="pull-right"> <el-button type="text" data-toggle="modal" data-target="#myModal">举报</el-button>&nbsp;&nbsp;&nbsp;<a @click="reply(comment.id,comment.customerName)">回复</a>&nbsp;&nbsp;&nbsp;<a @click="showReplyComment(comment.id)"><span :id="comment.id+'show'">查看回复</span></a></span>
+                                    <div class="first-con" >
+                                        {{comment.content}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-if="comment.replyComments!=''" class="second-con" :id="comment.id">
+                                <div v-for="replyComment in comment.replyComments">
+                                    <div class="back">
+                                        <img class="head-pic" src="../../images/0.jpg"/>
+                                        <div class="ss">
+                                            <span style="font-weight: bold;font-size: 16px">{{replyComment.customerReplyName}}</span>&nbsp;&nbsp;&nbsp;
+                                            <span style="color: #999999">回复了</span>&nbsp;&nbsp;&nbsp;<span>{{replyComment.customerName}}</span>
+                                            <div style="margin-left: 734px;margin-top: -20px"> <el-button type="text" data-toggle="modal" data-target="#myModal">举报</el-button>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;<a @click="reply(replyComment.id,replyComment.customerReplyName)">回复</a></div>
+                                        </div>
+
+                                        <div class="reply-content">
+                                            <span>{{replyComment.content}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="raside">
+
+        </div>
+    </div>
+
+    <div id="footer">
+        <div class="erweima">
+            <img src="../../images/erweima.jpg" width="100" height="100">
+        </div>
+        <div class="erweima2">
+            <img src="../../images/erweima2.jpg" width="100" height="100">
+        </div>
+        <div class="attention">
+            <p>河北工程大学LIUWEIDONG 版权所有</p>
+            <p>地址: 河北省邯郸经济技术开发区太极路19号 邮编: 067402</p>
+            <p>管理员邮箱: 1198423961@qq.com</p>
+            <p>注：本网站纯属虚构</p>
+        </div>
+
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+                <div class="modal-body">
+                    <h4 style="font-weight: bold">举报</h4>
+
+                    <div style="font-weight: bold">请输入要举报的内容（必选）</div>
+                    <table class="" style="margin-left:15px;margin-top: 10px">
+                        <!--点击click后，complaint.type的值自动变化-->
+                        <tr>
+                            <td><input type="radio" name="cate" @click="complaint.type=1"> &nbsp;<span class="cate">内容涉黄</span></td>
+                            <td><input type="radio" name="cate" @click="complaint.type=2"> &nbsp;<span class="cate">政治相关</span></td>
+                            <td><input type="radio" name="cate" @click="complaint.type=3"> &nbsp;<span class="cate">内容抄袭</span></td>
+                            <td><input type="radio" name="cate" @click="complaint.type=4"> &nbsp;<span class="cate">涉嫌广告</span></td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" name="cate" @click="complaint.type=5"> &nbsp;<span class="cate">内容侵权</span></td>
+                            <td><input type="radio" name="cate" @click="complaint.type=6"> &nbsp;<span class="cate">侮辱谩骂</span></td>
+                            <td><input type="radio" name="cate" @click="complaint.type=7"> &nbsp;<span class="cate">其他方面</span></td>
+                        </tr>
+                    </table>
+                    <div style="margin-top: 10px">
+                        <span style="font-weight: bold">补充说明（选填）</span>
+                        <div style="margin-top: 10px">
+                              <textarea cols="86" placeholder="请填写附加的补充内容" v-model="complaint.content"></textarea>
+                        </div>
+                    </div>
+                    <div style="margin-left: 467px;margin-top: 15px">
+                        <span>
+                            <button class="btn btn-sm btn-info form-inline" @click="rescind">取消</button>
+                            <button class="btn btn-sm btn-danger form-inline" @click="sure">确定</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+<script>
+
+    $("#pub").hide()
+    $("#cancle").hide();   // 撤销提示显示
+
+    // 当textare获取焦点时，提交按钮进行显示，其他则进行隐藏
+    $(function () {
+        $(".second-con").hide()
+        $("textarea").focus(function () {
+            $("#pub").show()
+        })
+
+
+    })
+
+
+    function getId() {
+        var qs = location.search.substr(1), // 获取url中"?"符后的字串
+            args = {}, // 保存参数数据的对象
+            items = qs.length ? qs.split("&") : [], // 取得每一个参数项,
+            item = null,
+            len = items.length;
+        var id = items[0].split("=")[1];
+        return id;
+    }
+
+    $("#mark").hide();
+
+
+    var vm = new Vue({
+        el:"#app",
+        data:{
+            complaint:{id:1,type:1,content:'',remark:''},
+            comment:{content:''}, // 评论对象
+            attention_flag:false,  //判断用（测试时使用，后台会出传递回来true 或者false）
+            user:{},  // 用户数据模型
+            text:'',
+            writer:{id:1},
+            flag:true,
+            article:{id:1,title:'神雕侠侣',pubTime:'2014-12-25',content:'时那是当然价格多少时放到搜软件'},
+            comments:[
+                {id:1,parentId:0,content:'真好',customerName:'阿东',
+                   replyComments:[
+                       {id:3,parentId:0,customerName:'adog',customerReplyName:'gougang',content:'还好'},
+                       {id:4,parentId:0,customerName:'adog',customerReplyName:'dd',content:'垃圾'},
+                   ]
+                },
+                {id:5,parentId:0,content:'真好',customerName:'阿东',
+                    replyComments:[
+                        {id:3,parentId:0,customerName:'adog',customerReplyName:'gougang',content:'还好'},
+                        {id:4,parentId:0,customerName:'adog',customerReplyName:'张三',content:'垃圾'},
+                        {id:3,parentId:0,customerName:'adog',customerReplyName:'gougang',content:'还好'},
+                        {id:4,parentId:0,customerName:'adog',customerReplyName:'张三',content:'垃圾'},
+                        {id:3,parentId:0,customerName:'adog',customerReplyName:'gougang',content:'还好'},
+                        {id:4,parentId:0,customerName:'adog',customerReplyName:'张三',content:'垃圾'},
+                        {id:3,parentId:0,customerName:'adog',customerReplyName:'gougang',content:'还好'},
+                        {id:4,parentId:0,customerName:'adog',customerReplyName:'张三',content:'垃圾'},
+                        {id:3,parentId:0,customerName:'adog',customerReplyName:'gougang',content:'还好'},
+                        {id:4,parentId:0,customerName:'adog',customerReplyName:'张三',content:'垃圾'},
+                    ]
+                }
+            ],
+            placeholder:'您想对作者说些什么',
+            parentId:0
+
+        },
+
+        created(){
+            // 获取文章id查询文章内容
+           var id = getId();
+           alert(id)
+
+            // 根据用户信息和作者信息到数据库中查询是否已经关注，返回条数若为以说明已经关注
+            if(this.attention_flag){
+                alert("aha")
+                $("#atten").text('已关注');
+                $("#atten").css({"color":'darkblue'})
+            }else{
+                $("#atten").text('关注');
+                $("#atten").css({"color":'blue'})
+            }
+
+        },
+
+
+
+        methods:{
+
+            // 取消投诉，取消后，将模态框进行隐藏
+            rescind(){
+                $('#myModal').modal('hide')
+            },
+            // 发送投诉信息
+            sure(){
+                // 将complaint对象出入数据库中，举报成功后将模态框关闭
+                $('#myModal').modal('hide')
+            },
+            // 当点击回复某一条评论，改变textare中的placeholder，让其获取焦点，并将撤销按钮显示出来
+            reply(id,name){
+                this.parentId = id;
+                this.placeholder="回复:"+name
+                $("textarea").focus()
+                $("#cancle").show()
+
+            },
+
+            // 撤销回复的方法，当回复者不想进行回复时，点击撤销回复按钮，会将评论设置为对文章的评论，将撤销按钮进行隐藏
+            cancle(){
+                this.comment.content=''
+                this.placeholder='您想对作者说些什么'
+                this.parentId=0
+                $("#cancle").hide()
+            },
+
+            // 发表评论，重点是记录下父评论的id
+            pubComment(){
+                this.comment.parentId=this.parentId
+                alert(this.parentId)
+            },
+
+            // 点即查看回复，回复展示，点击收起，回复列表收起
+            showReplyComment(id){
+                var text =  $("#"+id+"show").text();
+
+                if(text == "查看回复"){
+                    $("#"+id).show(500)
+                    $("#"+id+"show").text("收起回复")
+                }else{
+                    $("#"+id).hide(500)
+                    $("#"+id+"show").text("查看回复")
+                }
+
+
+            },
+            // 登陆时跳转页面
+            login(){
+                window.location.href='../user/login.html'
+            },
+
+
+            // 点赞数，点一下加一，点第二下，减一
+            add(){
+                if(this.flag){
+                    alert(1)
+
+                }else{
+                    alert(-1)
+                }
+
+                this.flag = !this.flag
+            },
+
+            // 点击关注，再次点击取消关注
+            isAttention(){
+                this.attention_flag = !this.attention_flag
+                if(this.attention_flag){
+                    // 线数据库中添加记录
+                    $("#atten").text('已关注');
+                    $("#atten").css({"color":'grey'})
+
+                }else{
+                    // 从数据库中删除记录
+                    $("#atten").text('关注');
+                    $("#atten").css({"color":'blue'})
+                    this.$message.info("已取消关注")
+                }
+            },
+
+            // 用户退出
+            layout(){
+
+                // 发送ajax,参数为用户id，通过id使session 失效
+
+                // 将user置空
+                this.user=''
+                $('.collapse').collapse('hide')
+
+            },
+
+
+            // 点击头像展示用户详细信息
+            writerDetail(id){
+                window.location.href='attention_detail.html?id='+id
+            }
+
+
+
+        }
+    })
+</script>
+</html>

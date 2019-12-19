@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>lhvhsd</title>
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="../../css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../../css/login.css"/>
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script type="text/javascript" src="../js/vue-router-3.0.1.js"></script>
+    <script type="text/javascript" src="../../js/axios-0.18.0.js"></script>
+
+
+</head>
+<body>
+<div id="app">
+    <!--<div class="btn-lr">
+        <button type="button" id="login" class="btn btn-sm btn-warning">登陆</button>
+        <button type="button" id="register" class="btn btn-sm btn-primary">注册</button>
+    </div>-->
+    <div id="title">
+        <span>欢迎来到河工程JAVA论坛</span>
+
+    </div>
+
+    <div id="link">
+        <router-link to="/login1" type="button"><span class="link">密码登陆</span></router-link>&nbsp;&nbsp;&nbsp;&nbsp;
+        <router-link to="/login2" type="button" ><span class="link">短信登陆</span></router-link>&nbsp;&nbsp;&nbsp;&nbsp;
+        <router-link to="/register" type="button"><span class="link">没有账号立即注册</span></router-link>&nbsp;&nbsp;&nbsp;&nbsp;
+    </div>
+    <!--在页面中引入路由的配置信息,路由匹配的组件就会展示到该标签中-->
+    <router-view> </router-view>
+
+</div>
+  <template id="login1">
+      <form id="loginForm2" action="#" method="post">
+          <div id="phone">
+              <div class="form-group">
+                  <label class="control-label">昵称 :</label>
+                  <input type="text" class="form-control username" onblur="validate('username')" onfocus="check('username')" v-model="username">
+                  <span class="warn" id="username"></span>
+              </div>
+              <div class="form-group">
+                  <label class="control-label">密码 :</label>
+                  <input type="password" class="form-control password"  onblur="validate('password')" onfocus="check('password')" placeholder="不得少于6位" v-model="password">
+                  <span class="warn" id="password"></span>
+              </div>
+              <div class="form-group">
+                  <label class="control-label"> </label>
+                  <input type="reset" class="btn btn-warning btn-sm reset" value="重置">
+                  <button class="btn btn-primary btn-sm reset" @click.prevent="loginPass">登陆</button>
+              </div>
+          </div>
+      </form>
+  </template>
+<template id="login2">
+        <form id="loginForm" action="#" method="post">
+            <div id="pass">
+                <div class="form-group">
+                    <label class="control-label">手机号 :</label>
+                    <input type="text" class="form-control mobile" v-model="mobile" onblur="validate('mobile')" onfocus="check('mobile')">
+                    <span class="warn" id="mobile"></span>
+                </div>
+
+                <div class="input-group">
+                    <label class="control-label">验证码 : </label>
+                    <input type="text" class="form-control validateCode" v-model="validateCode"  onblur="validate('validateCode')" onfocus="check('validateCode')" placeholder="请输入验证码">
+                    <span class="input-group-btn"><button id="validateCodeBtn" class="btn btn-default" style="height: 30px;margin-top: 22px" type="button" @click="getValidateCode">获取验证码</button></span>
+                </div>
+                <span class="warn" id="validateCode"></span>
+                <div class="form-group ">
+                    <label class="control-label"> </label>
+                    <input type="reset" class="btn btn-warning btn-sm reset" value="重置">
+                    <button class="btn btn-primary btn-sm submit" @click.prevent="loginMessage">登陆</button>
+                </div>
+            </div>
+         </form>
+</template>
+
+<template id="register">
+    <form id="RegisterForm" action="#" method="post">
+        <div class="form-group">
+            <label class="control-label">昵称 :</label>
+            <input type="text" class="form-control username"  onblur="validate('username')" onfocus="check('username')" v-model="user.username" >
+            <span class="warn" id="username"></span>
+        </div>
+        <div class="form-group">
+            <label  class="control-label">密码 :</label>
+            <input type="password" class="form-control password"  onblur="validate('password')" onfocus="check('password')" placeholder="不得少于6位" v-model="user.password">
+            <span class="warn" id="password"></span>
+        </div>
+        <div class="form-group">
+            <label class="control-label">邮箱 : </label>
+            <input type="text" class="form-control email"  onblur="validate('email')" onfocus="check('email')" v-model="user.email">
+            <span class="warn" id="email"></span>
+        </div>
+        <div class="form-group">
+            <label class="control-label">电话 : </label>
+            <input type="text" class="form-control mobile" onblur="validate('mobile')" onfocus="check('mobile')"  v-model="user.mobile">
+            <span class="warn" id="mobile"></span>
+        </div>
+        <div class="form-group">
+            <label class="control-label"> </label>
+            <input type="reset" class="btn btn-warning btn-sm reset" value="重置"/>
+            <button id="regist" class="btn btn-primary btn-sm submit" @click.prevent="register">注册</button>
+        </div>
+    </form>
+</template>
+</body>
+<script>
+
+    // 失去焦点时
+    function validate(name) {
+
+        var content = $("."+name).val();
+        if(content == ''){
+            $("#"+name).text((name=='username'?'姓名':name == 'password'? '密码':name=='email'?'邮箱':name=='mobile'?'电话':name=='validateCode'?'验证码':'') + "不能为空")
+            return false
+        }
+        if(name == 'password'){
+            if(content.length < 6){
+                $("#"+name).text("密码长度不能小于6")
+                return false
+            }
+        }else if(name == 'email'){
+            if(!checkMail(content)){
+                $("#"+name).text("邮箱格式不正确")
+                return false
+            }
+        }else if(name == 'mobile'){
+            if(!verifyPhone(content)){
+                $("#"+name).text("电话号码不正确")
+                return false
+            }
+        }
+        return true
+    }
+
+    // 获取焦点时
+    function check(name) {
+        $("#"+name).text('')
+    }
+
+    // 校验手机号
+    function verifyPhone(value) {
+        if (!(/^1[3|5|7|8][0-9]\d{4,8}$/.test(value))) {
+            return false;
+        }
+        return true
+    }
+
+    //
+    function checkMail(email) {
+        var reg = /^\w+((.\w+)|(-\w+))@[A-Za-z0-9]+((.|-)[A-Za-z0-9]+).[A-Za-z0-9]+$/; //正则表达式
+        if (!reg.test(email)) { //正则验证不通过，格式不对
+          return false
+        } else {
+            return true
+        }
+    }
+
+
+
+    /*方式一进行密码登陆*/
+    var login1 = {
+        template:'#login1',
+        data(){
+            return {
+                username: '',
+                password: '',
+            }
+        },
+        methods:{
+
+            out(){
+                if(this.password.length < 6){
+                    this.$message.error("密码长度不能小于6位")
+                }
+            },
+
+            // 密码登陆
+            loginPass() {
+
+               var arr = ['username','password'];
+                var flag = true;
+                for(var i = 0; i < arr.length; i++){
+                    if(!validate(arr[i])){
+                        flag = false
+                    }
+                }
+
+                if(!flag){
+                    this.$message.error("信息填写有误!")
+                    return false;
+                }
+
+                // 登陆
+            }
+        }
+    }
+
+    var login2 = {
+        template:'#login2',
+        data(){
+            return {
+                validateCode: '',
+                mobile: ""
+            }
+        },
+        methods:{
+            out(){
+                var flag = verifyPhone(this.mobile);
+                if(!flag){
+                    this.$message.error("号码不正确")
+                }
+            },
+            // 对验证码的按钮进行设置
+            getValidateCode(){
+                $('#validateCodeBtn').attr("disabled",true);
+                var i = 30;
+                var interval = setInterval(function () {
+                    $("#validateCodeBtn").text(i+"秒后重新发送");
+                    i--;
+                    if( i == 0){
+                        $('#validateCodeBtn').attr("disabled",false);
+                        $("#validateCodeBtn").text("获取验证码");
+                        clearInterval(interval)
+                    }
+                },1000)
+            },
+            // 短信登陆
+            loginMessage(){
+                var arr = ['mobile','validateCode'];
+                var flag = true;
+                for(var i = 0; i < arr.length; i++){
+                    if(!validate(arr[i])){
+                        flag = false
+                    }
+                }
+
+                if(!flag){
+                    this.$message.error("信息填写有误!")
+                    return false;
+                }
+            }
+        }
+    }
+
+    var register = {
+        template:'#register',
+        data(){
+            return {
+                user:{
+
+                    username:'',
+                    email:'1198423961@qq.com',
+                    password:'',
+                    validateCode:'',
+                    mobile:"18832030387"
+                }
+
+            }
+        },
+        methods:{
+
+            register(){
+              var arr = ['username','password','email','mobile'];
+              var flag = true;
+              for(var i = 0; i < arr.length; i++){
+                  if(!validate(arr[i])){
+                      flag = false
+                  }
+              }
+
+              if(!flag){
+                 this.$message.error("信息填写有误!")
+                  return false;
+              }
+                // 进行注册
+
+               axios.post("")
+
+            }
+        }
+    }
+
+    var router = new VueRouter({
+        routes:[
+            {path:'/',component:login1},
+            {path:'/login1',component:login1},
+            {path:'/login2',component:login2},
+            {path:'/register',component:register}
+        ]
+    })
+
+
+    var vm = new Vue({
+
+        el: "#app",
+        data: {
+
+        },
+
+        methods: {
+
+        },
+
+        comments:{
+          login2,
+          login1,
+          register
+        },
+        router
+
+    })
+
+
+
+
+
+</script>
+</html>

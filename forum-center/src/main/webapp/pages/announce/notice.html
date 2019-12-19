@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap-theme.min.css">
+    <!-- 引入组件库 -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+    <style>
+        body {
+            background-color: white;
+
+        }
+
+
+        #center{
+            width: 98%;
+            height: 750px;
+            margin-left: 10px;
+            border: 1px #ecf0f1 solid;
+            margin-top: 0px;
+            background-color: #f5f5f5;
+
+        }
+
+        #box{
+            width: 99%;
+            height: 670px;
+            background-color: white;
+            margin-left:5px;
+            margin-top: 5px;
+            position: relative;
+        }
+
+        #innerbox{
+            width: 90%;
+            height:620px ;
+            margin-left: 5%;
+            position: absolute;
+            margin-top: 10px;
+
+
+        }
+
+        #title{
+            font-size:30px;
+        }
+
+        el-collapse-item{
+            color: red;
+        }
+
+        .time{
+            margin-right: 30px;
+        }
+
+        .panel{
+            background-color: white;
+            outline: none;
+        }
+
+        .color{
+            color: #808ea0;
+        }
+
+        li:hover{
+            color: red;
+        }
+
+        .panel-body{
+            background-color: #fbfbfc;
+            letter-spacing: 1.5px;
+        }
+
+        #dot{
+            border-radius: 50% 50%;
+            width: 5px;
+            height: 5px;
+            background-color: black;
+        }
+
+    </style>
+</head>
+<body>
+<div id="app">
+    <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb"
+                   style="background-color: #f5f5f5;line-height: 30px">
+        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item>消息接收</el-breadcrumb-item>
+        <el-breadcrumb-item>通知</el-breadcrumb-item>
+    </el-breadcrumb>
+
+    <div id="center">
+        <div id="box">
+            <div id="innerbox">
+                <span id="title">消息通知</span>
+                <hr>
+                <div class="panel-group" >
+                    <div class="panel " v-for="(content,id) in contents" :key="id">
+                        <div class="panel-heading">
+                            <h4 class="panel-tile">
+                                <span :class="['collapsed',{'color':content.flag}]" data-toggle="collapse"  >
+                                    {{id+1}}.{{content.title}}
+                                </span>
+                               <a href="#" @click.prevent="show(id)"> <li class="el-icon-arrow-down pull-right"></li></a>
+                                <span :class="['pull-right', 'time',{'color':content.status==1}]">{{content.time}}</span>
+
+                            </h4>
+                        </div>
+                        <div :id="id" class="panel-collapse collapse" >
+                            <div class="panel-body">
+                               {{content.content}}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="pagination-container">
+                    <el-pagination
+                            class="pagiantion"
+                            @current-change="handleCurrentChange"
+                            :current-page="pagination.currentPage"
+                            :page-size="pagination.pageSize"
+                            layout="total, prev, pager, next, jumper"
+                            :total="pagination.total">
+                    </el-pagination>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+</body>
+<script>
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            activeNames: ['1'],
+            contents:[
+                {id:1,title:'这是一个很寂寞的天',content:'liuu',status:0,time:'2012-12-21 12:05:25'},
+                {id:2,title:'下着有心伤心的雨',content:'下着有心伤心的雨',status:1,time:'2018-5-8 13:16:19'}
+            ],
+            pagination: {//分页相关模型数据
+                currentPage: 1,//当前页码
+                pageSize:10,//每页显示的记录数
+                total:0,//总记录数
+                queryString:null//查询条件
+            },
+        },
+
+        methods: {
+            handleChange(val) {
+                console.log(val);
+            },
+            show(id){
+               $("#"+id).slideToggle("fast")
+            },
+            // 切换页码
+            handleCurrentChange:function(currentPage) {
+                this.pagination.currentPage = currentPage;
+                this.findPage();
+            },
+        }
+    })
+</script>
+</html>

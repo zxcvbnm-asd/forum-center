@@ -1,0 +1,201 @@
+body{
+    position: relative;
+}
+
+
+nav{
+    background-color:#8f0008
+}
+
+#header{
+    background-color: #8f0008;
+    width: 1347px;
+    height: 120px;
+}
+
+#nav{
+    width: 1347px;
+    /* height: 38px;*/
+    background-color: #720808;
+    line-height: 38px;
+    position: relative;
+}
+
+.item{
+    color: #ffffe7;
+    font-weight: bold;
+    font-size: 15px;
+
+}
+
+
+#nav table tr td a:hover{
+    text-decoration: none;
+    color:#ffffe7;
+}
+.ss:hover{
+    background-color: #3c763d!important;
+}
+
+.first:visited{
+    color: #ffffe7;
+    text-decoration: none;
+}
+
+td {
+    text-align: center;
+    width: 200px;
+    height: 38px;
+}
+
+table{
+    margin-left: 90px;
+}
+
+.window{
+    width: 1198px;
+    height: 320px;
+    margin: auto;
+    background-color: #ff88dc;
+    position: relative;
+}
+
+.window  img{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+#javaee{
+    position: absolute;
+    width: 590px;
+    height: 400px;
+    margin-left: 75px;
+    margin-top: 50px;
+}
+#javase{
+    position: absolute;
+    width: 590px;
+    height: 400px;
+    margin-left:685px;
+    margin-top: 50px;
+
+}
+#database{
+    position: absolute;
+    width: 590px;
+    height: 400px;
+    margin-left: 75px;
+    margin-top: 441px;
+}
+#html{
+    position: absolute;
+    width: 590px;
+    height: 400px;
+    margin-left: 685px;
+    margin-top: 441px;
+}
+
+#footer{
+    position: absolute;
+    width: 1347px;
+    height: 145px;
+    background-color: #8f0008;
+    margin-top: 846px;
+}
+h3{
+    border-bottom: 2px #ffd401 solid;
+    color: #990000;
+}
+.list-group-item{
+    margin-top: -10px;
+    line-height: 29px;
+
+}
+.list-group a{
+
+    font-weight: bold;
+    color: #2b669a;
+}
+.attention{
+    width: 500px;
+    height: 130px;
+    margin-left: 500px;
+    margin-top: 20px;
+    color: #ffffe7;
+    font-weight: bold;
+}
+#javase .list-group-item .badge{
+    background-color: purple;
+}
+#javaee .list-group-item .badge{
+    background-color: red;
+}
+#database .list-group-item .badge{
+    background-color: green;
+}
+#html .list-group-item .badge{
+    background-color: orange;
+}
+.erweima{
+    position: absolute;
+    margin-left: 120px;
+    margin-top: 20px;
+}
+.erweima2{
+    position: absolute;
+    margin-left: 1000px;
+    margin-top: 20px;
+}
+
+.search{
+    width: 130px;
+    height: 30px;
+}
+
+#ss:hover{
+    background-color: red;
+}
+
+table tr td:hover{
+    cursor: pointer;
+}
+.el-dropdown-link {
+    cursor: pointer;
+    color: #ffffe7;
+}
+.el-icon-arrow-down {
+    font-size: 15px;
+}
+
+.pic{
+    position: absolute;
+    z-index:1;
+    margin-left: 1180px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+#myModalLabel{
+    text-align: center;
+    font-size: 30px;
+    font-family: DFKai-SB;
+    font-weight: bold;
+}
+
+.demo{
+    font-size: 20px;
+    font-family: DFKai-SB;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    color: #8f0008;
+    text-indent:2em;
+}
+
+[v-cloak]{
+    display: none;
+}
+
+a{
+    text-decoration: none;
+}
