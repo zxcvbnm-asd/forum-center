@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/forum-admin/forum-admin.iml" filepath="$PROJECT_DIR$/forum-admin/forum-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/forum-center/forum-center.iml" filepath="$PROJECT_DIR$/forum-center/forum-center.iml" />
+      <module fileurl="file://$PROJECT_DIR$/forum-common/forum-common.iml" filepath="$PROJECT_DIR$/forum-common/forum-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/forum-interface/forum-interface.iml" filepath="$PROJECT_DIR$/forum-interface/forum-interface.iml" />
+      <module fileurl="file://$PROJECT_DIR$/forum-service-provider/forum-service-provider.iml" filepath="$PROJECT_DIR$/forum-service-provider/forum-service-provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/forumparent.iml" filepath="$PROJECT_DIR$/forumparent.iml" />
+    </modules>
+  </component>
+</project>

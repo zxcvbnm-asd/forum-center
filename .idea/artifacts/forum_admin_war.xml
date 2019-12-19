@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="forum-admin:war">
+    <output-path>$PROJECT_DIR$/forum-admin/target</output-path>
+    <root id="archive" name="forum-admin-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="forum-admin:war exploded" />
+    </root>
+  </artifact>
+</component>
