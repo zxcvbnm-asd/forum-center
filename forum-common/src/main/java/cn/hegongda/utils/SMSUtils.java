@@ -8,6 +8,7 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import sun.applet.Main;
 
 /**
  * 短信发送工具类
@@ -60,5 +61,9 @@ public class SMSUtils {
 			System.out.println("请求成功");
 		}
 
+	}
+
+	public static void main(String[] args) throws ClientException {
+		SMSUtils.sendShortMessage(SMSUtils.VALIDATE_CODE,"18832030387","4567");
 	}
 }

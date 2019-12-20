@@ -8,6 +8,15 @@ import org.springframework.security.core.userdetails.User;
 
 @Service
 public class UserServiceImpl  implements UserService {
+    @Override
+    public int editUser(TUser user) {
+        return 0;
+    }
+
+    @Override
+    public TUser findByMobile(String mobile) {
+        return null;
+    }
 
     @Autowired
     private TUserMapper userMapper;
@@ -17,10 +26,5 @@ public class UserServiceImpl  implements UserService {
     public TUser getUserById(Integer id) {
         TUser user = userMapper.selectByPrimaryKey(1);
         return user;
-    }
-
-    @Override
-    public int updateUser(TUser user) {
-        return 0;
     }
 }

@@ -4,6 +4,7 @@ import cn.hegongda.pojo.TUser;
 import cn.hegongda.pojo.TUserExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 public interface TUserMapper {
     int countByExample(TUserExample example);
@@ -27,4 +28,16 @@ public interface TUserMapper {
     int updateByPrimaryKeySelective(TUser record);
 
     int updateByPrimaryKey(TUser record);
+
+    @Select("select count(*) from t_user where username=#{username}")
+    int findCountUserByUserName(String username);
+
+    @Select("select count(*) from t_user where mobile=#{mobile}")
+    int findCountUserByUserMobile(String mobile);
+
+    @Select("select * from t_user where username=#{username}")
+    public TUser findUserBuUsername(String username);
+
+    @Select("select * from t_user where mobile=#{mobile}")
+    TUser findUserByMobile(String mobile);
 }

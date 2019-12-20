@@ -18,10 +18,8 @@ public final class CookieUtils {
 
     /**
      * 得到Cookie的值, 不编码
-     * 
-     * @param request
-     * @param cookieName
-     * @return
+     *  @param request
+     * @param cookieName  @return
      */
     public static String getCookieValue(HttpServletRequest request, String cookieName) {
         return getCookieValue(request, cookieName, false);
