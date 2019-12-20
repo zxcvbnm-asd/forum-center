@@ -35,6 +35,14 @@
     <mvc:resources mapping="/ueditor/**" location="/ueditor/"/>
 
 
+    <!--注册拦截器-->
+     <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/user/**"/>
+            <bean class="cn.hegongda.interceptor.ControllerInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
     <!-- 指定应用名称 -->
     <dubbo:application name="forum_center"/>
     <!--指定服务注册中心地址-->
@@ -44,5 +52,5 @@
     <!--超时全局设置 10分钟 check=false 不检查服务提供方，开发阶段建议设置为false
         check=true 启动时检查服务提供方，如果服务提供方没有启动则报错 -->
     <dubbo:consumer timeout="600000" check="false"/>
-   <!-- <import resource="spring-redis.xml"></import>-->
+    <import resource="spring-redis.xml"></import>
 </beans>
