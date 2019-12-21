@@ -6,9 +6,31 @@ import java.util.Date;
 public class TArticleCategory implements Serializable {
     private Integer id;
 
+    private String cname;
+
+    private String rmark;
+
     private Integer parentId;
 
     private Date createTime;
+
+
+    public String getCname() {
+        return cname;
+    }
+
+    public void setCname(String cname) {
+        this.cname = cname;
+    }
+
+    public String getRmark() {
+        return rmark;
+    }
+
+    public void setRmark(String rmark) {
+        this.rmark = rmark;
+    }
+
 
     public Integer getId() {
         return id;

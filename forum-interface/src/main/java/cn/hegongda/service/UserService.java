@@ -1,6 +1,7 @@
 package cn.hegongda.service;
 
 import cn.hegongda.pojo.TUser;
+import cn.hegongda.result.Result;
 
 
 public interface UserService {
@@ -9,7 +10,7 @@ public interface UserService {
     public TUser getUserById(Integer id);
 
     // 编辑用户
-    public int editUser(TUser user);
+    public Result editUser(TUser user);
 
     // 根据电话号码查找用户
     public TUser findByMobile(String mobile);

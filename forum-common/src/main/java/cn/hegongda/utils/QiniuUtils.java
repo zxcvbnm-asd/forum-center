@@ -86,6 +86,7 @@ public class QiniuUtils {
     }
 
     public static void main(String[] args) {
+        //q2rcyhwpl.bkt.clouddn.com
          QiniuUtils.upload2Qiniu("E://2.jpg","3.jpg");
        // QiniuUtils.deleteFileFromQiniu("3.jpg");
     }
