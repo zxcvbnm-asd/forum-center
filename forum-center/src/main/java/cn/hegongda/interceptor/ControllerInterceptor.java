@@ -22,13 +22,18 @@ public class ControllerInterceptor implements HandlerInterceptor{
     @Autowired
     private JedisPool jedisPool;
 
+    @Autowired
+    private HttpServletResponse res;
+    private HttpServletRequest req;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("请求已经拦截");
         // 从客户端获取token
         String token = CookieUtils.getCookieValue(request, RedisConstant.USER_TOKEN);
         if(StringUtils.isBlank(token)){
             // token不存在则跳转到登录页面
-            request.getRequestDispatcher("pages/login.html").forward(request,response);
+            res.sendRedirect("http://localhost:8082/pages/user/login.html");
             return false;
         }
 

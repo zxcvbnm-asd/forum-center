@@ -1,4 +1,4 @@
-package cn.hegongda.controller;
+package cn.hegongda.controller.user;
 
 import cn.hegongda.constant.RedisConstant;
 import cn.hegongda.pojo.TUser;
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller
 @RequestMapping("/user")
-@ResponseBody
+
 public class LoginController {
 
     @Reference
@@ -42,9 +42,18 @@ public class LoginController {
     private JedisPool jedisPool;
 
     /*
+     * 跳转到登录页面
+     */
+    @RequestMapping("/login.do")
+    public String toLoginPage(){
+        return "user/login";
+    }
+
+    /*
      * 通过密码的方式进行登陆
      */
     @RequestMapping("/loginByPass.do")
+    @ResponseBody
     public Result loginByPass(@RequestBody  TUser user){
         // 判断传入参数是否合法
         if(user == null || StringUtils.isBlank(user.getUsername()) || StringUtils.isBlank(user.getPassword())){
@@ -69,6 +78,7 @@ public class LoginController {
      * 通过短信进行登陆
      */
     @RequestMapping("/getValidateCode.do")
+    @ResponseBody
     public Result loginByMobile(String mobile){
         try{
             Result result = loginService.validateMobile(mobile);
@@ -92,6 +102,7 @@ public class LoginController {
      * 短信登陆
      */
     @RequestMapping("/loginByMobile.do")
+    @ResponseBody
     public Result loginByMobile(String mobile, String validateCode){
         // 参数校验
         if (StringUtils.isBlank(mobile) || StringUtils.isBlank(validateCode)){

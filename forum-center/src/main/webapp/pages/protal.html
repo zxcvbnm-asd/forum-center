@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../css/bootstrap-theme.min.css"/>
     <link rel="stylesheet" href="../css/protal.css"/>
     <link rel="stylesheet" href="../css/bootstrap.min.css"/>
-    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
     <script type="text/javascript" src="../js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../js/vue.js"></script>
     <script src="../plugins/elementui/index.js"></script>
@@ -32,8 +32,9 @@
            <img src="../images/logo_right.jpg" class="pull-right" style="margin-right:120px">
           <div class="pic"  v-if="user!=''">
 
-                  <img :src="user.avatarName" width="20px" height="20px" class="img-circle" style="margin-left: 5px;margin-bottom: 5px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                  <span v-cloak class='item' style="font-size: 13px"  data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">{{user.username}}</span>
+                  <img v-if="flag" src="../img/avatar5.png" width="20px" height="20px" class="img-circle" style="margin-left: 5px;margin-bottom: 5px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                  <img v-if="!flag" :src="'http://q2rcyhwpl.bkt.clouddn.com/'+user.avatarName" width="20px" height="20px" class="img-circle" style="margin-left: 5px;margin-bottom: 5px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+              <span v-cloak class='item' style="font-size: 13px"  data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">{{user.username}}</span>
           </div>
       </div>
       <div id="nav">
@@ -156,6 +157,18 @@
   <script>
       var i = 0;
 
+      function getToken(){
+          if(location.search == ''){
+              return 0;
+          }
+          var qs = location.search.substr(1), // 获取url中"?"符后的字串
+              args = {}, // 保存参数数据的对象
+              items = qs.length ? qs.split("&") : [], // 取得每一个参数项,
+              len = items.length;
+          var token = items[0].split("=")[1];
+
+          return token;
+      }
 
       $("#mark").hide();
       function helper(arr,j){
@@ -176,12 +189,9 @@
           el:"#app",
           data:{
               dialogTableVisible: false,
+              flag:false,  // 头像显示标志
               user:{
-                  id:1,
-                  username:'阿三',
-                  avatarName:'./images/0.jpg',
-                  status:1,          // 会员状态 0 不是会员  1 是会员
-                  endTime:'2019-12-4',  // 会员到期时间
+                  avatarName:''
               },
 
               queryString:'', // 绑定查询条件
@@ -222,6 +232,24 @@
                       $(this).show().prependTo(".window");
                   })
               }, 3000);
+
+              // 根据token判断用户是否进行登陆
+              var token = getToken();
+              if(token == 0){
+                  this.user = '';
+              }else{
+                  // 发送axious 根据token获取用户信息
+                  axios.get("/user/getUserByToken.do?token="+token).then((res)=>{
+                      if(res.data.flag){
+                          this.user = res.data.data;
+                          if(this.user.avatarName == null){
+                              this.flag = !this.flag
+                          }
+                      }else{
+                          this.user = '';
+                      }
+                  })
+              }
           },
 
 
@@ -283,7 +311,8 @@
                   $("#demo2").empty();*/
               },
               center(){
-                  window.location.href=''
+                  // 携带id跳转到个人中心
+                  window.location.href="/pages/user/main.html?id="+this.user.id
               }
           }
       })

@@ -17,7 +17,7 @@ import java.io.PrintWriter;
 @RequestMapping("/ueditor")
 public class UeditorController {
 
-    @RequestMapping(value = "/upload")
+    @RequestMapping(value = "/upload.do")
     public void config(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType("application/json");
         String rootPath = request.getSession().getServletContext().getRealPath("/");

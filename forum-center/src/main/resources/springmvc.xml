@@ -24,8 +24,15 @@
                     </list>
                 </property>
             </bean>
-    </mvc:message-converters>
+        </mvc:message-converters>
     </mvc:annotation-driven>
+
+    <!--配置视图解析器-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/pages/"/>
+        <property name="suffix" value=".html"/>
+    </bean>
+
     <mvc:resources mapping="/css/**" location="/css/"/>
     <mvc:resources mapping="/img/**" location="/img/"/>
     <mvc:resources mapping="/fonts/**" location="/fonts/"/>
@@ -36,12 +43,18 @@
 
 
     <!--注册拦截器-->
-     <mvc:interceptors>
-        <mvc:interceptor>
-            <mvc:mapping path="/user/**"/>
-            <bean class="cn.hegongda.interceptor.ControllerInterceptor"/>
-        </mvc:interceptor>
-    </mvc:interceptors>
+  <!--   <mvc:interceptors>
+    <mvc:interceptor>
+        <mvc:mapping path="/user/**"/>
+        <mvc:exclude-mapping path="/user/login.do"/>
+        <bean class="cn.hegongda.interceptor.ControllerInterceptor"/>
+    </mvc:interceptor>
+</mvc:interceptors>-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver ">
+        <property name="maxUploadSize" value="104857600" />
+        <property name="maxInMemorySize" value="4096" />
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
 
     <!-- 指定应用名称 -->
     <dubbo:application name="forum_center"/>

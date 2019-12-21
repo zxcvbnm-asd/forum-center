@@ -17,6 +17,7 @@
     <script src="../../js/vue.js"></script>
     <script src="../../plugins/elementui/index.js"></script>
     <script src="../../js/axios-0.18.0.js"></script>
+    <script src="../../js/link-param.js"></script>
     <style>
         .avatar-uploader .el-upload {
             border: 1px dashed #d9d9d9;
@@ -94,11 +95,12 @@
         </el-breadcrumb>
 
     <div class="app-container">
-        <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
+        <el-form :label-position="labelPosition" label-width="80px">
             <el-form-item label="编辑头像"><br>
                 <el-upload
                         class="avatar-uploader"
-                        action="https://jsonplaceholder.typicode.com/posts/"
+                        action="/user/upload.do"
+                        name="imgFile"
                         :show-file-list="false"
                         :on-success="handleAvatarSuccess"
                         :before-upload="beforeAvatarUpload"
@@ -118,8 +120,8 @@
             </el-form-item>
             <el-form-item label="性别">
                 <template>
-                    <el-radio v-model="user.sex" label="1">男</el-radio>
-                    <el-radio v-model="user.sex" label="0">女</el-radio>
+                    <el-radio v-model="user.sex" label=0>男</el-radio>
+                    <el-radio v-model="user.sex" label=1>女</el-radio>
                 </template>
             </el-form-item>
             <el-form-item label="邮箱">
@@ -144,9 +146,6 @@
         </el-form>
 
         </el-upload>
-        <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" alt="">
-        </el-dialog>
     </div>
 </div>
 </body>
@@ -157,39 +156,40 @@
         data:{
             labelPosition: 'right',
             user: {
-                username: 'liueweidong',
-                age: '25',
-                sex:'0',
-                email:'11982',
-                mobile:'1886288',
-                collage:'信电',
-                cla:'7班',
-                major:'电气',
-                avatarName:'../img/9.png'
             },
-            imageUrl: ''
+            imageUrl:''
 
         },
         created() {
+            var id = getId();
 
+            //发送请求获取当前登录用户的用户名
+            axios.get('/user/getUserById.do?id='+id).then((response)=>{
+                if(response.data.flag){
+                    this.user = response.data.data;
+                    this.user.sex=this.user.sex.toString();
+                    if(this.user.avatarName != null){
+                        this.imageUrl = "http://q2rcyhwpl.bkt.clouddn.com/"+this.user.avatarName;
+                    }else{
+                        this.imageUrl = "http://q2rcyhwpl.bkt.clouddn.com/avatar5.png"
+                    }
+
+                }else{
+                    this.$message.error(response.data.message)
+                }
+            });
         },
         methods: {
-            handleRemove(file, fileList) {
-                console.log(file, fileList);
-            },
-            handlePictureCardPreview(file) {
-                this.dialogImageUrl = file.url;
-                this.dialogVisible = true;
-            },
+
             //文件上传成功后的钩子，response为服务端返回的值，file为当前上传的文件封装成的js对象
             handleAvatarSuccess(response, file) {
-                this.imageUrl="http://q0ftk89nh.bkt.clouddn.com/"+response.data;
+                this.imageUrl="http://q2rcyhwpl.bkt.clouddn.com/"+response.data;
                 this.$message({
                     message:response.message,
                     type:response.flag?"success":"error"
                 })
                 // 设置模型数据图片名称，以便后续保存到数据库中
-                this.formData.img=response.data;
+                this.user.avatarName=response.data;
 
             },
 
@@ -206,9 +206,8 @@
                 return isJPG && isLt2M;
             },
             //添加
-            handleAdd() {
-                axios.post("/setmeal/add.do?checkgroupIds=" + this.checkgroupIds, this.formData).then((res) => {
-                    this.dialogFormVisible = false
+            onSubmit() {
+                axios.post("/user/edit.do", this.user).then((res) => {
                     if (res.data.flag) {
                         this.$message({
                             message: res.data.message,
@@ -217,10 +216,9 @@
                     } else {
                         this.$message(res.data.message)
                     }
-                }).finally(() => {
-                    this.findPage();
                 })
             },
+
         }
     })
 </script>

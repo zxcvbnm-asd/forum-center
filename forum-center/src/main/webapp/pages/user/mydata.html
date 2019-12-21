@@ -83,7 +83,10 @@
              <table class="table table-striped table-bordered table-hover">
                  <tr>
                      <th>头像</th>
-                     <td><img  class="img-circle" :src="user.avatarName" width="25px" height="25px"/> </td>
+                     <td>
+                         <img class="img-circle" v-if="!flag"  :src="'http://q2rcyhwpl.bkt.clouddn.com/'+user.avatarName" width="25px" height="25px"/>
+                         <img class="img-circle"  v-if="flag"  src="../../img/avatar5.png" width="25px" height="25px"/>
+                     </td>
                  </tr>
                  <tr>
                      <th>昵称</th>
@@ -123,17 +126,34 @@
      </div>
 </body>
 <script>
+    function getId() {
+        var qs = location.search.substr(1), // 获取url中"?"符后的字串
+            args = {}, // 保存参数数据的对象
+            items = qs.length ? qs.split("&") : [], // 取得每一个参数项,
+            len = items.length;
+        var id = items[0].split("=")[1];
+
+        return id;
+    }
     var vm = new Vue({
         el:"#app",
         data:{
             user:{},
+            flag:false
+
         },
 
         created(){
+
+            var id = getId();
+
             //发送请求获取当前登录用户的用户名
-            axios.get('/user/getUserById.do?id=1').then((response)=>{
+            axios.get('/user/getUserById.do?id='+id).then((response)=>{
                 if(response.data.flag){
                     this.user = response.data.data;
+                    if(this.user.avatarName == null){
+                        this.flag = !this.flag
+                    }
                 }else{
                     this.$message.error(response.data.message)
                 }

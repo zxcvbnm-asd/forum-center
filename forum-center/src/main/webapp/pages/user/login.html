@@ -8,11 +8,11 @@
     <link rel="stylesheet" href="../../css/bootstrap-theme.min.css"/>
     <link rel="stylesheet" href="../../css/bootstrap.min.css"/>
     <link rel="stylesheet" href="../../css/login.css"/>
-    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../../js/vue.js"></script>
     <script src="../../plugins/elementui/index.js"></script>
-    <script type="text/javascript" src="../js/vue-router-3.0.1.js"></script>
+    <script type="text/javascript" src="../../js/vue-router-3.0.1.js"></script>
     <script type="text/javascript" src="../../js/axios-0.18.0.js"></script>
 
 
@@ -200,6 +200,17 @@
                 }
 
                 // 登陆
+                var user = {
+                    username:this.username,
+                    password:this.password
+                }
+                axios.post('/user/loginByPass.do',user).then((res)=>{
+                    if(res.data.flag){
+                        window.location.href='/pages/protal.html?token='+res.data.data
+                    }else{
+                        this.$message.error(res.data.message)
+                    }
+                })
             }
         }
     }
@@ -232,6 +243,18 @@
                         clearInterval(interval)
                     }
                 },1000)
+
+                // 发送axios请求获取验证码
+                axios.get("/user/getValidateCode.do?mobile="+this.mobile).then((res)=>{
+                    if( res.data.flag ){
+                        this.$message.success("验证码已经发送至您的手机")
+                    }else{
+                        clearInterval(interval)
+                        $('#validateCodeBtn').attr("disabled",false);
+                        $("#validateCodeBtn").text("获取验证码");
+                        this.$message.error(res.data.message)
+                    }
+                })
             },
             // 短信登陆
             loginMessage(){
@@ -247,6 +270,14 @@
                     this.$message.error("信息填写有误!")
                     return false;
                 }
+
+                axios.get("/user/loginByMobile.do?mobile="+this.mobile+"&validateCode="+this.validateCode).then((res)=>{
+                    if (res.data.flag){
+                        window.location.href="../protal.html"
+                    }else{
+                        this.$message.error(res.data.message)
+                    }
+                })
             }
         }
     }
@@ -257,11 +288,6 @@
             return {
                 user:{
 
-                    username:'',
-                    email:'1198423961@qq.com',
-                    password:'',
-                    validateCode:'',
-                    mobile:"18832030387"
                 }
 
             }
@@ -282,8 +308,13 @@
                   return false;
               }
                 // 进行注册
-
-               axios.post("")
+               axios.post("/user/register.do",this.user).then((res)=>{
+                  if(res.data.flag){
+                      window.location.href="login.html"
+                  }else{
+                      this.$message.error(res.data.message)
+                  }
+               })
 
             }
         }

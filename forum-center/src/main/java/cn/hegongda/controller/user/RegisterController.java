@@ -1,4 +1,4 @@
-package cn.hegongda.controller;
+package cn.hegongda.controller.user;
 
 import cn.hegongda.pojo.TUser;
 import cn.hegongda.result.Result;

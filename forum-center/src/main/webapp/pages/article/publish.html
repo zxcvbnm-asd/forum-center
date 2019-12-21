@@ -85,10 +85,10 @@
             </el-form-item>
             <el-form-item label="文章分类:">
                 <el-select v-model="category_id" @change="change" placeholder="一级分类">
-                    <el-option v-for="category in categoryOne" :label="category.name" :value="category.id"></el-option>
+                    <el-option v-for="category in categoryOne" :label="category.cname" :value="category.id"></el-option>
                 </el-select>
                 <el-select v-model="form.categoryId"  placeholder="二级分类">
-                    <el-option v-for="category in categoryTwo" :label="category.name" :value="category.id"></el-option>
+                    <el-option v-for="category in categoryTwo" :label="category.cname" :value="category.id"></el-option>
                 </el-select>
             </el-form-item>
 
@@ -97,7 +97,6 @@
                 <div>
                     <script id="editor" type="text/plain" style="width:95%;height:700px;"></script>
                 </div>
-
             </el-form-item>
 
             <el-form-item label="上传封面"><br/>
@@ -160,7 +159,7 @@
                             type="datetime"
                             placeholder="选择日期时间">
                     </el-date-picker><br><br>
-                    <span id="tip">您的文章将于{{pubtime | timeformat}}发布</span>
+                    <span id="tip">您的文章将于{{form.pubtime | timeformat}}发布</span>
                 </div>
             </template>
             <span slot="footer" class="dialog-footer">
@@ -255,9 +254,21 @@
             centerDialogVisible: false,
             dialogImageUrl: '',
             dialogVisible: false,
-            categoryOne:[{name:'db',id:1},{name:'javavse',id:2}] , // 一级分类
-            categoryTwo:[{name:'html',id:1},{name:'spring',id:2}]  // 一级分类
+            categoryOne:[] , // 一级分类
+            categoryTwo:[]  // 一级分类
         },
+
+        created(){
+            //先查询出一级分类进行备用
+            axios.get("/article/findFirstCate.do").then((res)=>{
+                if(res.data.flag){
+                    this.categoryOne = res.data.data;
+                }else{
+                    this.$message.error(res.data.message)
+                }
+            })
+        },
+
         methods:{
             handleRemove(file, fileList) {
                 console.log(file, fileList);
@@ -271,6 +282,14 @@
             change(){
                var id = this.category_id;  // 一级分类的id
                // 根据一级分类的id查询二级分类，然后再赋值给二级分类
+                axios.get("/article/findSecondCate.do?parentId="+id).then((res)=>{
+                    if(res.data.flag){
+                        this.categoryTwo = res.data.data;
+                        alert(this.categoryTwo[0].cname)
+                    }else{
+                        this.$message.error(res.data.message)
+                    }
+                })
             },
 
             // 以html的方式获取文本，并赋值给vue中的属性

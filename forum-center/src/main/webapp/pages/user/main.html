@@ -39,7 +39,8 @@
                     <div class="right-menu">
                         <el-dropdown class="avatar-container right-menu-item" trigger="click">
                             <div class="avatar-wrapper">
-                                <img :src="user.avatarName" class="user-avatar">
+                                <img v-if="!flag"  :src="'http://q2rcyhwpl.bkt.clouddn.com/'+user.avatarName" class="user-avatar" id="1">
+                                <img v-if="flag"  src="../../img/avatar5.png" class="user-avatar">
                                 {{user.username}}
                             </div>
                             <el-dropdown-menu slot="dropdown">
@@ -65,14 +66,14 @@
                             </template>
                             <template v-for="child in menu.children">
                                 <el-menu-item :index="child.path">
-                                    <a :href="child.linkUrl" target="right">{{child.title}}</a>
+                                    <a :href="child.linkUrl+'?id='+user.id" target="right">{{child.title}}</a>
                                 </el-menu-item>
                             </template>
                         </el-submenu>
                     </el-menu>
                 </el-aside>
                 <el-container>
-                    <iframe name="right" class="el-main" src="potals.html" width="100%" height="580px" frameborder="0"></iframe>
+                    <iframe name="right" class="el-main" src="head.html" width="100%" height="580px" frameborder="0"></iframe>
                 </el-container>
             </el-container>
         </el-container>
@@ -84,10 +85,21 @@
 <script type="text/javascript" src="../../js/jquery.min.js"></script>
 <script type="text/javascript" src="../../js/axios-0.18.0.js"></script>
 <script>
+    function getId(){
+        var qs = location.search.substr(1), // 获取url中"?"符后的字串
+            args = {}, // 保存参数数据的对象
+            items = qs.length ? qs.split("&") : [], // 取得每一个参数项,
+            len = items.length;
+        var id = items[0].split("=")[1];
+
+        return id;
+    }
     new Vue({
         el: '#app',
         data:{
-            user:{},
+            user:{
+            },
+            flag:false,
             menuList:[
                 {
                     "path": "1",
@@ -98,7 +110,7 @@
                         {
                             "path": "/1-1",
                             "title": " Trial Begins",
-                            "linkUrl":"potals.html",
+                            "linkUrl":"head.html",
                             "children":[]
                         }
                     ]
@@ -111,7 +123,7 @@
                         {
                             "path": "/2-1",
                             "title": "查看资料",
-                            "linkUrl":"mydata.html5555",
+                            "linkUrl":"mydata.html",
                             "children":[]
                         },
                         {
@@ -194,14 +206,23 @@
             ]
         },
         created(){
+            var id = getId();
             //发送请求获取当前登录用户的用户名
-           axios.get('/user/getUserById.do?id=1').then((response)=>{
+            axios.get('/user/getUserById.do?id='+id).then((response)=>{
                 if(response.data.flag){
                     this.user = response.data.data;
+                    if(this.user.avatarName == null){
+                        this.flag = !this.flag
+                    }
                 }else{
                     this.$message.error(response.data.message)
                 }
             });
+        },
+
+        methods:{
+
+
         }
     });
     $(function() {
