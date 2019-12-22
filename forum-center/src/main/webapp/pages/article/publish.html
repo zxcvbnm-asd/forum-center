@@ -18,7 +18,6 @@
 
     <script type="text/javascript" charset="utf-8" src="../../ueditor/lang/zh-cn/zh-cn.js"></script>
 
-
     <style>
         body{
             background-color: white;
@@ -87,7 +86,7 @@
                 <el-select v-model="category_id" @change="change" placeholder="一级分类">
                     <el-option v-for="category in categoryOne" :label="category.cname" :value="category.id"></el-option>
                 </el-select>
-                <el-select v-model="form.categoryId"  placeholder="二级分类">
+                <el-select v-model="form.cid"  placeholder="二级分类">
                     <el-option v-for="category in categoryTwo" :label="category.cname" :value="category.id"></el-option>
                 </el-select>
             </el-form-item>
@@ -101,11 +100,14 @@
 
             <el-form-item label="上传封面"><br/>
                 <el-upload
-                        action="https://jsonplaceholder.typicode.com/posts/"
+                        action="/user/upload.do"
                         list-type="picture-card"
+                        name="imgFile"
+                        :limit="3"
                         :on-preview="handlePictureCardPreview"
-                        :on-remove="handleRemove">
-                    <i class="el-icon-plus"></i>
+                        :on-remove="handleRemove"
+                        :on-success="handleAvatarSuccess" >
+                    <i class="el-icon-plus">1-3</i>
                 </el-upload>
                 <el-dialog :visible.sync="dialogVisible">
                     <img width="100%" :src="dialogImageUrl" alt="">
@@ -113,7 +115,7 @@
             </el-form-item>
 
 
-            <el-form-item label="添加标签">
+            <el-form-item label="添加标签"><br>
                 <el-tag
                         :key="tag"
                         v-for="tag in dynamicTags"
@@ -164,7 +166,7 @@
             </template>
             <span slot="footer" class="dialog-footer">
     <el-button @click="centerDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="publish">确 定</el-button>
+    <el-button type="primary" @click="scedulePublish">确 定</el-button>
   </span>
         </el-dialog>
 
@@ -172,6 +174,16 @@
 </div>
 </body>
 <script>
+
+    function getId(){
+        var qs = location.search.substr(1), // 获取url中"?"符后的字串
+            args = {}, // 保存参数数据的对象
+            items = qs.length ? qs.split("&") : [], // 取得每一个参数项,
+            len = items.length;
+        var id = items[0].split("=")[1];
+
+        return id;
+    }
 
    var ue = UE.getEditor('editor',{
        toolbars: [
@@ -227,7 +239,7 @@
             var y = date.getFullYear();
             var M = date.getMonth() + 1;
             var d = date.getDate();
-            var h = date.getHours();
+            var h = date.getHours().length == 1 ? "0"+date.getHours():date.getHours();
             var m = date.getMinutes();
             var s = date.getSeconds();
 
@@ -240,22 +252,25 @@
             category_id:'',
             form: {
                 title: '',
-                categoryId:'',
-                desc: '',
+                cid:'',
+                uid:'',
+                coverUrl:'',
                 content:'', // 内容
-                dynamicTags:'',
+                labels:'',
                 status:'',  // 1.审核中  2、已发布  3、存草稿 4、发布失败
                 pubtime: '',  // 后端判断发布时间是否为空，若为空，则为立即发布，直接new即可，若不是，则说明是定时发布，设置定时任务即可
 
             },
-            dynamicTags: ['标签一', '标签二', '标签三'],
+            dynamicTags: [],
             inputVisible: false,
             inputValue: '',
             centerDialogVisible: false,
             dialogImageUrl: '',
             dialogVisible: false,
             categoryOne:[] , // 一级分类
-            categoryTwo:[]  // 一级分类
+            categoryTwo:[],  // 一级分类
+            file:[],  // 跟踪上传的封面图片
+            coverUrl:[] // 暂时存放图片路径
         },
 
         created(){
@@ -271,11 +286,31 @@
 
         methods:{
             handleRemove(file, fileList) {
-                console.log(file, fileList);
+                // 查找元素所在数组中的下标位置
+                var index = this.file.indexOf(file,0);
+                // 删除该下标位置以后的第几项
+                this.file.splice(index,1);
+
+                // 删除上传图片
+                this.coverUrl.splice(index,1);
             },
             handlePictureCardPreview(file) {
+                alert(file.url)
                 this.dialogImageUrl = file.url;
                 this.dialogVisible = true;
+            },
+
+            //文件上传成功后的钩子，response为服务端返回的值，file为当前上传的文件封装成的js对象
+            handleAvatarSuccess(response, file,fileList) {
+                if(response.flag){
+                    // 设置模型数据图片名称，以便后续保存到数据库中
+                    this.$message.success(response.message);
+                    this.coverUrl.push(response.data);
+                    this.file.push(file)
+                }else{
+                    // 设置模型数据图片名称，以便后续保存到数据库中
+                    this.$message.error(response.message+",请手动删除");
+                }
             },
 
             // 下拉选择框发生改变
@@ -285,7 +320,6 @@
                 axios.get("/article/findSecondCate.do?parentId="+id).then((res)=>{
                     if(res.data.flag){
                         this.categoryTwo = res.data.data;
-                        alert(this.categoryTwo[0].cname)
                     }else{
                         this.$message.error(res.data.message)
                     }
@@ -300,7 +334,7 @@
 
 
 
-            // 定时发布
+            // 定时发布弹框，设置时间
             timingPublish(){
                 this.$confirm("确认发布？建议发布前再检查一遍","发布提醒",{type:"warning"}).then(()=>{
                     this.centerDialogVisible=true
@@ -308,19 +342,88 @@
                     this.$message("已取消")
                 })
             },
+            // 定时发布
+            scedulePublish(){
+                axios.post("/article/schedulePub.do",this.form).then((res)=>{
+                    if(res.data.flag){
+                    }
+                })
+            },
 
             // 发布
             publish(){
+                var id = getId()
+                this.form.uid=id
+                this.showContent();
+                this.form.coverUrl = this.coverUrl.toString();
+                this.form.labels = this.dynamicTags.toString();
                 this.centerDialogVisible=false;
-                // 发送ajax请求添加到数据库
 
+                if(!this.checkForm()){
+                    return false;
+                }
+                // 发送post请求
+                axios.post("/article/publish.do", this.form).then((res)=>{
+                    if(res.data.flag){
+                        this.$message.success(res.data.message);
+                        // 跳转到审核页面
+                    }else{
+                        this.$message.error(res.data.message)
+                    }
+                })
+            },
+
+            // 进行校验相关数据
+            checkForm(){
+                if(this.form.title=='' || this.form.title.length < 5){
+                    this.$message.error("请检查标题是否正确");
+                    return false;
+                }
+
+                if(this.form.content==''){
+                    this.$message.error("正文不能为空");
+                    return false;
+                }
+
+                if(this.form.categoryId==''){
+                    this.$message.error("请选择文章分类");
+                    return false;
+                }
+
+                if(this.form.dynamicTags==''){
+                    this.$message.error("至少需要添加一个标签");
+                    return false;
+                }
+
+                if(this.form.coverUrl==''){
+                    this.$message.error("至少需要上传一个封面");
+                    return false;
+                }
+
+                return true;
             },
 
             // 存入草稿箱
             saveDrafts(){
-                // 设置文章状态
-                this.form.status=3
-                // 添加到数据库中
+                var id = getId()
+                this.form.uid=id
+                this.showContent();
+                this.form.coverUrl = this.coverUrl.toString();
+                this.form.labels = this.dynamicTags.toString();
+                this.centerDialogVisible=false;
+
+                if(!this.checkForm()){
+                    return false;
+                }
+                // 发送post请求
+                axios.post("/article/saveDraft.do", this.form).then((res)=>{
+                    if(res.data.flag){
+                        this.$message.success(res.data.message);
+                        // 跳转到草稿页面
+                    }else{
+                        this.$message.error(res.data.message)
+                    }
+                })
             },
 
             // 预览
@@ -348,8 +451,7 @@
                 this.inputValue = '';
             },
 
-            // 上传文件图片
-            //文件上传成功后的钩子，response为服务端返回的值，file为当前上传的文件封装成的js对象
+
         }
     })
 </script>
