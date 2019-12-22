@@ -14,4 +14,6 @@ public interface ArticleService {
     public List<TArticleCategory> findSecondCategory(Integer parentId);
     // 发布文章，向数据库中插入文章
     public Result pubArticle(TArticle article);
+    // 文章存入草稿箱
+    Result saveDraft(TArticle article);
 }

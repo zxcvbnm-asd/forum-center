@@ -17,6 +17,7 @@
       <module name="forum-admin" target="1.8" />
       <module name="forum-center" target="1.8" />
       <module name="forum-common" target="1.8" />
+      <module name="forum-eduitor" target="1.8" />
       <module name="forum-interface" target="1.8" />
       <module name="forum-service-provider" target="1.8" />
       <module name="forumparent" target="1.8" />

@@ -20,7 +20,7 @@ public class TArticle implements Serializable {
 
     private Integer cid;
 
-    private Integer status;
+    private Integer status;   // 1、审核中  2、 发布  3、存草稿  4、发布失败
 
     private String content;
 

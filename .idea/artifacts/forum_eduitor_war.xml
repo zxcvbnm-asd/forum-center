@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="forum-eduitor:war">
+    <output-path>$PROJECT_DIR$/forum-eduitor/target</output-path>
+    <root id="archive" name="forum-eduitor-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="forum-eduitor:war exploded" />
+    </root>
+  </artifact>
+</component>

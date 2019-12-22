@@ -7,7 +7,9 @@ import cn.hegongda.pojo.TArticleCategory;
 import cn.hegongda.result.Result;
 import com.alibaba.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service(interfaceClass = ArticleService.class)
@@ -35,8 +37,36 @@ public class ArticleServiceImpl implements ArticleService {
         return list;
     }
 
+    // 发布文章
     @Override
+    @Transactional
     public Result pubArticle(TArticle article) {
-        return null;
+        // 设置相关参数
+        Date pubTime = new Date();
+        article.setPubTime(pubTime);
+        article.setStatus(2);  // 已经发布
+        int number = articleMapper.insert(article);
+        if (number > 0){
+            return new Result(true, "发布成功");
+        }
+        return new Result(false, "发布失败");
+    }
+
+
+    @Override
+    @Transactional
+    public Result saveDraft(TArticle article) {
+        if(article == null){
+            return new Result(false, "请按照正常方式操作");
+        }
+        // 设置相关参数
+        Date pubTime = new Date();
+        article.setPubTime(pubTime);
+        article.setStatus(3);  // 存入草稿箱
+        int number = articleMapper.insert(article);
+        if (number > 0){
+            return new Result(true, "成功存入草稿箱");
+        }
+        return new Result(false, "存入失败");
     }
 }
