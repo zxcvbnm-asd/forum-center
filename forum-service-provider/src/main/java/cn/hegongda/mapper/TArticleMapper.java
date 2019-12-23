@@ -3,6 +3,9 @@ package cn.hegongda.mapper;
 import cn.hegongda.pojo.TArticle;
 import cn.hegongda.pojo.TArticleExample;
 import java.util.List;
+import java.util.Map;
+
+import cn.hegongda.result.QueryPageBean;
 import org.apache.ibatis.annotations.Param;
 
 public interface TArticleMapper {
@@ -33,4 +36,8 @@ public interface TArticleMapper {
     int updateByPrimaryKeyWithBLOBs(TArticle record);
 
     int updateByPrimaryKey(TArticle record);
+
+    int add(TArticle article);
+    // 查询全部文章
+    List<Map> findAllByPage(String queryString);
 }

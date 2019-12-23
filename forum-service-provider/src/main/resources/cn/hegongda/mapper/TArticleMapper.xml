@@ -128,6 +128,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.hegongda.pojo.TArticle" >
+    <selectKey order="AFTER" resultType="java.lang.Integer" keyProperty="id">
+         SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into t_article (id, title, num, 
       labels, cover_url, pub_time, 
       uid, cid, status, content
@@ -337,4 +340,28 @@
       status = #{status,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <insert id="add" parameterType="cn.hegongda.pojo.TArticle" >
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_article (title, num,
+    labels, cover_url, pub_time,
+    uid, cid, status, content
+    )
+    values (#{title,jdbcType=VARCHAR}, #{num,jdbcType=INTEGER},
+    #{labels,jdbcType=VARCHAR}, #{coverUrl,jdbcType=VARCHAR}, #{pubTime,jdbcType=TIMESTAMP},
+    #{uid,jdbcType=INTEGER}, #{cid,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR}
+    )
+  </insert>
+
+  <select id="findAllByPage" parameterType="java.lang.String" resultType="java.util.Map">
+      SELECT a.id AS id,a.title AS title, a.num AS num ,a.status AS `status`,a.pub_time AS pubTime,c.cname AS category
+      FROM t_article a ,t_article_category c
+      WHERE
+      <if test="value != null and value != ''">
+        `status`=#{value} AND
+      </if>
+     a.cid=c.id ORDER BY pub_time DESC
+  </select>
 </mapper>

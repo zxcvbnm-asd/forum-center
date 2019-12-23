@@ -41,6 +41,9 @@ public class TArticle implements Serializable {
     }
 
     public Integer getNum() {
+        if(num == null){
+            num = 0;
+        }
         return num;
     }
 

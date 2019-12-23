@@ -62,4 +62,6 @@ public class UserServiceImpl  implements UserService {
         jedis.set(RedisConstant.USER_INFORMATION + id, JsonUtils.objectToJson(user));
         return user;
     }
+
+
 }

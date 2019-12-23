@@ -2,6 +2,8 @@ package cn.hegongda.service;
 
 import cn.hegongda.pojo.TArticle;
 import cn.hegongda.pojo.TArticleCategory;
+import cn.hegongda.result.PageResult;
+import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
 
 import java.util.List;
@@ -16,4 +18,10 @@ public interface ArticleService {
     public Result pubArticle(TArticle article);
     // 文章存入草稿箱
     Result saveDraft(TArticle article);
+    // 定时发布文章
+    Result schedulePub(TArticle article);
+    // 分页查询全部文章
+    PageResult findAllByPage(QueryPageBean queryPageBean);
+
+    Result findById(Integer id);
 }

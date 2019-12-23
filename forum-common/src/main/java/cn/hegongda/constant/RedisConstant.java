@@ -11,4 +11,6 @@ public class RedisConstant {
     public static final String VALIDATE_CODE = "VALIDATE_CODE";
     // 根据Id查询出用户信息后，保存至redis中，避免每次都访问数据库
     public static final String USER_INFORMATION = "USER_INFORMATION";
+    // 将审核状态的文章放入到redis中，当后台管理员审核时直接在redis中获取即可
+    public static final String CHECK_ARTICLE = "CHECK_ARTICLE";
 }
