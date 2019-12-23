@@ -3,6 +3,8 @@ package cn.hegongda.controller.article;
 
 import cn.hegongda.pojo.TArticle;
 import cn.hegongda.pojo.TArticleCategory;
+import cn.hegongda.result.PageResult;
+import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
 import cn.hegongda.service.ArticleService;
 import com.alibaba.dubbo.config.annotation.Reference;
@@ -12,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.net.CacheRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -58,6 +59,10 @@ public class ArticleController {
             return new Result(false,"请按照正常方式发布文章");
         }
         try {
+            // 设置相关参数
+            Date pubTime = new Date();
+            article.setPubTime(pubTime);
+            article.setStatus(1);  // 当文章发布立刻变成审核状态
             Result result = articleService.pubArticle(article);
             return result;
         } catch (Exception e){
@@ -80,11 +85,42 @@ public class ArticleController {
         }
     }
 
-
+    // 定时发布任务
     @RequestMapping("/schedulePub.do")
     @ResponseBody
     public Result schedulePub(@RequestBody TArticle article){
-        System.out.println(article.getPubTime());
-        return new Result(false,"成功");
+        try {
+            return articleService.schedulePub(article);
+        } catch(Exception e) {
+            e.printStackTrace();
+            return new Result(false, "系统出现异常");
+        }
+
+    }
+
+    // 查询全部文章
+    @RequestMapping("/findAllByPage.do")
+    @ResponseBody
+    public PageResult findAllByPage(@RequestBody QueryPageBean queryPageBean){
+         try {
+             PageResult pageResult = articleService.findAllByPage(queryPageBean);
+             return pageResult;
+         } catch (Exception e){
+             e.printStackTrace();
+             return new PageResult("查询出错",false);
+         }
+    }
+
+    // 根据id查询文章
+    @RequestMapping("/findById.do")
+    @ResponseBody
+    public Result findById(Integer id){
+        try {
+            Result result = articleService.findById(id);
+            return result;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new Result(false, "系统繁忙");
+        }
     }
 }

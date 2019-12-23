@@ -326,10 +326,16 @@
                 })
             },
 
-            // 以html的方式获取文本，并赋值给vue中的属性
-            showContent(){
+
+            //发布前进行相关的参数补全
+            beforePrepared(){
                 var content = UE.getEditor('editor').getContent()
+                // 以html的方式获取文本，并赋值给vue中的属性
                 this.form.content = content;
+                var id = getId()
+                this.form.uid=id
+                this.form.coverUrl = this.coverUrl.toString();
+                this.form.labels = this.dynamicTags.toString();
             },
 
 
@@ -344,21 +350,26 @@
             },
             // 定时发布
             scedulePublish(){
+                this.beforePrepared();
+                if(!this.checkForm()){
+                    return false;
+                }
+                this.centerDialogVisible = false;
                 axios.post("/article/schedulePub.do",this.form).then((res)=>{
                     if(res.data.flag){
+                        this.$message.success(res.data.message)
+                        // 到定时文章列表
+                        window.location.href="/pages/user/myartic.html"
+                    }else{
+                        this.$message.error(res.data.message);
                     }
                 })
             },
 
             // 发布
             publish(){
-                var id = getId()
-                this.form.uid=id
-                this.showContent();
-                this.form.coverUrl = this.coverUrl.toString();
-                this.form.labels = this.dynamicTags.toString();
+                this.beforePrepared();
                 this.centerDialogVisible=false;
-
                 if(!this.checkForm()){
                     return false;
                 }
@@ -366,6 +377,7 @@
                 axios.post("/article/publish.do", this.form).then((res)=>{
                     if(res.data.flag){
                         this.$message.success(res.data.message);
+                        window.location.href="/pages/user/myartic.html"
                         // 跳转到审核页面
                     }else{
                         this.$message.error(res.data.message)
@@ -405,13 +417,8 @@
 
             // 存入草稿箱
             saveDrafts(){
-                var id = getId()
-                this.form.uid=id
-                this.showContent();
-                this.form.coverUrl = this.coverUrl.toString();
-                this.form.labels = this.dynamicTags.toString();
+                this.beforePrepared();
                 this.centerDialogVisible=false;
-
                 if(!this.checkForm()){
                     return false;
                 }
@@ -420,6 +427,7 @@
                     if(res.data.flag){
                         this.$message.success(res.data.message);
                         // 跳转到草稿页面
+                        window.location.href="/pages/user/myartic.html"
                     }else{
                         this.$message.error(res.data.message)
                     }

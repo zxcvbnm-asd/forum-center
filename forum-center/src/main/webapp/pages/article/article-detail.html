@@ -17,7 +17,6 @@
     <style>
         body{
             background-color: white;
-            overflow: hidden;
 
         }
 
@@ -69,8 +68,9 @@
 
         #content{
             width: 80%;
-            margin-left: 10%;
+            margin-left: 6%;
             margin-top: 60px;
+            margin-bottom: 10px;
         }
 
         #footer{
@@ -107,7 +107,7 @@
                 <div id="time" class="pull-right">{{article.pubTime}}</div>
                 <div id="content" v-html="article.content"></div>
                 <div id="footer" class="pull-right">
-                    <span class="label label-danger" v-for="label in article.labels">{{label}}</span>
+                    <span class="label label-danger" v-for="label in labels">{{label}}</span>
                     <div style="margin-top: 10px;font-weight: bold">
                         阅读量：{{article.num}}
                     </div>
@@ -152,11 +152,17 @@
                 pubTime:'2012-12-25',
                 title:'钢铁是怎样炼成的',
                 num:3000
-            }
+            },
+            labels:['java','javase','html','德玛西亚'],
         },
         created(){
-            var id = getId();
-            alert(id)
+            let id = getId();
+            axios.get("/article/findById.do?id="+id).then((res)=>{
+                if (res.data.flag){
+                    this.article = res.data.data;
+                    this.labels = this.article.labels.split(",");
+                }
+            })
         },
         methods: {
 
