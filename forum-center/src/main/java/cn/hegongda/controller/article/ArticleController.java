@@ -59,10 +59,13 @@ public class ArticleController {
             return new Result(false,"请按照正常方式发布文章");
         }
         try {
-            // 设置相关参数
-            Date pubTime = new Date();
-            article.setPubTime(pubTime);
-            article.setStatus(1);  // 当文章发布立刻变成审核状态
+            // 判断status的参数，参数不为空说明是草稿箱中发布，为空则是直接发布
+            if (article.getStatus() == null){
+                // 设置相关参数
+                Date pubTime = new Date();
+                article.setPubTime(pubTime);
+                article.setStatus(1);  // 当文章发布立刻变成审核状态
+            }
             Result result = articleService.pubArticle(article);
             return result;
         } catch (Exception e){
@@ -121,6 +124,20 @@ public class ArticleController {
         } catch (Exception e){
             e.printStackTrace();
             return new Result(false, "系统繁忙");
+        }
+    }
+
+
+    // 根据id删除文章
+    @RequestMapping("/deleteById.do")
+    @ResponseBody
+    public Result deleteById(Integer id){
+        try {
+            Result result = articleService.deleteById(id);
+            return result;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new Result(false, "系统繁忙，请稍后重试");
         }
     }
 }

@@ -13,6 +13,7 @@
     <script src="../../js/vue.js"></script>
     <script src="../../plugins/elementui/index.js"></script>
     <script src="../../js/axios-0.18.0.js"></script>
+    <script src="../../js/link-param.js"></script>
     <style>
         body{
             background-color: white;
@@ -106,7 +107,7 @@
                                      end-placeholder="结束日期"
                                      style="width: 280px;line-height: 20px;">
                              </el-date-picker>
-                             <button class="btn btn-primary" style="width: 100px;height: 40px;margin-bottom: 3px">查询</button>
+                             <button class="btn btn-primary" style="width: 100px;height: 40px;margin-bottom: 3px" @click="searchByTime">查询</button>
                              <button class="btn btn-info" style="width: 100px;height: 40px;margin-bottom: 3px">导出excel</button>
                              <table class="table table-hover table-bordered table-striped"  >
                                    <tr>
@@ -114,8 +115,8 @@
                                        <th>阅读量</th>
                                    </tr>
                                    <tr v-for="item in tableData" >
-                                       <td>{{item.date}}</td>
-                                       <td>{{item.name}}</td>
+                                       <td>{{item.date|timeformat}}</td>
+                                       <td>{{item.total}}</td>
                                    </tr>
                              </table>
                          </div>
@@ -160,6 +161,13 @@
 
     // 使用刚指定的配置项和数据显示图表。
 
+    Vue.filter('timeformat',function (timesatr) {
+            var date = new Date(timesatr);
+            var y = date.getFullYear();
+            var M = date.getMonth() + 1;
+            var d = date.getDate();
+            return `${y}-${M}-${d}`;
+    })
 
 
     var vm = new Vue({
@@ -169,25 +177,40 @@
             value1:[],
             tableData: [{    // 每页10条数据
                 date: '2016-05-02',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄',
+                total: '王小虎',
             }, {
                 date: '2016-05-04',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
+                total: '王小虎',
             },
             ],
             pagination: {//分页相关模型数据
                 currentPage: 1,//当前页码
                 pageSize:10,//每页显示的记录数
                 total:0,//总记录数
-                queryString:null//查询条件
+                queryString:null,//查询条件
+                timeArray:[]
             },
             data:['1','2','3','4','1','2','3','4','1','2','3','4','1','2','3','4','1','2','3','4','1','2','3','4'],
             count:[20,40,50,60]
         },
         created(){
+            // 获取uid
+            var id = getId();
+            // 查询前十条数据，统计阅读量
+            var param = {
+                currentPage: this.pagination.currentPage,//当前页码
+                pageSize:this.pagination.pageSize,//每页显示的记录数
+                queryString:this.pagination.queryString//查询条件
+            }
 
+            axios.post("/article-report/getDayTotal.do?id="+id,param).then((res)=>{
+                if(res.data.flag){
+                    this.tableData = res.data.rows
+                    this.pagination.total = res.data.total
+                }else{
+                    this.$message.error(res.data.message)
+                }
+            })
         },
         methods: {
 
@@ -301,13 +324,52 @@
                 return '';
             },
             handleClick(){
+                alert("转到了另一个页面");
                 this.showYearsDay();
+            },
+
+            // 按照时间段进行查询
+            searchByTime(){
+               var id =  getId();
+               this.pagination.timeArray = this.value1;
+                this.pagination.queryString=this.value1;
+                let param = {
+                    currentPage: this.pagination.currentPage,
+                    pageSize: this.pagination.pageSize,
+                    queryString: this.pagination.queryString,
+                    timeArray:this.pagination.timeArray
+                };
+                axios.post("/article-report/searchByTime.do?id="+id,param).then((res)=>{
+                    if(res.data.flag){
+                        this.tableData = res.data.rows
+                        this.pagination.total = res.data.total
+                    }else{
+                        this.$message.error(res.data.message)
+                    }
+                })
             },
             // 切换页码
             handleCurrentChange:function(currentPage) {
                 this.pagination.currentPage = currentPage;
                 this.findPage();
             },
+
+            findPage() {
+                let param = {
+                    currentPage: this.pagination.currentPage,
+                    pageSize: this.pagination.pageSize,
+                    queryString: this.pagination.queryString
+                };
+                var id = getId();
+                axios.post("/article-report/getDayTotal.do?id="+id,param).then((res)=>{
+                    if(res.data.flag){
+                        this.tableData = res.data.rows
+                        this.pagination.total = res.data.total
+                    }else{
+                        this.$message.error(res.data.message)
+                    }
+                })
+            }
         }
     })
 </script>

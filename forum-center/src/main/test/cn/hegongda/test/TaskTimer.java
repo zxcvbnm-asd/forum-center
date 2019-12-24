@@ -1,6 +1,10 @@
 package cn.hegongda.test;
 
+import cn.hegongda.utils.DateUtils;
+import org.junit.Test;
+
 import java.sql.Time;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -43,5 +47,21 @@ public class TaskTimer {
     public static void testSchdeul(Runnable task, long time){
 
         executorService.schedule(task,time, TimeUnit.MILLISECONDS);
+    }
+
+
+    @Test
+    public void test() {
+
+        Date date = new Date();
+        String dateStr = DateUtils.format(date);
+        System.out.println(dateStr);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_MONTH,1);
+        Date time = calendar.getTime();
+        System.out.println(DateUtils.format(time));
+
     }
 }

@@ -37,14 +37,17 @@
             width: 100%;
             margin-top: 0px;
             margin-left: 5px;
+            /*background-image: url("../../images/780.");
+            background-size: 118px 125px;
+            background-repeat:repeat-y;*/
         }
 
 
         #box{
             width: 80%;
-            height: 500px;
+            height: auto;
             margin-left: 10%;
-            border:1px solid #fff5d4;
+            border:2px dashed yellow;
 
 
 
@@ -56,6 +59,7 @@
             letter-spacing: 1.5px;
             font-weight: bold;
             margin-top: 25px;
+            color: red;
         }
 
         #time{
@@ -64,23 +68,25 @@
             font-weight: bold;
             margin-top: 15px;
             font-family: DFKai-SB;
+            color: orange;
         }
 
         #content{
-            width: 80%;
-            margin-left: 6%;
+            width: 90%;
+            margin-left: 5%;
             margin-top: 60px;
             margin-bottom: 10px;
         }
 
         #footer{
-            width: 250px;
+            width: 195px;
             margin-top: 40px;
         }
 
         #status{
-            margin-top: 140px;
+            margin-top: 40px;
             text-align: center;
+            margin-bottom: 24px;
         }
 
         .btn{
@@ -88,7 +94,7 @@
         }
 
         .label{
-            margin-left: 5px;
+            margin-left: -2px;
         }
 
     </style>
@@ -106,16 +112,16 @@
                 <div id="title" >{{article.title}}</div>
                 <div id="time" class="pull-right">{{article.pubTime}}</div>
                 <div id="content" v-html="article.content"></div>
-                <div id="footer" class="pull-right">
+               <!-- <div id="footer" class="pull-right">
                     <span class="label label-danger" v-for="label in labels">{{label}}</span>
                     <div style="margin-top: 10px;font-weight: bold">
                         阅读量：{{article.num}}
                     </div>
-                </div>
+                </div>-->
                 <div id="status">
                     <span v-if="article.status==1" style="font-size: 18px;font-weight: bold;color: green">正在审核中</span>
-                    <button v-if="article.status==2 || article.status==4" class="btn btn-danger">删&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;除</button>
-                    <button v-if="article.status==3" class="btn btn-success">发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布</button>
+                    <button v-if="article.status==2 || article.status==4" class="btn btn-danger" @click="handleDelete">删&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;除</button>
+                    <button v-if="article.status==3" class="btn btn-success" @click="publish">发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布</button>
 
                 </div>
             </div>
@@ -159,15 +165,51 @@
             let id = getId();
             axios.get("/article/findById.do?id="+id).then((res)=>{
                 if (res.data.flag){
-                    this.article = res.data.data;
+                    res.data.data.content=res.data.data.content.replace(/<img/g,"<img style='max-width:100%;height:auto;'");
+                    this.article = res.data.data ;
                     this.labels = this.article.labels.split(",");
                 }
             })
         },
         methods: {
+            // 删除文章
+            handleDelete(row){
+                this.$confirm("确认删除吗？","提示",{type:"warning"}).then(()=>{
+                    // 点击确认执行此处代码
+                    axios.get("/article/deleteById.do?id="+this.article.id).then((res)=>{
+                        if(res.data.flag){
+                            this.$message({
+                                message:res.data.message,
+                                type:"success"
+                            })
+                            // 删除完之后重新更新页面
+                            window.location.href=document.referrer; // 返回上一页并刷新
+                        }else{
+                            this.$message("删除失败")
+                        }
+                    }).catch((r)=>{
+                        this.showMessage(r);
+                    })
+                }).catch(()=>{
+                    this.$message("已取消")
+                })
+            },
+            // 发布文章
+            publish(){
+                // 发送post请求
+                axios.post("/article/publish.do", this.article).then((res)=>{
+                    if(res.data.flag){
+                        this.$message.success(res.data.message);
+                        window.location.href="/pages/user/myartic.html"
+                        // 跳转到审核页面
+                    }else{
+                        this.$message.error(res.data.message)
+                    }
+                })
+            },
+        },
 
 
-        }
     })
 </script>
 </html>
