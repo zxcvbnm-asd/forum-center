@@ -12,6 +12,7 @@ import cn.hegongda.utils.JsonUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,7 +65,12 @@ public class ArticleServiceImpl implements ArticleService {
             // 定时发布的文章，只需要将数据库中状态修改为1即可
             article.setStatus(1);
             number = articleMapper.updateByPrimaryKey(article);
-        }else {
+        }else if(status == 3){
+            // 存草稿中的文章重新发送
+            article.setStatus(1);
+            number = articleMapper.updateByPrimaryKey(article);
+
+        }  else {
             // 没有定时发布只需要直接插入数据库中即可
              number = articleMapper.insert(article);
         }
@@ -158,6 +164,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
 
+    // 根据id查询文章
     @Override
     public Result findById(Integer id) {
         if (id == null){
@@ -165,5 +172,20 @@ public class ArticleServiceImpl implements ArticleService {
         }
         TArticle article =  articleMapper.selectByPrimaryKey(id);
         return new Result(true,"成功",article);
+    }
+
+    // 根据id删除文章
+    @Override
+    @Transactional
+    public Result deleteById(Integer id) {
+        if (id == null){
+            return new Result(false, "传入参数有误");
+        }
+
+        int number = articleMapper.deleteByPrimaryKey(id);
+        if (number > 0){
+            return new Result(true, "删除成功");
+        }
+        return new Result(false, "删除失败");
     }
 }

@@ -364,4 +364,15 @@
       </if>
      a.cid=c.id ORDER BY pub_time DESC
   </select>
+
+  <select id="getDayTotal" parameterType="java.lang.Integer" resultType="java.util.Map">
+      SELECT `date`, total FROM t_read_recoder WHERE uid=#{value}
+  </select>
+
+  <select id="searchByTime" parameterType="java.util.Map" resultType="java.util.Map">
+    SELECT `date`, total,uid FROM t_read_recoder
+    GROUP BY `date`
+    HAVING `date`>=#{beginTime} AND #{endTime} >= `date` AND #{uid}
+
+  </select>
 </mapper>

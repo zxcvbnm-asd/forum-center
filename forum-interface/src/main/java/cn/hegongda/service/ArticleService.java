@@ -24,4 +24,7 @@ public interface ArticleService {
     PageResult findAllByPage(QueryPageBean queryPageBean);
 
     Result findById(Integer id);
+
+    // 根据id删除文章
+    Result deleteById(Integer id);
 }

@@ -40,4 +40,9 @@ public interface TArticleMapper {
     int add(TArticle article);
     // 查询全部文章
     List<Map> findAllByPage(String queryString);
+
+    // 查询每天阅读量
+    List<Map> getDayTotal(Integer id);
+    // 按照时间段进行查询
+    List<Map> searchByTime(Map<String, String> map);
 }
