@@ -257,6 +257,14 @@ public class DateUtils {
         return cal.getTime();
     }
 
+    // 获取上周周天日期
+    public static Date getLastWeekSunday(Date date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime( DateUtils.geLastWeekMonday(date));
+        calendar.add(Calendar.DAY_OF_MONTH,6);
+        return  calendar.getTime();
+    }
+
     //获得本周一的日期
     public static Date getThisWeekMonday(Date date) {
         Calendar cal = Calendar.getInstance();
@@ -309,13 +317,20 @@ public class DateUtils {
         return ca.getTime();
     }
 
+    // 获取上一天
+    public static String getYesterday(){
+        Date today = getToday();
+        System.out.println(today);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(today);
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        return format(calendar.getTime());
+    }
+
 
     public static void main(String[] args) {
-        Date thisWeekMonday = DateUtils.getThisWeekMonday();
-        System.out.println(thisWeekMonday);
-
-        Date sundayOfThisWeek = DateUtils.getSundayOfThisWeek();
-        System.out.println(sundayOfThisWeek);
+        String yesterday = getYesterday();
+        System.out.println(yesterday);
 
     }
 

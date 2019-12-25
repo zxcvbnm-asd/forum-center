@@ -1,6 +1,9 @@
 package cn.hegongda.result;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
+
 
 /**
  * 封装返回结果
@@ -10,6 +13,7 @@ public class Result implements Serializable{
     private String message;//返回结果信息，主要用于页面提示信息
     private Object data;//返回数据
     private Object token;  // 专门用于回传token制定
+    private List<String> tip;  // 用于封装饼状图的图例
     public Result(boolean flag, String message) {
         super();
         this.flag = flag;
@@ -29,6 +33,20 @@ public class Result implements Serializable{
         this.token = token;
     }
 
+    public Result(boolean flag, String message, Object data, List<String> tip) {
+        this.flag = flag;
+        this.message = message;
+        this.data = data;
+        this.tip = tip;
+    }
+
+    public List<String> getTip() {
+        return tip;
+    }
+
+    public void setTip(List<String> tip) {
+        this.tip = tip;
+    }
 
     public boolean isFlag() {
         return flag;

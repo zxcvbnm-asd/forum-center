@@ -175,14 +175,7 @@
         data:{
             activeName: 'first',
             value1:[],
-            tableData: [{    // 每页10条数据
-                date: '2016-05-02',
-                total: '王小虎',
-            }, {
-                date: '2016-05-04',
-                total: '王小虎',
-            },
-            ],
+            tableData: [],
             pagination: {//分页相关模型数据
                 currentPage: 1,//当前页码
                 pageSize:10,//每页显示的记录数
@@ -191,7 +184,15 @@
                 timeArray:[]
             },
             data:['1','2','3','4','1','2','3','4','1','2','3','4','1','2','3','4','1','2','3','4','1','2','3','4'],
-            count:[20,40,50,60]
+            count:[20,40,50,60],
+            categoryName:['java','html','IO流','多线程'],
+            categoryNum:[
+                {value:200,name:'html'},
+                {value:250,name:'java'},
+                {value:200,name:'多线程'},
+                {value:260,name:'IO流'},
+            ]
+
         },
         created(){
             // 获取uid
@@ -213,15 +214,21 @@
             })
         },
         methods: {
+            // 查询上周阅读量
 
             showWeek(){
-              /*  axios.get("http://localhost:8080/show").then((res)=>{*/
-                    $("#mychart").hide()
-                    $("#mycharts").show()
-                    var myChart = echarts.init(document.getElementById('mycharts'));
+                let id = getId();
+                axios.get("http://localhost:8082/article-report/showLastWeek.do?id="+id).then((res)=>{
+                    if(!res.data.flag){
+                        this.$message.error(res.data.message);
+                        return ;
+                    }
+                    $("#mychart").hide();
+                    $("#mycharts").show();
+                    let myChart = echarts.init(document.getElementById('mycharts'));
                     myChart.setOption({
                         title: {
-                            text: '近一周阅读量统计'
+                            text: '上周阅读量统计'
                         },
                         tooltip: {},
                         legend: {
@@ -234,10 +241,10 @@
                         series: [{
                             name: '阅读量',
                             type: 'bar',
-                            data: [52, 20, 36, 10, 10, 20,80]
+                            data: res.data.data
                         }]
                     })
-              /*  })*/
+                })
 
             },
             showMonth(){
@@ -248,7 +255,7 @@
 
                     myChart.setOption({
                         title: {
-                            text: '近一周阅读量统计'
+                            text: '上月阅读量整体分析统计分析'
                         },
                         tooltip: {},
                         legend: {
@@ -270,13 +277,14 @@
 
             },
             showYearsDay(){
-               /* axios.get("http://localhost:8080/show").then((res)=>{*/
+                let id = getId();
+                axios.get("http://localhost:8082/article-report/showYearsDay.do?id="+id).then((res)=>{
                     $("#mycharts").hide()
                     $("#mychart").show()
                     var myChart = echarts.init(document.getElementById('mychart'));
                     myChart.setOption({
                         title : {
-                            text: '昨天文章阅读量',
+                            text: '昨天各分类文章阅读量',
                             x:'center'
                         },
                         tooltip : {
@@ -286,7 +294,7 @@
                         legend: {
                             orient: 'vertical',
                             left: 'left',
-                            data: ['上午阅读量','下午阅读量','晚上阅读量','夜间阅读量']
+                            data: res.data.tips
                         },
                         series : [
                             {
@@ -294,12 +302,7 @@
                                 type: 'pie',
                                 radius : '55%',
                                 center: ['50%', '60%'],
-                                data:[
-                                    {value:335, name:'上午阅读量'},
-                                    {value:310, name:'下午阅读量'},
-                                    {value:234, name:'晚上阅读量'},
-                                    {value:135, name:'夜间阅读量'},
-                                ],
+                                data:res.data.data,
                                 itemStyle: {
                                     emphasis: {
                                         shadowBlur: 10,
@@ -311,7 +314,7 @@
                         ]
                     })
 
-               /* })*/
+                })
 
 
             },
@@ -324,7 +327,6 @@
                 return '';
             },
             handleClick(){
-                alert("转到了另一个页面");
                 this.showYearsDay();
             },
 

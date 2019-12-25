@@ -4,10 +4,7 @@ import cn.hegongda.utils.DateUtils;
 import org.junit.Test;
 
 import java.sql.Time;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -62,6 +59,23 @@ public class TaskTimer {
         calendar.add(Calendar.DAY_OF_MONTH,1);
         Date time = calendar.getTime();
         System.out.println(DateUtils.format(time));
+
+        Map<String, String> map = new HashMap<>();
+        map.put("name","liu");
+        map.put("sex","nane");
+        Set<String> strings = map.keySet();
+        for (String string : strings) {
+            System.out.println(string);
+        }
+
+    }
+
+
+    @Test
+    public void test2(){
+        Date date = DateUtils.geLastWeekMonday(new Date());
+        Date lastWeekSunday = DateUtils.getLastWeekSunday(new Date());
+        System.out.println(lastWeekSunday);
 
     }
 }

@@ -366,13 +366,53 @@
   </select>
 
   <select id="getDayTotal" parameterType="java.lang.Integer" resultType="java.util.Map">
-      SELECT `date`, total FROM t_read_recoder WHERE uid=#{value}
+     SELECT `date`, SUM(total) AS total,uid
+     FROM t_read_recoder GROUP BY `date` HAVING uid=#{value}
+     ORDER BY `date` DESC
   </select>
 
   <select id="searchByTime" parameterType="java.util.Map" resultType="java.util.Map">
-    SELECT `date`, total,uid FROM t_read_recoder
+    SELECT `date`, SUM(total) as total,uid FROM t_read_recoder
     GROUP BY `date`
     HAVING `date`>=#{beginTime} AND #{endTime} >= `date` AND #{uid}
+    ORDER BY `date` DESC
+  </select>
+
+  <select id="getYesterDay" parameterType="java.util.Map" resultType="java.util.Map">
+    SELECT r.total AS `value` ,c.cname AS `name`
+    FROM t_read_recoder r,t_article_category c
+    WHERE `date`=#{date} AND r.cid=c.id AND uid=#{uid}
+  </select>
+
+
+  <select id="getLastWeekNumber" parameterType="java.util.Map" resultType="java.lang.Integer">
+     SELECT IFNULL(b.total,0) AS total 
+     FROM
+     (SELECT #{endTime} AS click_date
+        UNION ALL
+        SELECT DATE_SUB(#{endTime}, INTERVAL 1 DAY) AS click_date
+        UNION ALL
+        SELECT DATE_SUB(#{endTime}, INTERVAL 2 DAY) AS click_date
+        UNION ALL
+        SELECT DATE_SUB(#{endTime}, INTERVAL 3 DAY) AS click_date
+        UNION ALL
+        SELECT DATE_SUB(#{endTime}, INTERVAL 4 DAY) AS click_date
+        UNION ALL
+        SELECT DATE_SUB(#{endTime}, INTERVAL 5 DAY) AS click_date
+        UNION ALL
+        SELECT DATE_SUB(#{endTime}, INTERVAL 6 DAY) AS click_date
+    ) a
+     LEFT JOIN
+    (SELECT `date`,uid, SUM(total) AS total
+     FROM t_read_recoder
+     GROUP BY `date`
+     HAVING uid=#{uid}
+    ) b
+
+    ON a.click_date=b.date
+    ORDER BY a.click_date ASC
 
   </select>
+
+
 </mapper>

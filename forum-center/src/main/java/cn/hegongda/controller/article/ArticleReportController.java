@@ -41,7 +41,9 @@ public class ArticleReportController {
     }
 
 
-    // 按照时间段进行查询
+    /*
+     *  按照时间段进行查询
+     */
     @RequestMapping("/searchByTime.do")
     @ResponseBody
     public PageResult searchByTime(Integer id, @RequestBody QueryPageBean queryPageBean){
@@ -51,6 +53,36 @@ public class ArticleReportController {
         } catch (Exception e){
             e.printStackTrace();
             return new PageResult("系统繁忙",false);
+        }
+    }
+
+    /*
+     * 查询昨天各类文章的阅读量情况
+     */
+    @ResponseBody
+    @RequestMapping("/showYearsDay.do")
+    public Result showYearsDay(Integer id){
+        try {
+            Result result = articleReportService.showYearsDay(id);
+            return result;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new Result(false,"系统出现异常");
+        }
+    }
+
+    /*
+     * 查询上周文章阅读量
+     */
+    @RequestMapping("/showLastWeek.do")
+    @ResponseBody
+    public Result getLastWeek(Integer id){
+        try {
+            Result result = articleReportService.getLastWeek(id);
+            return result;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new Result(false, "系统出现异常");
         }
     }
 }

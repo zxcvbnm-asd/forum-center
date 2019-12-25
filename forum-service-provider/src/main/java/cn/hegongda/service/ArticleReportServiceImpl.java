@@ -9,11 +9,9 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service(interfaceClass = ArticleReportService.class)
 public class ArticleReportServiceImpl implements ArticleReportService {
@@ -62,5 +60,66 @@ public class ArticleReportServiceImpl implements ArticleReportService {
         List<Map> list = articleMapper.searchByTime(map);
         PageInfo info = new PageInfo(list);
         return new PageResult(info.getTotal(),list,"操作成功",true);
+    }
+
+    /*
+     * 查询昨天文章分类信息
+     */
+    @Override
+    public Result showYearsDay(Integer id) {
+        // 判断参数
+        if (id == null){
+            return new Result(false, "此操作为非法操作");
+        }
+        // 用map构造查询条件
+        Map<String, String> map = new HashMap<>();
+        map.put("uid",id+"");
+        map.put("date",DateUtils.getYesterday());
+
+        // 1、查询数据再  2、查数据将图例封装
+        List<String> tips = new ArrayList<>();
+        List<Map> list = articleMapper.getYesterDay(map);
+        // 当无数据时构造数据
+        if (list == null || list.size() == 0){
+            Map<String,String> newMap = new HashMap<>();
+            newMap.put("name","无阅读量");
+            newMap.put("value","0");
+            list.add(newMap);
+            tips.add("无阅读量");
+            return new Result(true,"操作成功",list,tips);
+        }
+        // 获取图例
+        for (Map map1 : list) {
+            Set<String> temp = map1.keySet();
+            for (String key : temp) {
+                tips.add(map1.get(key)+"");
+                break;
+            }
+        }
+        System.out.println(list.size());
+        return new Result(true,"操作成功",list,tips);
+    }
+
+
+    /*
+     * 查询上周阅读量
+     */
+    @Override
+    public Result getLastWeek(Integer id) {
+        if(id == null){
+            return new Result(false,"此操作为非法操作");
+        }
+        // 获取上周日的时间
+         Date sunday = DateUtils.getLastWeekSunday(new Date());
+         String endTime = DateUtils.format(sunday);
+
+         //封装条件
+         Map<String,String> map = new HashMap<>();
+         map.put("endTime",endTime);
+         map.put("uid",id+"");
+        // 获取数据
+        List<Integer> list = articleMapper.getLastWeekNumber(map);
+        System.out.println("ahha");
+        return new Result(true,"操作成功",list);
     }
 }

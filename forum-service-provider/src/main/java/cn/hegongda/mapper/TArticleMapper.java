@@ -4,9 +4,12 @@ import cn.hegongda.pojo.TArticle;
 import cn.hegongda.pojo.TArticleExample;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import cn.hegongda.result.QueryPageBean;
+import com.alibaba.dubbo.config.annotation.Service;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 public interface TArticleMapper {
     int countByExample(TArticleExample example);
@@ -40,9 +43,13 @@ public interface TArticleMapper {
     int add(TArticle article);
     // 查询全部文章
     List<Map> findAllByPage(String queryString);
-
     // 查询每天阅读量
     List<Map> getDayTotal(Integer id);
     // 按照时间段进行查询
     List<Map> searchByTime(Map<String, String> map);
+    // 查询昨日数据
+    List<Map> getYesterDay(Map<String, String> map);
+    // 获取上周数据
+    List<Integer> getLastWeekNumber(Map<String, String> map);
+    // 获取横坐标信息
 }

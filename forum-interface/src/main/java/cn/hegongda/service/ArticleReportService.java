@@ -12,4 +12,7 @@ public interface ArticleReportService {
 
     PageResult searchByTime(Integer id, QueryPageBean queryPageBean);
 
+    Result showYearsDay(Integer id);
+
+    Result getLastWeek(Integer id);
 }
