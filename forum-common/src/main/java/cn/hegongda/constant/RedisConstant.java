@@ -13,4 +13,6 @@ public class RedisConstant {
     public static final String USER_INFORMATION = "USER_INFORMATION";
     // 将审核状态的文章放入到redis中，当后台管理员审核时直接在redis中获取即可
     public static final String CHECK_ARTICLE = "CHECK_ARTICLE";
+    // 将门户页面查询出的最大文章分类存在redis中
+    public static final String MAX_NUM_ARTICLE_LIST = "MAX_NUM_ARTICLE_LIST";
 }

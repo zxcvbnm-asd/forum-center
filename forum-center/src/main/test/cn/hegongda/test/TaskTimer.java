@@ -73,9 +73,10 @@ public class TaskTimer {
 
     @Test
     public void test2(){
-        Date date = DateUtils.geLastWeekMonday(new Date());
-        Date lastWeekSunday = DateUtils.getLastWeekSunday(new Date());
-        System.out.println(lastWeekSunday);
+       Calendar calendar = Calendar.getInstance();
+       calendar.add(Calendar.MONTH,-12);
+        Date time = calendar.getTime();
+        System.out.println(time);
 
     }
 }

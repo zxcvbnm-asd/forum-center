@@ -22,9 +22,11 @@ public interface ArticleService {
     Result schedulePub(TArticle article);
     // 分页查询全部文章
     PageResult findAllByPage(QueryPageBean queryPageBean);
-
+    // 根据id查找文章
     Result findById(Integer id);
 
     // 根据id删除文章
     Result deleteById(Integer id);
+    // 查询每种分类阅读量最多的几篇文章
+    Result findMaxNumArticle();
 }

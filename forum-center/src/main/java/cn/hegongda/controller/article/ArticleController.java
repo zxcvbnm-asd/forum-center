@@ -140,4 +140,20 @@ public class ArticleController {
             return new Result(false, "系统繁忙，请稍后重试");
         }
     }
+
+
+    /*
+     * 查询出每种分类最高的8篇文章
+     */
+    @RequestMapping("/findMaxNumArticle.do")
+    @ResponseBody
+    public Result findMaxNumArticle(){
+        try {
+            Result result = articleService.findMaxNumArticle();
+            return result;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new Result(false, "系统繁忙，请稍后进行重试");
+        }
+    }
 }

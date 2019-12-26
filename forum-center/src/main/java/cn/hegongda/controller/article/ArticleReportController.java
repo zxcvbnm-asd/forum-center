@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.jws.WebResult;
 import java.util.Date;
 
 
@@ -32,6 +33,10 @@ public class ArticleReportController {
     @ResponseBody
     public PageResult getDayTotal(Integer id, @RequestBody QueryPageBean queryPageBean){
         try {
+            // 对时间段的条件进行判断，若存在条件，说明是按照时间段进行查询
+            if(queryPageBean.getTimeArray() != null && queryPageBean.getTimeArray().length > 0){
+                return articleReportService.searchByTime(id,queryPageBean);
+            }
             PageResult pageResult = articleReportService.getDayTotal(id, queryPageBean);
             return pageResult;
         } catch (Exception e){
@@ -79,6 +84,21 @@ public class ArticleReportController {
     public Result getLastWeek(Integer id){
         try {
             Result result = articleReportService.getLastWeek(id);
+            return result;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new Result(false, "系统出现异常");
+        }
+    }
+
+    /*
+     * 获取前十二个月的阅读量统计
+     */
+    @RequestMapping("/showPreMonths.do")
+    @ResponseBody
+    public Result getPreMonthsTotal(Integer id){
+        try {
+            Result result = articleReportService.getPreMonthsTotal(id);
             return result;
         } catch (Exception e){
             e.printStackTrace();

@@ -11,6 +11,7 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service(interfaceClass = ArticleReportService.class)
@@ -121,5 +122,35 @@ public class ArticleReportServiceImpl implements ArticleReportService {
         List<Integer> list = articleMapper.getLastWeekNumber(map);
         System.out.println("ahha");
         return new Result(true,"操作成功",list);
+    }
+
+    /*
+     * 获取前十二个月每个月的阅读量
+     */
+    @Override
+    public Result getPreMonthsTotal(Integer id) {
+        // 获取当前月的前十二个月
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH,-12);
+        // 设置list集合，存放横坐标
+        List<String> monthList = new ArrayList<>();
+        for (int i = 1; i <= 12; i++){
+            calendar.add(Calendar.MONTH, 1);
+            String month = new SimpleDateFormat("yyyy-MM").format(calendar.getTime());
+            monthList.add(month);
+        }
+        // 设置map用于封装查询条件
+        Map<String, String>  conditionMap = new HashMap<>();
+        conditionMap.put("uid", id+"");
+        conditionMap.put("beginTime",monthList.get(0));
+        conditionMap.put("endTime",monthList.get(monthList.size() - 1));
+
+        // 查询结果
+        List<Integer> numberList = articleMapper.getPreMonths(conditionMap);
+        // 查询结果，用map代表data
+        Map<String,Object> map = new HashMap<>();
+        map.put("months",monthList);
+        map.put("number",numberList);
+        return new Result(true,"查询成功",map);
     }
 }

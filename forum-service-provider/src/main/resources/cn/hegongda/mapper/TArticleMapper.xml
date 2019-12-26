@@ -414,5 +414,22 @@
 
   </select>
 
+  <select id="getPreMonths" parameterType="java.util.Map" resultType="java.lang.Integer">
+     SELECT t.total AS total
+    FROM
+    (SELECT SUM(total) AS total,DATE_FORMAT(`date`,'%Y-%m') AS `date`,uid
+    FROM t_read_recoder
+    GROUP BY DATE_FORMAT(`date`,'%Y-%m')
+    HAVING `date`>=#{beginTime} AND #{endTime} >=  `date` AND uid=#{uid} ) t
+
+  </select>
+
+  <select id="findMaxNumArticle" parameterType="java.lang.Integer" resultType="cn.hegongda.pojo.TArticle">
+    SELECT r.`title` AS title,r.`num` AS num,r.`id` AS id
+    FROM t_article r INNER JOIN t_article_category c
+    ON r.`cid`=c.`id` AND c.`parent_id` =#{value} AND r.`status`=2
+    ORDER BY r.`num` DESC
+    LIMIT 0,8
+  </select>
 
 </mapper>

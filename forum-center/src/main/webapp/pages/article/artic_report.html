@@ -161,11 +161,14 @@
 
     // 使用刚指定的配置项和数据显示图表。
 
+    // 新的函数 padSart/padEnd , 如果字符串不满足长度为2，则在其前面或者后面补0
+    //var s = num.toString().padStart(2,'0');
     Vue.filter('timeformat',function (timesatr) {
             var date = new Date(timesatr);
             var y = date.getFullYear();
             var M = date.getMonth() + 1;
-            var d = date.getDate();
+            var d = date.getDate().toString().padStart('2',0);
+            M = M.toString().padStart('2',0);
             return `${y}-${M}-${d}`;
     })
 
@@ -178,7 +181,7 @@
             tableData: [],
             pagination: {//分页相关模型数据
                 currentPage: 1,//当前页码
-                pageSize:10,//每页显示的记录数
+                pageSize:9,//每页显示的记录数
                 total:0,//总记录数
                 queryString:null,//查询条件
                 timeArray:[]
@@ -248,9 +251,15 @@
 
             },
             showMonth(){
-              /*  axios.get("http://localhost:8080/show").then((res)=>{*/
+                let id = getId();
+                // 获取前十二个月的阅读量统计
+                axios.get("/article-report/showPreMonths.do?id="+id).then((res)=>{
                     $("#mychart").hide()
                     $("#mycharts").show()
+
+                    if(!res.data.flag){
+                        this.$message.error(res.data.message)
+                    }
                     var myChart = echarts.init(document.getElementById('mycharts'));
 
                     myChart.setOption({
@@ -263,17 +272,17 @@
                         },
                         xAxis: {
                             type: 'category',
-                            data:this.data   // 日期
+                            data:res.data.data.months  // 日期
                         },
                         yAxis: {
                             type: 'value'
                         },
                         series: [{
-                            data: this.count,
+                            data: res.data.data.number,
                             type: 'line'
                         }]
                     })
-               /* })*/
+                })
 
             },
             showYearsDay(){
@@ -360,7 +369,8 @@
                 let param = {
                     currentPage: this.pagination.currentPage,
                     pageSize: this.pagination.pageSize,
-                    queryString: this.pagination.queryString
+                    queryString: this.pagination.queryString,
+                    timeArray:this.pagination.timeArray
                 };
                 var id = getId();
                 axios.post("/article-report/getDayTotal.do?id="+id,param).then((res)=>{

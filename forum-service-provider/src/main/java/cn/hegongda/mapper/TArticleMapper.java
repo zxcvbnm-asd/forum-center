@@ -51,5 +51,8 @@ public interface TArticleMapper {
     List<Map> getYesterDay(Map<String, String> map);
     // 获取上周数据
     List<Integer> getLastWeekNumber(Map<String, String> map);
-    // 获取横坐标信息
+    // 获取前十二个月的数据
+    List<Integer> getPreMonths(Map<String, String> conditionMap);
+    // 首页查询出分类阅读量最多的文章
+    List<TArticle> findMaxNumArticle(Integer id);
 }

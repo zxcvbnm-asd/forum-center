@@ -92,7 +92,7 @@
        <div id="javase">
            <h3>&nbsp;&nbsp;&nbsp;JAVASE</h3>
            <div class="list-group">
-               <div v-for="(article,id) in articles[0]" :key="id">
+               <div v-for="(article,id) in articles[1]" :key="id">
                    <a href="#" class="list-group-item" @click.prevent="showDetail(article.id)"><span>{{id+1}}、</span>{{article.title}}  <span class="badge">{{article.num}}</span></a>
                </div>
            </div>
@@ -100,7 +100,7 @@
        <div id="database">
            <h3>&nbsp;&nbsp;&nbsp;DATABASE</h3>
            <div class="list-group">
-               <div v-for="(article,id) in articles[0]" :key="id">
+               <div v-for="(article,id) in articles[2]" :key="id">
                    <a href="#" class="list-group-item" @click.prevent="showDetail(article.id)"><span>{{id+1}}、</span>{{article.title}}  <span class="badge">{{article.num}}</span></a>
                </div>
            </div>
@@ -108,7 +108,7 @@
        <div id="html">
            <h3>&nbsp;&nbsp;&nbsp;WEBPAGE</h3>
            <div class="list-group">
-               <div v-for="(article,id) in articles[0]" :key="id">
+               <div v-for="(article,id) in articles[3]" :key="id">
                    <a href="#" class="list-group-item" @click.prevent="showDetail(article.id)"><span>{{id+1}}、</span>{{article.title}}  <span class="badge">{{article.num}}</span></a>
                </div>
            </div>
@@ -170,13 +170,14 @@
           return token;
       }
 
+      var interval1 = null;
       $("#mark").hide();
       function helper(arr,j){
           if(j == arr.length){
               return;
           }
           i = 0;
-          var interval1 = setInterval(function () {
+           interval1 = setInterval(function () {
               $("#demo" + j).text(arr[j].substring(0, ++i));
               if (i == arr[j].length) {
                   clearInterval(interval1);
@@ -250,6 +251,25 @@
                       }
                   })
               }
+
+
+              // 查询出一级分类
+              axios.get("/article/findFirstCate.do").then((res)=>{
+                  if (res.data.flag){
+                      this.categories = res.data.data;
+                  }else{
+                      this.$message.error(res.data.message);
+                  }
+              })
+
+              // 查出分类图书中阅读量最高的8篇文章
+              axios.get("/article/findMaxNumArticle.do").then((res)=>{
+                  if (res.data.flag){
+                      this.articles = res.data.data;
+                  }else{
+                      this.$message.error(res.data.message);
+                  }
+              })
           },
 
 
@@ -280,8 +300,8 @@
               handleCommand(command) {
                  //this.$message('click on item ' + command);
                   // 此时command代表分类的id,可以根据分类的id查找到相关的文章
-                  //alert(command)
-                  window.location.href='special.html?id='+command
+                  alert(command)
+                  //window.location.href='special.html?id='+command
               },
 
               // 用户退出
@@ -306,9 +326,7 @@
                   helper(str, 0);
               },
               close(){
-                 /* $("#demo0").empty();
-                  $("#demo1").empty();
-                  $("#demo2").empty();*/
+                clearInterval(interval1)
               },
               center(){
                   // 携带id跳转到个人中心

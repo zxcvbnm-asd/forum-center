@@ -15,4 +15,6 @@ public interface ArticleReportService {
     Result showYearsDay(Integer id);
 
     Result getLastWeek(Integer id);
+
+    Result getPreMonthsTotal(Integer id);
 }

@@ -10,15 +10,19 @@ import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
 import cn.hegongda.utils.JsonUtils;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
+import org.aspectj.lang.annotation.AfterThrowing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisSentinelPool;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -187,5 +191,34 @@ public class ArticleServiceImpl implements ArticleService {
             return new Result(true, "删除成功");
         }
         return new Result(false, "删除失败");
+    }
+
+
+    /*
+     * 查询每种分类阅读量最多的几篇文章
+     */
+    @Override
+    public Result findMaxNumArticle() {
+        List<List<TArticle>> list = new ArrayList<>();
+        // 先从redis中获取
+        Jedis jedis = jedisPool.getResource();
+        List<String> jsonList = jedis.lrange(RedisConstant.MAX_NUM_ARTICLE_LIST, 0, -1);
+        if (jsonList != null && jsonList.size() > 0){
+            for (String json : jsonList) {
+                List<TArticle> articles = JsonUtils.jsonToList(json, TArticle.class);
+                list.add(articles);
+            }
+            return new Result(true,"操作成功",list);
+        }
+        // 查询出一级分类
+        List<TArticleCategory> firstCategory = findFirstCategory();
+        // 根据一级分类的id查询文章
+        for (TArticleCategory tArticleCategory : firstCategory) {
+            List<TArticle> articles = articleMapper.findMaxNumArticle(tArticleCategory.getId());
+            // 为了增强性能，将查询结果放到redis中
+            jedis.rpush(RedisConstant.MAX_NUM_ARTICLE_LIST,JsonUtils.objectToJson(articles));
+            list.add(articles);
+        }
+        return new Result(true,"操作成功",list);
     }
 }
