@@ -30,7 +30,7 @@
       <div id="header">
            <img src="../images/3.png">
            <img src="../images/logo_right.jpg" class="pull-right" style="margin-right:120px">
-          <div class="pic"  v-if="user!=''">
+          <div class="pic"  v-if="user!=null">
 
                   <img v-if="flag" src="../img/avatar5.png" width="20px" height="20px" class="img-circle" style="margin-left: 5px;margin-bottom: 5px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                   <img v-if="!flag" :src="'http://q2rcyhwpl.bkt.clouddn.com/'+user.avatarName" width="20px" height="20px" class="img-circle" style="margin-left: 5px;margin-bottom: 5px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
@@ -55,14 +55,14 @@
                               </el-dropdown>
                           </a>
                       </td>
-                      <td class="ss" v-if="user==''">  <a class="item first" href="#"  @click="login"  v-cloak>登   陆</a></td>
-                      <td class="ss" v-if="user.username!='' && user.status==0 ">  <a class="item first" href="#"  v-cloak>开通会员</a></td>
-                      <td class="ss" v-if="user.username!='' && user.status==1 ">
+                      <td class="ss" v-if="user==null">  <a class="item first" href="#"  @click="login"  v-cloak>登   陆</a></td>
+                      <td class="ss" v-if="user!=null && user.username!='' && user.status==0 ">  <a class="item first" href="#"  v-cloak>开通会员</a></td>
+                      <td class="ss" v-if="user!=null && user.username!='' && user.status==1 ">
                           <el-tooltip class="item" effect="dark" :content="'会员到期的时间为:'+user.endTime" placement="bottom">
                               <span  v-cloak>会员信息</span>
                           </el-tooltip>
                       </td>
-                      <td class="ss" v-if="user!=''">  <span  v-cloak class="item first" href="#" @click="center">个人中心</span></td>
+                      <td class="ss" v-if="user!=null">  <span  v-cloak class="item first" href="#" @click="center">个人中心</span></td>
 
                   </tr>
               </table>
@@ -157,19 +157,6 @@
   <script>
       var i = 0;
 
-      function getToken(){
-          if(location.search == ''){
-              return 0;
-          }
-          var qs = location.search.substr(1), // 获取url中"?"符后的字串
-              args = {}, // 保存参数数据的对象
-              items = qs.length ? qs.split("&") : [], // 取得每一个参数项,
-              len = items.length;
-          var token = items[0].split("=")[1];
-
-          return token;
-      }
-
       var interval1 = null;
       $("#mark").hide();
       function helper(arr,j){
@@ -191,9 +178,7 @@
           data:{
               dialogTableVisible: false,
               flag:false,  // 头像显示标志
-              user:{
-                  avatarName:''
-              },
+              user:null,
 
               queryString:'', // 绑定查询条件
 
@@ -234,23 +219,16 @@
                   })
               }, 3000);
 
-              // 根据token判断用户是否进行登陆
-              var token = getToken();
-              if(token == 0){
-                  this.user = '';
-              }else{
                   // 发送axious 根据token获取用户信息
-                  axios.get("/user/getUserByToken.do?token="+token).then((res)=>{
+                  axios.get("/user/getUserByToken.do").then((res)=>{
                       if(res.data.flag){
                           this.user = res.data.data;
                           if(this.user.avatarName == null){
                               this.flag = !this.flag
                           }
-                      }else{
-                          this.user = '';
                       }
                   })
-              }
+
 
 
               // 查询出一级分类
@@ -293,7 +271,7 @@
 
               // 跳转到文章详情页面
               showDetail(id){
-                  window.location.href='article.html?id='+id
+                  window.location.href='/pages/article/article.html?id='+id
               },
 
               // elementui 的下拉选择，弹出command的值
@@ -310,7 +288,7 @@
                   // 发送ajax,参数为用户id，通过id使session 失效
 
                   // 将user置空
-                  this.user=''
+                  this.user=null
                   $('.collapse').collapse('hide')
 
               },

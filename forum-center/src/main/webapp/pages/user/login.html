@@ -16,6 +16,7 @@
     <script type="text/javascript" src="../../js/axios-0.18.0.js"></script>
 
 
+
 </head>
 <body>
 <div id="app">
@@ -114,6 +115,13 @@
 </body>
 <script>
 
+    // 获取重定向的路径
+
+    function getRedirectUrl() {
+        var qs = location.search.substr(1); // 获取url中"?"符后的字串
+        let redirectUrl = qs.substring(12);
+        return redirectUrl;
+    }
     // 失去焦点时
     function validate(name) {
 
@@ -206,7 +214,13 @@
                 }
                 axios.post('/user/loginByPass.do',user).then((res)=>{
                     if(res.data.flag){
-                        window.location.href='/pages/protal.html?token='+res.data.data
+                        let redirectUrl = getRedirectUrl();
+                        if (redirectUrl != ''){
+                            window.location.href=redirectUrl
+                        }else{
+                            window.location.href='/pages/protal.html'
+                        }
+
                     }else{
                         this.$message.error(res.data.message)
                     }

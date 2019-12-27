@@ -35,9 +35,7 @@ public interface TUserMapper {
     @Select("select count(*) from t_user where mobile=#{mobile}")
     int findCountUserByUserMobile(String mobile);
 
-    @Select("select * from t_user where username=#{username}")
-    public TUser findUserBuUsername(String username);
+    public TUser findUserByUsername(String username);
 
-    @Select("select * from t_user where mobile=#{mobile}")
     TUser findUserByMobile(String mobile);
 }

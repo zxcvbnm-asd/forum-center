@@ -350,4 +350,11 @@
       status = #{status,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="findUserByUsername" parameterType="java.lang.String" resultMap="BaseResultMap">
+     select * from t_user where username=#{value}
+  </select>
+  <select id="findUserByMobile" parameterType="java.lang.String" resultMap="BaseResultMap">
+     select * from t_user where mobile=#{value}
+  </select>
 </mapper>

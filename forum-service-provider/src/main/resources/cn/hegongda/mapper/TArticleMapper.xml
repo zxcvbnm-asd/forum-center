@@ -432,4 +432,9 @@
     LIMIT 0,8
   </select>
 
+
+  <select id="getSupportNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+      SELECT support_num FROM t_article_expan WHERE aid=#{value}
+  </select>
+
 </mapper>

@@ -24,17 +24,25 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private JedisPool jedisPool;
 
+    @Autowired
+    private TokenService tokenService;
+
     /*
      *  用户进行密码登录
      */
     @Override
-    public Result loginByPass(String username, String password) {
+    public Result loginByPass(String username, String password,String oldToken) {
         // 根据用户名查询该用户是否存在
-        TUser user = userMapper.findUserBuUsername(username);
+        TUser user = userMapper.findUserByUsername(username);
         if(user != null){
             // 存在则进行密码校验
             if(!user.getPassword().equals(MD5Utils.md5(password))){
                 return new Result(false,"密码不正确");
+            }
+            // 根据oldToken进行判断
+            Result result = tokenService.getUserByTokenAndUsernameOrMibile(oldToken, username);
+            if (result.isFlag()){
+                return result;
             }
             String token = this.saveUserToRedis(user);
             return new Result(true,"登陆成功",token);
@@ -45,6 +53,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Result validateMobile(String mobile) {
         if(StringUtils.isNotBlank(mobile)){
+            // 判断是否有该电话的用户存在
             int count = userMapper.findCountUserByUserMobile(mobile);
             if(count > 0){
                 return new Result(true,"短信发送成功");
@@ -55,7 +64,13 @@ public class LoginServiceImpl implements LoginService {
 
 
     @Override
-    public Result loginByMobile(String mobile) {
+    public Result loginByMobile(String mobile, String oldToken) {
+        // 根据oldToken进行判断
+        Result result = tokenService.getUserByTokenAndUsernameOrMibile(oldToken, mobile);
+        if (result.isFlag()){
+            return result;
+        }
+        // 以前未登录过重新登陆
         TUser user = userMapper.findUserByMobile(mobile);
         String token = this.saveUserToRedis(user);
         return new Result(true,"短信发送成功",token);

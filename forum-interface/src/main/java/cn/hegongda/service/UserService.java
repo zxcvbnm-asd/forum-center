@@ -10,7 +10,7 @@ public interface UserService {
     public TUser getUserById(Integer id);
 
     // 编辑用户
-    public Result editUser(TUser user);
+    public Result editUser(TUser user, String token);
 
     // 根据电话号码查找用户
     public TUser findByMobile(String mobile);

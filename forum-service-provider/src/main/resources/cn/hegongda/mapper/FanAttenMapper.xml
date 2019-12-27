@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.hegongda.mapper.FanAttenMapper" >
+   <select id="getWriterDetail" parameterType="java.lang.Integer" resultType="java.util.Map">
+    SELECT t1.username AS username,t1.age AS age,t1.collage AS collage,t1.cla AS cla,
+       t1.major AS major, t1.avatar_name AS avatarName,t2.count AS `count`,t3.attention AS
+       attention, t4.fan AS fan
+    FROM
+    (SELECT username,age,collage,cla,major, avatar_name FROM t_user WHERE id=#{value}) t1,
+    (SELECT COUNT(*)AS `count` FROM t_article WHERE uid=#{value}) t2,
+    (SELECT COUNT(*) AS attention FROM t_atten_fan WHERE fid=#{value}) t3,
+    (SELECT COUNT(*) AS fan FROM t_atten_fan WHERE tid=#{value}) t4
+   </select>
+
+    <select id="getArticleList" parameterType="java.lang.Integer" resultType="java.util.Map">
+        SELECT a.id AS id, a.`pub_time` AS pubTime,
+           a.`cover_url` AS coverUrl, a.`num` AS num, c.`cname` AS category
+        FROM t_article a,t_article_category c
+        WHERE a.`cid`=c.`id`AND a.`uid`=#{value}
+        ORDER BY a.`pub_time` DESC
+    </select>
+</mapper>

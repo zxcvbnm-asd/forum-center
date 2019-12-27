@@ -29,4 +29,8 @@ public interface ArticleService {
     Result deleteById(Integer id);
     // 查询每种分类阅读量最多的几篇文章
     Result findMaxNumArticle();
+    // 查询点击量
+    Result getSupportNum(Integer aid);
+    // 增加点赞数
+    Result addSupportNum(Integer aid, Integer number);
 }

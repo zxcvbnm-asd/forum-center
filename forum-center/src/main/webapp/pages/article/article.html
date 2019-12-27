@@ -182,7 +182,7 @@
             margin-top: 20px;
             font-size: 20px;
             font-family: DFKai-SB;
-            margin-left: 780px;
+            margin-left: 733px;
         }
 
         #text{
@@ -272,10 +272,21 @@
             font-weight: bold;
         }
 
-        .second-con{
-
+        #user-name{
+             color: white;
+             font-weight: bold;
+             margin-left: 9px;
+             margin-top: -8px;
         }
 
+        #support-num{
+            font-weight:bold;;
+            margin-left: -717px;
+            margin-top:-26px;
+            position: absolute;
+            letter-spacing: 0.5px;
+            color: #4cae4c;
+        }
 
     </style>
 </head>
@@ -284,19 +295,19 @@
     <div id="header">
         <img src="../../images/3.png">
         <img src="../../images/logo_right.jpg" class="pull-right" style="margin-right:120px">
-        <div class="pic"  v-if="user!=''">
+        <div class="pic"  v-if="user!=null">
 
-            <img src="../../images/0.jpg" width="20px" height="20px" class="img-circle" style="margin-left: 5px;margin-bottom: 5px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            <img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+user.avatarName" width="30px" height="30px" class="img-circle" style="margin-left: -23px;margin-bottom: -17px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><div id="user-name">{{user.username}}</div>
             <span v-cloak class='item' style="font-size: 13px"  data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">{{user.name}}</span>
         </div>
-        <div class="collapse" style="margin-left: 1233px;margin-top: -81px;position: absolute" id="collapseExample">
+        <div class="collapse" style="margin-left: 1233px;margin-top: -69px;position: absolute" id="collapseExample">
             <div  style="width: 110px;height: 70px; background-color: #ecf0f1;border-radius: 5% 5% 5% 5%">
                 <div style="padding-left: 10px;padding-top: 10px;"><a href="../user/edit_password.html" style="color: #8f0008;font-weight: bold"> 修改密码</a></div>
                 <div style="padding-left: 10px;margin-top: 10px;"><a style="font-weight: bold" href="#" @click="layout">退出</a></div>
             </div>
         </div>
-        <div class="pic" v-if="user==''">
-            <a href="../user/login.html" class="login" style="text-decoration: none;color: skyblue;font-weight: bold; font-size: 15px">登&nbsp;&nbsp;&nbsp;陆</a>
+        <div class="pic" v-if="user==null">
+            <a @click="login" class="login" style="text-decoration: none;color: skyblue;font-weight: bold; font-size: 15px">登&nbsp;&nbsp;&nbsp;陆</a>
         </div>
     </div>
 
@@ -304,8 +315,6 @@
         <div id="aside">
 
         </div>
-
-
 
         <div id="main">
            <div id="content">
@@ -320,8 +329,8 @@
             </div>
             <hr>
             <div id="writer">
-                <a id="suport" @click="add"><span  :class="['glyphicon','glyphicon-thumbs-up', {'zi':flag},{'zi1':!flag}]" ></span> </a>
-                <a href="#" @click="writerDetail(writer.id)">
+                <a id="suport" @click="add"><span  :class="['glyphicon','glyphicon-thumbs-up', {'zi':flag},{'zi1':!flag}]" ></span> </a>&nbsp;&nbsp;&nbsp;<div id="support-num">{{support_num>10000?Math.floor(support_num/10000)+'0000+':support_num}}</div>
+                <a href="#" @click="writerDetail()">
                 <img src="../../images/0.jpg" class="img-circle" width="30px" height="30px"/></a>&nbsp;&nbsp;&nbsp;<a ref="atten" id="atten" @click="isAttention">关注</a>
             </div>
             <hr>
@@ -468,10 +477,10 @@
             complaint:{id:1,type:1,content:'',remark:''},
             comment:{content:''}, // 评论对象
             attention_flag:false,  //判断用（测试时使用，后台会出传递回来true 或者false）
-            user:{},  // 用户数据模型
+            user:null,  // 用户数据模型
             text:'',
-            writer:{id:1},
             flag:true,
+            support_num:7859972,
             article:{id:1,title:'神雕侠侣',pubTime:'2014-12-25',content:'时那是当然价格多少时放到搜软件'},
             comments:[
                 {id:1,parentId:0,content:'真好',customerName:'阿东',
@@ -502,19 +511,49 @@
 
         created(){
             // 获取文章id查询文章内容
-           var id = getId();
-           alert(id)
+           let id = getId();
+           // 发送axios请求获取文章数据
+            axios.get("/article/findById.do?id="+id).then((res)=>{
+                if (res.data.flag){
+                    this.article = res.data.data
+                }else{
+                    this.$message.error(res.data.flag)
+                }
+            });
 
-            // 根据用户信息和作者信息到数据库中查询是否已经关注，返回条数若为以说明已经关注
-            if(this.attention_flag){
-                alert("aha")
-                $("#atten").text('已关注');
-                $("#atten").css({"color":'darkblue'})
-            }else{
-                $("#atten").text('关注');
-                $("#atten").css({"color":'blue'})
-            }
 
+            // 获取文章的点赞数
+            axios.get("/article/getSupportNum.do?aid="+id).then((res)=>{
+                if (res.data.flag){
+                    this.support_num = res.data.data;
+                }else{
+                    this.$message.error(res.data.message);
+                }
+            });
+
+
+            // 获取用户信息
+            axios.get("/user/getUserByToken.do").then((res)=>{
+                if(res.data.flag){
+                    this.user = res.data.data;
+                    //alert(this.article.uid)
+                    // 根据用户信息和作者信息到数据库中查询是否已经关注，返回条数若为以说明已经关注
+                    axios.get("/fan-atten/relation.do?fid="+this.user.id+"&tid="+this.article.uid).then((res)=>{
+                        if( res.data.flag ) {
+                            $("#atten").text('已关注');
+                            $("#atten").css({"color":'darkblue'})
+                            this.attention_flag = !this.attention_flag;
+                        }else{
+                            $("#atten").text('关注');
+                            $("#atten").css({"color":'blue'})
+                            this.attention_flag = !this.attention_flag;
+                        }
+
+                    });
+                }else{
+                    this.user = null;
+                }
+            });
         },
 
 
@@ -569,17 +608,36 @@
             },
             // 登陆时跳转页面
             login(){
-                window.location.href='../user/login.html'
+                var url = window.location.href ;
+                window.location.href='../user/login.html?redirectUrl='+url
             },
 
 
             // 点赞数，点一下加一，点第二下，减一
             add(){
+                // 先判断用户是否进行登陆，若登陆，则可以点点击，没有登陆，则提示用户登录
+                if (this.user == null){
+                    this.$message.error("登陆后才能点赞")
+                    return;
+                }
                 if(this.flag){
-                    alert(1)
+                  // 加一
+                    this.support_num +=1;
+                    axios.get("/article/addSupportNum.do?aid="+this.article.id+"&number=1").then((res)=>{
+                        if(!res.data.flag){
+                            this.support_num -=1;
+                            this.$message.error(res.data.message)
+                        }
+                    })
 
                 }else{
-                    alert(-1)
+                    this.support_num -=1;
+                    axios.get("/article/addSupportNum.do?aid="+this.article.id+"&number=-1").then((res)=>{
+                        if(!res.data.flag){
+                            this.support_num +=1;
+                            this.$message.error(res.data.message)
+                        }
+                    })
                 }
 
                 this.flag = !this.flag
@@ -587,17 +645,31 @@
 
             // 点击关注，再次点击取消关注
             isAttention(){
+                if (this.user == null){
+                    this.$message.error("登陆后才能关注")
+                    return;
+                }
                 this.attention_flag = !this.attention_flag
                 if(this.attention_flag){
-                    // 线数据库中添加记录
-                    $("#atten").text('已关注');
-                    $("#atten").css({"color":'grey'})
-
+                    axios.get("/fan-atten/attenOrNot.do?fid="+this.user.id+"&tid="+this.article.uid).then((res)=>{
+                        if (res.data.flag){
+                            $("#atten").text('已关注');
+                            $("#atten").css({"color":'grey'})
+                        }else {
+                            this.$message.error(res.data.message);
+                        }
+                    })
                 }else{
                     // 从数据库中删除记录
-                    $("#atten").text('关注');
-                    $("#atten").css({"color":'blue'})
-                    this.$message.info("已取消关注")
+                    axios.get("/fan-atten/attenOrNot.do?fid="+this.user.id+"&tid="+this.article.uid).then((res)=>{
+                        if (res.data.flag){
+                            $("#atten").text('关注');
+                            $("#atten").css({"color":'blue'})
+                        }else {
+                            this.$message.error(res.data.message);
+                        }
+                    })
+
                 }
             },
 
@@ -614,8 +686,8 @@
 
 
             // 点击头像展示用户详细信息
-            writerDetail(id){
-                window.location.href='attention_detail.html?id='+id
+            writerDetail(){
+                window.location.href='/pages/fan-atten/attention_detail.html?id='+this.article.uid
             }
 
 

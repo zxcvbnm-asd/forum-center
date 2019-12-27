@@ -156,4 +156,37 @@ public class ArticleController {
             return new Result(false, "系统繁忙，请稍后进行重试");
         }
     }
+
+    /*
+     * 查询出文章的点赞数
+     */
+    @RequestMapping("/getSupportNum.do")
+    @ResponseBody
+    public Result getSupportNum(Integer aid){
+        try {
+            Result result = articleService.getSupportNum(aid);
+            return result;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new Result(false,"系统繁忙，请稍后再试");
+        }
+    }
+
+
+    /*
+     * 用户点赞相关的处理
+     */
+    @RequestMapping("/addSupportNum.do")
+    @ResponseBody
+    public Result addSupportNum(Integer aid, Integer number){
+        try {
+            Result result = articleService.addSupportNum(aid,number);
+            return result;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new Result(false,"系统繁忙，请稍后再试");
+        }
+    }
+
+
 }

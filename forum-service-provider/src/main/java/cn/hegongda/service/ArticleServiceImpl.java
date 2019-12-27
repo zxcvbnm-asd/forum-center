@@ -221,4 +221,44 @@ public class ArticleServiceImpl implements ArticleService {
         }
         return new Result(true,"操作成功",list);
     }
+
+
+    /*
+     * 查询文章点击量
+     */
+    @Override
+    @Transactional
+    public Result getSupportNum(Integer aid) {
+        if(aid == null){
+            return new Result(false, "非法操作");
+        }
+        Jedis jedis = jedisPool.getResource();
+        // 先从redis中查，查不到在从数据中查
+        String json = jedis.hget(RedisConstant.SUPPOT_NUM_ARTICLE, aid + "");
+        if (StringUtils.isNotBlank(json)){
+            return new Result(true,"操作成功",Integer.valueOf(json));
+        }
+        Integer count = articleMapper.getSupportNum(aid);
+        if (count == null){
+            articleMapper.insertArticleExpan(0,aid);
+            count = 0;
+        }
+        // 将点击量存入redis中
+        jedis.hset(RedisConstant.SUPPOT_NUM_ARTICLE,aid+"",count+"");
+        return new Result(true,"查询成功",count);
+    }
+
+
+    /*
+     * 增加点赞数（设置定时任务）
+     */
+    @Override
+    public Result addSupportNum(Integer aid, Integer number) {
+        if(aid == null || number == null){
+            return new Result(false, "非法操作");
+        }
+        Jedis jedis = jedisPool.getResource();
+        jedis.hincrBy(RedisConstant.SUPPOT_NUM_ARTICLE,aid+"",number);
+        return new Result(true,"操作成功");
+    }
 }

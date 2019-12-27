@@ -60,22 +60,19 @@ public class UserController {
      */
     @RequestMapping(value = "/getUserByToken.do")
     @ResponseBody
-    public Result getUserByToken(String token){
-        // 判断token是否与客户端存在的token相同
-        String oldToken = CookieUtils.getCookieValue(request, RedisConstant.USER_TOKEN);
-        if(StringUtils.isBlank(oldToken) || !token.equals(oldToken)){
-            return new Result(false,"用户没有登录");
-        }
-
+    public Result getUserByToken(){
         Jedis jedis = jedisPool.getResource();
-        String json = jedis.get(RedisConstant.USER_TOKEN + token);
-
-        // 从jedis中取出用户信息，取到说明已经登陆
-        if (StringUtils.isNotBlank(json)){
-            TUser user = JsonUtils.jsonToPojo(json, TUser.class);
-            return new Result(true, "用户已经登陆", user);
+        // 从cookie中获取token
+        String token = CookieUtils.getCookieValue(request, RedisConstant.USER_TOKEN);
+        // 判断token是否存在存在则从jedis中获取用户信息并返回
+        if (StringUtils.isNotBlank(token)){
+            String json = jedis.get(RedisConstant.USER_TOKEN + token);
+            if (StringUtils.isNotBlank(json)){
+                TUser user = JsonUtils.jsonToPojo(json, TUser.class);
+                jedis.expire(RedisConstant.USER_TOKEN + token, 60*60*24);
+                return new Result(true, "用户已经登陆", user);
+            }
         }
-
         return new Result(false, "用户没有登陆");
     }
 
@@ -112,7 +109,8 @@ public class UserController {
     @RequestMapping("/edit.do")
     @ResponseBody
     public Result eidtUser(@RequestBody TUser user){
-        Result result = userService.editUser(user);
+        String token = CookieUtils.getCookieValue(request, RedisConstant.USER_TOKEN);
+        Result result = userService.editUser(user, token);
         return result;
     }
 

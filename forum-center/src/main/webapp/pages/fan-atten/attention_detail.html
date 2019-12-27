@@ -111,7 +111,7 @@
 <div class="container" >
     <div id="head">
         <h3 class="page-header">作者详细信息:</h3>
-        <img :src="writer.avatarName" class="img-circle" height="40px" width="40px" id="picture">
+        <img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+writer.avatarName" class="img-circle" height="40px" width="40px" id="picture">
     </div>
 
 
@@ -208,7 +208,6 @@
                 attention:36,
                 fan:25
             },
-            activeName: '',
             articles:[
                 {id:1,coverUrl:'../img/9.png',pubTime:'2012-6-5',num:6555,category:'JAVASE',title:'射雕英雄传重复的设计费好滴哦输入覅瓯都市'},
                 {id:2,coverUrl:'../img/hebeu_logo.png',pubTime:'2012-6-5',num:6555,category:'JAVASE',title:'射雕英雄传'},
@@ -233,8 +232,14 @@
 
         created(){
             var id = getId();
-
             // 根据此Id查询作者详细信息
+            axios.get("/fan-atten/writerDetail.do?id="+id).then((res)=>{
+                if (res.data.flag){
+                    this.writer=res.data.data;
+                }else{
+                    this.$message.error(res.data.message)
+                }
+            })
         },
         methods:{
             handleClick(tab, event) {

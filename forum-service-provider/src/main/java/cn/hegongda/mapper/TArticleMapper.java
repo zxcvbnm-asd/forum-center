@@ -8,6 +8,7 @@ import java.util.Set;
 
 import cn.hegongda.result.QueryPageBean;
 import com.alibaba.dubbo.config.annotation.Service;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -55,4 +56,10 @@ public interface TArticleMapper {
     List<Integer> getPreMonths(Map<String, String> conditionMap);
     // 首页查询出分类阅读量最多的文章
     List<TArticle> findMaxNumArticle(Integer id);
+    //查询文章点击量
+    Integer getSupportNum(Integer aid);
+    // 向点赞表中出入数据
+
+    @Insert("INSERT INTO t_article_expan (support_num,aid,attention) VALUES (#{count},#{aid},NULL)")
+    void insertArticleExpan(@Param("count") int count,@Param("aid") Integer aid);
 }

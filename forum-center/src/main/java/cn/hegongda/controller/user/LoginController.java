@@ -60,9 +60,9 @@ public class LoginController {
             return new Result(false,"数据发生错误，请检查姓名或者密码是否为空");
         }
         try{
-            Result result = loginService.loginByPass(user.getUsername(),user.getPassword());
-            if(result.isFlag()){
-
+            String token = CookieUtils.getCookieValue(request, RedisConstant.USER_TOKEN);
+            Result result = loginService.loginByPass(user.getUsername(),user.getPassword(),token);
+            if(result.isFlag() && result.getData() != null){
                 // 将token保存到客户端
                 CookieUtils.setCookie(request,response, RedisConstant.USER_TOKEN, (String) result.getData(),60 * 60 * 12);
             }
@@ -113,8 +113,12 @@ public class LoginController {
             Jedis jedis = jedisPool.getResource();
             String code = jedis.get(RedisConstant.VALIDATE_CODE + mobile);
             if (validateCode.equals(code)){
-                Result result = loginService.loginByMobile(mobile);
-                String token = (String) result.getData();
+                String token = CookieUtils.getCookieValue(request, RedisConstant.USER_TOKEN);
+                Result result = loginService.loginByMobile(mobile,token);
+                // 说明用户已经提前就登陆过
+                if (result.getData() == null){
+                    return result;
+                }
                 // 将token保存到客户端
                 CookieUtils.setCookie(request,response, RedisConstant.USER_TOKEN, (String) result.getData(),60 * 60 * 12);
                 return result;

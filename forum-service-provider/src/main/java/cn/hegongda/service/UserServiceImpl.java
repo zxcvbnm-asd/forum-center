@@ -25,7 +25,7 @@ public class UserServiceImpl  implements UserService {
 
     // 编辑用户信息
     @Override
-    public Result editUser(TUser user) {
+    public Result editUser(TUser user, String token) {
         int number = userMapper.updateByPrimaryKey(user);
         if(number > 0){
             // 通过jedis的set结构将，将传至服务器的图片记录
@@ -34,6 +34,8 @@ public class UserServiceImpl  implements UserService {
 
             // 当用户编辑信息后，用户数据发生变化，将redis中缓存数据清除
             jedis.del(RedisConstant.USER_INFORMATION + user.getId());
+            // 将用户登陆的redis中保存信息进行更改
+            jedis.set(RedisConstant.USER_TOKEN + token, JsonUtils.objectToJson(user));
 
             return new Result(true,"信息编辑成功");
         }
