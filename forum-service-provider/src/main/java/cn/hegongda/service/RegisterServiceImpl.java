@@ -1,5 +1,6 @@
 package cn.hegongda.service;
 
+import cn.hegongda.constant.MessageConstant;
 import cn.hegongda.mapper.TUserMapper;
 import cn.hegongda.pojo.TUser;
 import cn.hegongda.pojo.TUserExample;
@@ -46,6 +47,9 @@ public class RegisterServiceImpl implements RegisterService {
             // 将密码进行MD5加密
             String newPass = MD5Utils.md5(user.getPassword());
             user.setPassword(newPass);
+
+            // 注册时为用户设置默认头像， 设置默认头像
+            user.setAvatarName(MessageConstant.USER_AVATARNAME);
 
             // 保存到数据库
             int number = userMapper.insert(user);

@@ -95,4 +95,29 @@ public class FanAttenServiceImpl implements FanAttenService {
         }
         return new Result(true,MessageConstant.OPERATION_SUCCESS,list);
     }
+
+
+    /*
+     * 查询作者关注
+     */
+    @Override
+    public Result getUserAtten(Integer id) {
+        if (id == null) {
+            return new Result(false, MessageConstant.PARAM_NULL_MESSAGE);
+        }
+        List<Map> list = fanAttenMapper.getUserAtten(id);
+        return new Result(true, MessageConstant.OPERATION_SUCCESS,list);
+    }
+
+    /*
+     * 查询作者粉丝
+     */
+    @Override
+    public Result getUserFan(Integer id) {
+        if (id == null) {
+            return new Result(false, MessageConstant.PARAM_NULL_MESSAGE);
+        }
+        List<Map> list = fanAttenMapper.getUserFan(id);
+        return new Result(true, MessageConstant.OPERATION_SUCCESS,list);
+    }
 }

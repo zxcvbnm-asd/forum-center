@@ -12,4 +12,8 @@ public interface FanAttenService {
     Result getWriterDetail(Integer id);
     // 查询作者发布的全部文章
     Result getArticleList(Integer id);
+    // 作者关注
+    Result getUserAtten(Integer id);
+    // 作者粉丝
+    Result getUserFan(Integer id);
 }

@@ -25,4 +25,8 @@ public interface FanAttenMapper {
     Map getWriterDetail(Integer id);
     // 根据id查询详作者发布的信息
     List<Map> getArticleList(Integer id);
+    // 获取作者关注的人数
+    List<Map> getUserAtten(Integer id);
+    // 获取作者的粉丝
+    List<Map> getUserFan(Integer id);
 }

@@ -272,4 +272,17 @@
       comment_date = #{commentDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <select id="getParentComment" resultMap="BaseResultMap">
+       SELECT *
+       FROM t_comment
+       WHERE content_id=#{content_id} AND parent_id=0 AND type=#{type} and status=1
+       ORDER BY comment_date DESC
+  </select>
+
+  <select id="getChildComments" resultMap="BaseResultMap">
+       SELECT *
+       FROM t_comment
+       WHERE content_id=#{content_id} AND parent_id=#{parentId} AND type=#{type} and status=1
+  </select>
 </mapper>

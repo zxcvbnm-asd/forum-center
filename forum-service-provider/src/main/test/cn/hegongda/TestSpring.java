@@ -2,9 +2,12 @@ package cn.hegongda;
 
 import cn.hegongda.mapper.FanAttenMapper;
 import cn.hegongda.mapper.TArticleMapper;
+import cn.hegongda.mapper.TCommentMapper;
+import cn.hegongda.pojo.CommentExpan;
 import cn.hegongda.pojo.TArticle;
 import cn.hegongda.result.Result;
 import cn.hegongda.service.ArticleServiceImpl;
+import cn.hegongda.service.CommentService;
 import cn.hegongda.service.FanAttenService;
 import cn.hegongda.utils.DateUtils;
 import org.junit.Test;
@@ -38,6 +41,9 @@ public class TestSpring {
     @Autowired
     private FanAttenService fanAttenService;
 
+    @Autowired
+    private CommentService commentService;
+
     @Test
     public void test1(){
        Map<String,String> map = new HashMap();
@@ -61,5 +67,19 @@ public class TestSpring {
         Result articleList = fanAttenService.getArticleList(12);
         List<Map> data = (List<Map>) articleList.getData();
         System.out.println(data.size());
+    }
+
+    @Test
+    public void testAttenFan(){
+        Result userAtten = fanAttenService.getUserFan(12);
+        List<Map> list = (List<Map>) userAtten.getData();
+        System.out.println("jaj");
+    }
+
+    @Test
+    public void testComment(){
+        Result comments = commentService.getComments(23, 1);
+        List<CommentExpan> list = (List<CommentExpan>) comments.getData();
+        System.out.println("a");
     }
 }

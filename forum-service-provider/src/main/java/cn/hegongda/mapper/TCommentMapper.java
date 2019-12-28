@@ -1,5 +1,6 @@
 package cn.hegongda.mapper;
 
+import cn.hegongda.pojo.CommentExpan;
 import cn.hegongda.pojo.TComment;
 import cn.hegongda.pojo.TCommentExample;
 import java.util.List;
@@ -27,4 +28,9 @@ public interface TCommentMapper {
     int updateByPrimaryKeySelective(TComment record);
 
     int updateByPrimaryKey(TComment record);
+
+    // 获取评论信息
+    List<CommentExpan> getParentComment(@Param("content_id") Integer content_id, @Param("type") Integer type);
+    // 获取回复信息
+    List<CommentExpan> getChildComments(@Param("content_id") Integer content_id, @Param("type")Integer type,@Param("parentId") Long parentId);
 }

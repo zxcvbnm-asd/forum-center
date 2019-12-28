@@ -78,4 +78,34 @@ public class FanAttenController {
             return new Result(false, MessageConstant.EXCEPTION_MESSAGE);
         }
     }
+
+    /*
+     * 查询作者的关注
+     */
+    @RequestMapping("/writerOfAttens.do")
+    @ResponseBody
+    public Result getWriterAtten(Integer id){
+        try {
+            Result result = fanAttenService.getUserAtten(id);
+            return result;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new Result(false, MessageConstant.EXCEPTION_MESSAGE);
+        }
+    }
+
+    /*
+     * 查询作者的粉丝
+     */
+    @RequestMapping("/writerOfFans.do")
+    @ResponseBody
+    public Result getWriterFan(Integer id){
+        try {
+            Result result = fanAttenService.getUserFan(id);
+            return result;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new Result(false, MessageConstant.EXCEPTION_MESSAGE);
+        }
+    }
 }

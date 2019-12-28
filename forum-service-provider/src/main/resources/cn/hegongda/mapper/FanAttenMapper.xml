@@ -13,10 +13,22 @@
    </select>
 
     <select id="getArticleList" parameterType="java.lang.Integer" resultType="java.util.Map">
-        SELECT a.id AS id, a.`pub_time` AS pubTime,
+        SELECT a.id AS id, a.`pub_time` AS pubTime, a.title AS title,
            a.`cover_url` AS coverUrl, a.`num` AS num, c.`cname` AS category
         FROM t_article a,t_article_category c
         WHERE a.`cid`=c.`id`AND a.`uid`=#{value}
         ORDER BY a.`pub_time` DESC
+    </select>
+
+    <select id="getUserAtten" parameterType="java.lang.Integer" resultType="java.util.Map">
+        SELECT u.id AS id, u.avatar_name AS avatarName,u.username AS username
+        FROM t_user u,(SELECT tid FROM t_atten_fan WHERE fid=#{value}) t
+        WHERE u.id=t.tid
+    </select>
+
+    <select id="getUserFan" parameterType="java.lang.Integer" resultType="java.util.Map">
+        SELECT u.id AS id, u.avatar_name AS avatarName,u.username AS username
+        FROM t_user u,(SELECT fid FROM t_atten_fan WHERE tid=#{value}) t
+        WHERE u.id=t.fid
     </select>
 </mapper>

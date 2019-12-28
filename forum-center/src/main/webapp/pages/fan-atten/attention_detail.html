@@ -138,11 +138,11 @@
         </tr>
     </table>
     <div style="background-color: white">
-        <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+        <el-tabs  type="card" @tab-click="handleClick">
             <el-tab-pane label="Ta关注的人" name="first">
                 <ul class="attens" >
                     <li v-for="atten in attentions">
-                        <a @click="detail(atten.id)"><img :src="atten.avatarName" width="25px" height="25px">
+                        <a @click="detail(atten.id)"><img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+atten.avatarName" width="25px" height="25px">
                         <div>{{atten.username}}</div></a>
                     </li>
                 </ul>
@@ -150,7 +150,7 @@
             <el-tab-pane label="Ta的粉丝" name="second">
                 <ul class="attens" >
                     <li v-for="fan in fans">
-                        <a @click="detail(fan.id)"><img :src="fan.avatarName" width="25px" height="25px">
+                        <a @click="detail(fan.id)"><img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+fan.avatarName" width="25px" height="25px">
                             <div>{{fan.username}}</div></a>
                     </li>
                 </ul>
@@ -166,7 +166,7 @@
             <div class="media" >
                 <div class="media-left">
                     <a href="#">
-                        <img class="media-object" :src="article.coverUrl" width="100px" height="75px" alt="NO PICTURE">
+                        <img class="media-object" :src="'http://q2rcyhwpl.bkt.clouddn.com/'+article.coverUrl" width="100px" height="75px" alt="NO PICTURE">
                     </a>
                 </div>
                 <div class="media-body">
@@ -240,21 +240,49 @@
                     this.$message.error(res.data.message)
                 }
             })
+
+
+            // 根据id查询作者已发布的文章
+            axios.get("/fan-atten/getArticleList.do?id="+id).then((res)=>{
+                if (res.data.flag){
+                    this.articles = res.data.data
+                }else {
+                    this.$message.error(res.data.message)
+                }
+            })
         },
         methods:{
             handleClick(tab, event) {
-                console.log(tab, event);
+                // 用于查询其关注的人以及粉丝
+                if (tab.name == "first"){
+                    axios.get("/fan-atten/writerOfAttens.do?id="+getId()).then((res)=>{
+                        if (res.data.flag) {
+                            this.attentions = res.data.data
+                        }else {
+                            this.$message.error(res.data.message)
+                        }
+                    })
+                }
+                if (tab.name == "second") {
+                    axios.get("/fan-atten/writerOfFans.do?id="+getId()).then((res)=>{
+                        if (res.data.flag) {
+                            this.fans = res.data.data
+                        }else {
+                            this.$message.error(res.data.message)
+                        }
+                    })
+                }
+
             },
 
             showDetail(id){
-                alert("ajja")
                 // 跟据id跳转到文章详情页面
-                window.location.href='article.html?id='+id
+                window.location.href='/pages/article/article.html?id='+id
             },
 
             // 查看关注者和粉丝的详情
             detail(id){
-                window.location.href='attention_detail.html?id='+id
+                window.location.href='/pages/fan-atten/attention_detail.html?id='+id
             }
         }
     })

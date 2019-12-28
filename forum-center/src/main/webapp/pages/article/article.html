@@ -331,7 +331,7 @@
             <div id="writer">
                 <a id="suport" @click="add"><span  :class="['glyphicon','glyphicon-thumbs-up', {'zi':flag},{'zi1':!flag}]" ></span> </a>&nbsp;&nbsp;&nbsp;<div id="support-num">{{support_num>10000?Math.floor(support_num/10000)+'0000+':support_num}}</div>
                 <a href="#" @click="writerDetail()">
-                <img src="../../images/0.jpg" class="img-circle" width="30px" height="30px"/></a>&nbsp;&nbsp;&nbsp;<a ref="atten" id="atten" @click="isAttention">关注</a>
+                <img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+avatarName" class="img-circle" width="30px" height="30px"/></a>&nbsp;&nbsp;&nbsp;<a ref="atten" id="atten" @click="isAttention">关注</a>
             </div>
             <hr>
             <div id="comments" style="margin-bottom: 20px">
@@ -364,10 +364,10 @@
                                     <div class="back">
                                         <img class="head-pic" src="../../images/0.jpg"/>
                                         <div class="ss">
-                                            <span style="font-weight: bold;font-size: 16px">{{replyComment.customerReplyName}}</span>&nbsp;&nbsp;&nbsp;
+                                            <span style="font-weight: bold;font-size: 16px">{{replyComment.replyCustomerName}}</span>&nbsp;&nbsp;&nbsp;
                                             <span style="color: #999999">回复了</span>&nbsp;&nbsp;&nbsp;<span>{{replyComment.customerName}}</span>
                                             <div style="margin-left: 734px;margin-top: -20px"> <el-button type="text" data-toggle="modal" data-target="#myModal">举报</el-button>
-                                                &nbsp;&nbsp;&nbsp;&nbsp;<a @click="reply(replyComment.id,replyComment.customerReplyName)">回复</a></div>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;<a @click="reply(replyComment.id,replyComment.replyCustomerName)">回复</a></div>
                                         </div>
 
                                         <div class="reply-content">
@@ -468,7 +468,7 @@
         return id;
     }
 
-    $("#mark").hide();
+   // $("#mark").hide();
 
 
     var vm = new Vue({
@@ -478,6 +478,7 @@
             comment:{content:''}, // 评论对象
             attention_flag:false,  //判断用（测试时使用，后台会出传递回来true 或者false）
             user:null,  // 用户数据模型
+            avatarName:'',
             text:'',
             flag:true,
             support_num:7859972,
@@ -485,22 +486,16 @@
             comments:[
                 {id:1,parentId:0,content:'真好',customerName:'阿东',
                    replyComments:[
-                       {id:3,parentId:0,customerName:'adog',customerReplyName:'gougang',content:'还好'},
-                       {id:4,parentId:0,customerName:'adog',customerReplyName:'dd',content:'垃圾'},
+                       {id:3,parentId:1,customerName:'adog',replyCustomerName:'gougang',content:'还好'},
+                       {id:4,parentId:3,customerName:'adog',replyCustomerName:'dd',content:'垃圾'},
                    ]
                 },
                 {id:5,parentId:0,content:'真好',customerName:'阿东',
                     replyComments:[
-                        {id:3,parentId:0,customerName:'adog',customerReplyName:'gougang',content:'还好'},
-                        {id:4,parentId:0,customerName:'adog',customerReplyName:'张三',content:'垃圾'},
-                        {id:3,parentId:0,customerName:'adog',customerReplyName:'gougang',content:'还好'},
-                        {id:4,parentId:0,customerName:'adog',customerReplyName:'张三',content:'垃圾'},
-                        {id:3,parentId:0,customerName:'adog',customerReplyName:'gougang',content:'还好'},
-                        {id:4,parentId:0,customerName:'adog',customerReplyName:'张三',content:'垃圾'},
-                        {id:3,parentId:0,customerName:'adog',customerReplyName:'gougang',content:'还好'},
-                        {id:4,parentId:0,customerName:'adog',customerReplyName:'张三',content:'垃圾'},
-                        {id:3,parentId:0,customerName:'adog',customerReplyName:'gougang',content:'还好'},
-                        {id:4,parentId:0,customerName:'adog',customerReplyName:'张三',content:'垃圾'},
+                        {id:6,parentId:5,customerName:'adog',replyCustomerName:'gougang',content:'还好'},
+                        {id:7,parentId:5,customerName:'adog',replyCustomerName:'张三',content:'垃圾'},
+                        {id:8,parentId:5,customerName:'adog',replyCustomerName:'gougang',content:'还好'},
+
                     ]
                 }
             ],
@@ -516,6 +511,14 @@
             axios.get("/article/findById.do?id="+id).then((res)=>{
                 if (res.data.flag){
                     this.article = res.data.data
+                    // 获取作者id查询作者头像信息
+                    axios.get("/user/getUserById.do?id="+this.article.uid).then(res=>{
+                        if (res.data.flag) {
+                            this.avatarName = res.data.data.avatarName;
+                        }else {
+                            this.$message.error(res.data.message);
+                        }
+                    })
                 }else{
                     this.$message.error(res.data.flag)
                 }
@@ -530,6 +533,8 @@
                     this.$message.error(res.data.message);
                 }
             });
+
+
 
 
             // 获取用户信息
@@ -571,6 +576,7 @@
             },
             // 当点击回复某一条评论，改变textare中的placeholder，让其获取焦点，并将撤销按钮显示出来
             reply(id,name){
+                alert(id)
                 this.parentId = id;
                 this.placeholder="回复:"+name
                 $("textarea").focus()
@@ -588,6 +594,7 @@
 
             // 发表评论，重点是记录下父评论的id
             pubComment(){
+                alert(this.parentId);
                 this.comment.parentId=this.parentId
                 alert(this.parentId)
             },
