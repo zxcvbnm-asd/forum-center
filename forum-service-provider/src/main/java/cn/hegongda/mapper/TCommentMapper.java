@@ -5,6 +5,7 @@ import cn.hegongda.pojo.TComment;
 import cn.hegongda.pojo.TCommentExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 public interface TCommentMapper {
     int countByExample(TCommentExample example);
@@ -33,4 +34,10 @@ public interface TCommentMapper {
     List<CommentExpan> getParentComment(@Param("content_id") Integer content_id, @Param("type") Integer type);
     // 获取回复信息
     List<CommentExpan> getChildComments(@Param("content_id") Integer content_id, @Param("type")Integer type,@Param("parentId") Long parentId);
+
+    @Select("SELECT u.username FROM t_comment t INNER JOIN t_user u  ON t.id=#{parentId} AND t.customer_id=u.id")
+    String getCustomerName(Long parentId);
+
+    @Select("select * from t_comment where parent_id=#{id}")
+    List<TComment> getComments(Long id);
 }

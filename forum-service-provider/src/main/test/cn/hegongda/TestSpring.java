@@ -5,6 +5,7 @@ import cn.hegongda.mapper.TArticleMapper;
 import cn.hegongda.mapper.TCommentMapper;
 import cn.hegongda.pojo.CommentExpan;
 import cn.hegongda.pojo.TArticle;
+import cn.hegongda.pojo.TComment;
 import cn.hegongda.result.Result;
 import cn.hegongda.service.ArticleServiceImpl;
 import cn.hegongda.service.CommentService;
@@ -78,8 +79,16 @@ public class TestSpring {
 
     @Test
     public void testComment(){
-        Result comments = commentService.getComments(23, 1);
-        List<CommentExpan> list = (List<CommentExpan>) comments.getData();
-        System.out.println("a");
+        CommentExpan comment = new CommentExpan();
+        comment.setContent("镇海");
+        comment.setCustomerId(12);
+        comment.setContentId(23);
+        commentService.pubComment(comment);
+    }
+
+    @Test
+    public void testdeletComment(){
+        Result result = commentService.deleteById(53L);
+        System.out.println("ahah");
     }
 }

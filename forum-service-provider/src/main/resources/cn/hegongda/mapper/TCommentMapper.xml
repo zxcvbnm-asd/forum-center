@@ -12,6 +12,17 @@
     <result column="support_num" property="supportNum" jdbcType="INTEGER" />
     <result column="comment_date" property="commentDate" jdbcType="TIMESTAMP" />
   </resultMap>
+  <resultMap id="BaseResultMapExpan" type="cn.hegongda.pojo.CommentExpan" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="customer_id" property="customerId" jdbcType="INTEGER" />
+    <result column="parent_id" property="parentId" jdbcType="BIGINT" />
+    <result column="content_id" property="contentId" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="support_num" property="supportNum" jdbcType="INTEGER" />
+    <result column="comment_date" property="commentDate" jdbcType="TIMESTAMP" />
+  </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
       <foreach collection="oredCriteria" item="criteria" separator="or" >
@@ -104,11 +115,14 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.hegongda.pojo.TComment" >
-    insert into t_comment (id, customer_id, parent_id, 
+    <selectKey keyProperty="id" resultType="java.lang.Long" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_comment (customer_id, parent_id,
       content_id, content, type, 
       status, support_num, comment_date
       )
-    values (#{id,jdbcType=BIGINT}, #{customerId,jdbcType=INTEGER}, #{parentId,jdbcType=BIGINT}, 
+    values (#{customerId,jdbcType=INTEGER}, #{parentId,jdbcType=BIGINT},
       #{contentId,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
       #{status,jdbcType=INTEGER}, #{supportNum,jdbcType=INTEGER}, #{commentDate,jdbcType=TIMESTAMP}
       )
@@ -273,14 +287,14 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 
-  <select id="getParentComment" resultMap="BaseResultMap">
+  <select id="getParentComment" resultMap="BaseResultMapExpan">
        SELECT *
        FROM t_comment
        WHERE content_id=#{content_id} AND parent_id=0 AND type=#{type} and status=1
        ORDER BY comment_date DESC
   </select>
 
-  <select id="getChildComments" resultMap="BaseResultMap">
+  <select id="getChildComments" resultMap="BaseResultMapExpan">
        SELECT *
        FROM t_comment
        WHERE content_id=#{content_id} AND parent_id=#{parentId} AND type=#{type} and status=1

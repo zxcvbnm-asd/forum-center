@@ -6,7 +6,21 @@ public class CommentExpan extends TComment {
 
     private String customerName;  // 评论人信息
     private String replyCustomerName;   // 回复人信息
+    private String avatarName;     // 评论和回复人的头像
+
+
+
     private List<CommentExpan> replyComments;
+
+
+
+    public String getAvatarName() {
+        return avatarName;
+    }
+
+    public void setAvatarName(String avatarName) {
+        this.avatarName = avatarName;
+    }
 
     public String getCustomerName() {
         return customerName;
