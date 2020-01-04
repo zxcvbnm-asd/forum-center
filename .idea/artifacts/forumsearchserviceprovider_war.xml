@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="forumsearchserviceprovider:war">
+    <output-path>$PROJECT_DIR$/forumsearchserviceprovider/target</output-path>
+    <root id="archive" name="forum-search-service-provider.war">
+      <element id="artifact" artifact-name="forumsearchserviceprovider:war exploded" />
+    </root>
+  </artifact>
+</component>

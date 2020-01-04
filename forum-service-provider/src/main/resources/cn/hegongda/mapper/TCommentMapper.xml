@@ -299,4 +299,10 @@
        FROM t_comment
        WHERE content_id=#{content_id} AND parent_id=#{parentId} AND type=#{type} and status=1
   </select>
+
+  <select id="getParentCommentByCustomerId" resultMap="BaseResultMapExpan">
+      SELECT c.*
+      FROM t_article  a , t_comment c
+      WHERE a.uid=#{customerId} AND a.id=c.`content_id` AND c.`parent_id`=0 AND c.type=#{type} AND  c.status=1
+  </select>
 </mapper>

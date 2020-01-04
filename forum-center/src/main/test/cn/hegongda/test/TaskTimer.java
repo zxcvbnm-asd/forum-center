@@ -79,4 +79,11 @@ public class TaskTimer {
         System.out.println(time);
 
     }
+
+    @Test
+    public void testTime() {
+         Calendar calendar = Calendar.getInstance();
+         calendar.add(Calendar.DAY_OF_YEAR,-40);
+        System.out.println(calendar.getTime());
+    }
 }

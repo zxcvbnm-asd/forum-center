@@ -15,6 +15,7 @@
     <script src="../../js/vue.js"></script>
     <script src="../../plugins/elementui/index.js"></script>
     <script src="../../js/axios-0.18.0.js"></script>
+    <script src="../../js/link-param.js"></script>
     <style>
         body {
             background-color: white;
@@ -108,10 +109,10 @@
                     <div class="panel " v-for="(content,id) in contents" :key="id">
                         <div class="panel-heading">
                             <h4 class="panel-tile">
-                                <span :class="['collapsed',{'color':content.flag}]" data-toggle="collapse"  >
+                                <span :class="['collapsed',{'color':content.status==1}]" data-toggle="collapse"  >
                                     {{id+1}}.{{content.title}}
                                 </span>
-                               <a href="#" @click.prevent="show(id)"> <li class="el-icon-arrow-down pull-right"></li></a>
+                               <a href="#" @click.prevent="show(id)"> <li @click="changeStatus(content.id,id)" class="el-icon-arrow-down pull-right"></li></a>
                                 <span :class="['pull-right', 'time',{'color':content.status==1}]">{{content.time}}</span>
 
                             </h4>
@@ -158,9 +159,42 @@
             },
         },
 
+        created(){
+           this.findPage();
+        },
+
         methods: {
             handleChange(val) {
                 console.log(val);
+            },
+
+            // 修改通知是否已经读了
+            changeStatus(id , index) {
+                if (this.contents[index].status == 1){
+                    return false ;
+                }
+                axios.get("/announce/changeNoticeStatus.do?id="+id).then((res)=>{
+                    if (res.data.flag ) {
+                        this.contents[index].status = 1;
+                    } else {
+                        this.$message.error(res.data.message)
+                    }
+                })
+            },
+
+            findPage(){
+                let param = {
+                    currentPage:this.pagination.currentPage,
+                    pageSize:this.pagination.pageSize
+                } ;
+                axios.post("/announce/getNotices.do?id="+getId(), param).then((res)=>{
+                    if (res.data.flag ) {
+                        this.pagination.total = res.data.total;
+                        this.contents = res.data.rows ;
+                    } else {
+                        this.$message.error(res.data.message) ;
+                    }
+                })
             },
             show(id){
                $("#"+id).slideToggle("fast")

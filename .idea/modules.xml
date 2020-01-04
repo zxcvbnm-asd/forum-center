@@ -6,6 +6,8 @@
       <module fileurl="file://$PROJECT_DIR$/forum-center/forum-center.iml" filepath="$PROJECT_DIR$/forum-center/forum-center.iml" />
       <module fileurl="file://$PROJECT_DIR$/forum-common/forum-common.iml" filepath="$PROJECT_DIR$/forum-common/forum-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/forum-interface/forum-interface.iml" filepath="$PROJECT_DIR$/forum-interface/forum-interface.iml" />
+      <module fileurl="file://$PROJECT_DIR$/forum-search/forum-search.iml" filepath="$PROJECT_DIR$/forum-search/forum-search.iml" />
+      <module fileurl="file://$PROJECT_DIR$/forum-search-service-provider/forum-search-service-provider.iml" filepath="$PROJECT_DIR$/forum-search-service-provider/forum-search-service-provider.iml" />
       <module fileurl="file://$PROJECT_DIR$/forum-service-provider/forum-service-provider.iml" filepath="$PROJECT_DIR$/forum-service-provider/forum-service-provider.iml" />
       <module fileurl="file://$PROJECT_DIR$/forumparent.iml" filepath="$PROJECT_DIR$/forumparent.iml" />
     </modules>

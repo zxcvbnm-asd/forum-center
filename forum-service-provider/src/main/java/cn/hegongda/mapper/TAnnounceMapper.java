@@ -3,7 +3,10 @@ package cn.hegongda.mapper;
 import cn.hegongda.pojo.TAnnounce;
 import cn.hegongda.pojo.TAnnounceExample;
 import java.util.List;
+
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 public interface TAnnounceMapper {
     int countByExample(TAnnounceExample example);
@@ -33,4 +36,17 @@ public interface TAnnounceMapper {
     int updateByPrimaryKeyWithBLOBs(TAnnounce record);
 
     int updateByPrimaryKey(TAnnounce record);
+
+    @Select("select * from t_announce")
+    List<TAnnounce> getAnnouncesByPage();
+
+    @Select("select status from t_user_announce where uid=#{id} and aid=#{aid}")
+    Integer getStatus(@Param("id") Integer id,  @Param("aid") Integer aid);
+
+    @Select("select count(*) from t_user_announce where  uid=#{uid} and aid=#{aid}")
+    Integer existsUserAnnouce(@Param("uid") Integer uid, @Param("aid") Integer aid);
+
+
+    @Insert("insert into t_user_announce (uid, aid, status) values (#{uid}, #{aid}, 1)")
+    void changeStatus(@Param("uid") Integer uid, @Param("aid") Integer aid);
 }

@@ -40,4 +40,6 @@ public interface TCommentMapper {
 
     @Select("select * from t_comment where parent_id=#{id}")
     List<TComment> getComments(Long id);
+    // 通过作者获取评论信息
+    List<CommentExpan> getParentCommentByCustomerId(@Param("customerId") Integer customerId, @Param("type") Integer type);
 }

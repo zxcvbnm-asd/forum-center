@@ -13,6 +13,7 @@
     <script src="../../js/vue.js"></script>
     <script src="../../plugins/elementui/index.js"></script>
     <script src="../../js/axios-0.18.0.js"></script>
+    <script src="../../js/link-param.js"></script>
 
     <style>
         body {
@@ -133,7 +134,7 @@
             <div id="count">
                 <div id="box2">
                     <br><br>
-                    <span id="number">10000</span><br>
+                    <span id="number">{{total}}</span><br>
                     <span>粉丝总量</span>
                 </div>
             </div>
@@ -143,8 +144,8 @@
                 <table>
                     <tr>
                         <td>时间:</td>
-                        <td><button style="outline: none" @click="search(7)">近一周</button></td>
-                        <td><button style="outline: none" @click="search(31)">一个月前</button></td>
+                        <td><button style="outline: none" @click="search(6)">近一周</button></td>
+                        <td><button style="outline: none" @click="search(30)">一个月前</button></td>
                         <td><button style="outline: none" @click="search(90)">三个月前</button></td>
                         <td style="text-align: right;margin-right: 0" >
                             <div class="block">
@@ -157,7 +158,7 @@
                                 </el-date-picker>
                             </div>
                         </td>
-                        <td id="search" style="text-align: left;margin-left: 0"><button class="btn btn-default" style="height: 38px" @click="search(0)">查询</button></td>
+                        <td id="search" style="text-align: left;margin-left: 0"><button class="btn btn-default" style="height: 38px" @click="searchByTime()">查询</button></td>
                     </tr>
                 </table>
             </div>
@@ -175,21 +176,7 @@
     var vm = new Vue({
         el: "#app",
         data: {
-
-            dataList: [
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-
-
-            ],
+            total:100,
             pagination: {//分页相关模型数据
                 currentPage: 1,//当前页码
                 pageSize: 10,//每页显示的记录数
@@ -201,46 +188,89 @@
             countList:[10,15,19,21,25,25]
         },
 
+
+        created(){
+            // 查询粉丝总数
+            axios.get("/fan-atten/getSumFans.do?id="+getId()).then((res)=>{
+                if (res.data.flag) {
+                    this.total = res.data.data;
+                }else {
+                    this.$message.error(res.data.message)
+                }
+            })
+        },
+
         mounted(){
-            this.search(7);
+            this.search(6);
         },
         methods: {
 
             search(data){
-                alert(data)
-
                 // 说明在日期框中选择的日期
-                if(data == 0){
+                axios.get("/fan-atten/getFansByDays.do?id="+getId()+"&days="+data).then((res) => {
+                    if (res.data.flag ) {
+                        var myChart = echarts.init(document.getElementById('mycharts'));
+                        myChart.setOption({
+                            title: {
+                                text: '粉丝数量统计'
+                            },
+                            tooltip: {},
+                            legend: {
+                                data:['粉丝量']
+                            },
+                            xAxis: {
+                                type: 'category',
+                                data: res.data.data.dates  //  日期
+                            },
+                            yAxis: {
+                                type: 'value'
+                            },
+                            series: [{
+                                data:res.data.data.numbers, // 数量
+                                type: 'line',
+                                smooth: true
+                            }]
+                        })
+                    } else {
+                        this.$message.error(res.data.message)
+                    }
+                })
 
-                }else if (data == 7){
-                    // 查询近一周的数量
-                }else if(data == 31){
-                    // 查询一个月的
-                }else if(data == 90){
-                    // 查询三个月
+
+            },
+
+            searchByTime(){
+                var param = {
+                    timeArray:this.value1
                 }
-
-                var myChart = echarts.init(document.getElementById('mycharts'));
-                myChart.setOption({
-                    title: {
-                        text: '粉丝数量统计'
-                    },
-                    tooltip: {},
-                    legend: {
-                        data:['粉丝量']
-                    },
-                    xAxis: {
-                        type: 'category',
-                        data: this.timeList  //  日期
-                    },
-                    yAxis: {
-                        type: 'value'
-                    },
-                    series: [{
-                        data:this.countList, // 数量
-                        type: 'line',
-                        smooth: true
-                    }]
+                axios.post("/fan-atten/getFansByTime.do?id="+getId(), param).then((res) => {
+                    if (res.data.flag ) {
+                        var myChart = echarts.init(document.getElementById('mycharts'));
+                        alert("ahah")
+                        myChart.setOption({
+                            title: {
+                                text: '粉丝数量统计'
+                            },
+                            tooltip: {},
+                            legend: {
+                                data:['粉丝量']
+                            },
+                            xAxis: {
+                                type: 'category',
+                                data: res.data.data.dates  //  日期
+                            },
+                            yAxis: {
+                                type: 'value'
+                            },
+                            series: [{
+                                data:res.data.data.numbers, // 数量
+                                type: 'line',
+                                smooth: true
+                            }]
+                        })
+                    } else {
+                        this.$message.error(res.data.message)
+                    }
                 })
 
             },
@@ -248,6 +278,18 @@
             // 查看详情
             handleDetails(row) {
                 alert(row.id);
+            },
+
+            datedifference(sDate1, sDate2) {    //sDate1和sDate2是2006-12-18格式
+                var dateSpan,
+                    tempDate,
+                    iDays;
+                sDate1 = Date.parse(sDate1);
+                sDate2 = Date.parse(sDate2);
+                dateSpan = sDate2 - sDate1;
+                dateSpan = Math.abs(dateSpan);
+                iDays = Math.floor(dateSpan / (24 * 3600 * 1000));
+                return iDays
             },
 
             // 取消关注

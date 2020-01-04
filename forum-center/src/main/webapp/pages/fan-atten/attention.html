@@ -12,6 +12,7 @@
     <script src="../../js/vue.js"></script>
     <script src="../../plugins/elementui/index.js"></script>
     <script src="../../js/axios-0.18.0.js"></script>
+    <script src="../../js/link-param.js"></script>
     <style>
         body {
             background-color: white;
@@ -27,6 +28,10 @@
             border: 1px #ecf0f1 solid;
             margin-top: 5px;
         }
+
+        #search{
+            margin-left: 5px;
+        }
     </style>
 </head>
 <body>
@@ -39,11 +44,12 @@
     </el-breadcrumb>
 
     <div id="center">
+        <div id="search"><input type="text" class="form-control" v-model="pagination.queryString" placeholder="输入昵称进行搜索"> <button class="btn btn-sm" @click="search">搜索</button></div>
         <el-table size="small" current-row-key="id" :data="dataList" stripe highlight-current-row>
             <el-table-column type="index" align="center" label="序号"></el-table-column>
-            <el-table-column prop="name" label="作者昵称" align="center"></el-table-column>
-            <el-table-column prop="attention_time" label="关注时间" align="center"></el-table-column>
-            <el-table-column prop="number" label="关注人数" align="center"></el-table-column>
+            <el-table-column prop="username" label="作者昵称" align="center"></el-table-column>
+            <el-table-column prop="attenTime" label="关注时间" align="center"></el-table-column>
+
             <el-table-column label="操作" align="center">
                 <template slot-scope="scope">
                     <el-button type="primary" size="mini" @click="handleDetails(scope.row)">详情</el-button>
@@ -72,41 +78,79 @@
         data: {
 
             dataList: [
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-                {id: 25, name: '射雕用雄', attention_time: '2019-10-25 10:22:55', number: 46},
-
+                {id: 25, username: '射雕用雄'},
+                {id: 25, username: '射雕用雄'},
+                {id: 25, username: '射雕用雄'},
 
             ],
             pagination: {//分页相关模型数据
                 currentPage: 1,//当前页码
-                pageSize: 10,//每页显示的记录数
+                pageSize: 9,//每页显示的记录数
                 total: 0,//总记录数
                 queryString: null//查询条件
             },
         },
+
+        created(){
+            // 获取作者id查询其关注的人
+            var id = getId();
+            var param = {
+                currentPage:this.pagination.currentPage,
+                pageSize:this.pagination.pageSize,
+                queryString:this.pagination.queryString
+            }
+            axios.post("/fan-atten/getUserAttens.do?id="+id,param).then((res)=>{
+                if (res.data.flag) {
+                    this.dataList = res.data.rows;
+                    this.pagination.total = res.data.total
+                }else {
+                    this.$message.error(res.data.message)
+                }
+            })
+        },
         methods: {
+
+            findPage(){
+                var param = {
+                    currentPage:this.pagination.currentPage,
+                    pageSize:this.pagination.pageSize,
+                    queryString:this.pagination.queryString
+                }
+                axios.post("/fan-atten/getUserAttens.do?id="+getId(),param).then((res)=>{
+                    if (res.data.flag) {
+                        this.dataList = res.data.rows;
+                        this.pagination.total = res.data.total
+                    }else {
+                        this.$message.error(res.data.message)
+                    }
+                })
+            },
 
             // 查看详情
             handleDetails(row) {
-                window.open("attention_detail.html?id="+row.id)
+                window.open("/pages/fan-atten/attention_detail.html?id="+row.id)
             },
 
             // 取消关注
             cancelAttention(row) {
+                axios.get("/fan-atten/attenOrNot.do?fid="+getId()+"&tid="+row.id).then((res)=>{
+                    if (res.data.flag) {
+                        this.$message.success(res.data.message);
+                        this.findPage();
+                    }else {
+                        this.$message.error(res.data.message)
+                    }
+                })
+            },
 
+            search(){
+                this.findPage();
             },
 
             // 切换页码
             handleCurrentChange: function (currentPage) {
                 this.pagination.currentPage = currentPage;
+                this.findPage();
             },
         }
     })

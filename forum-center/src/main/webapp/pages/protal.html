@@ -257,7 +257,6 @@
                   window.location.href='user/login.html'
               },
               show(){
-                  alert("hahah");
               },
 
               // 按照条件进行文章查询
@@ -278,8 +277,7 @@
               handleCommand(command) {
                  //this.$message('click on item ' + command);
                   // 此时command代表分类的id,可以根据分类的id查找到相关的文章
-                  alert(command)
-                  //window.location.href='special.html?id='+command
+                  window.location.href='/pages/article/special-cate.html?id='+command
               },
 
               // 用户退出

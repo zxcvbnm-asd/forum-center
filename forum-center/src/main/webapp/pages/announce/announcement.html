@@ -15,6 +15,7 @@
     <script src="../../js/vue.js"></script>
     <script src="../../plugins/elementui/index.js"></script>
     <script src="../../js/axios-0.18.0.js"></script>
+    <script src="../../js/link-param.js"></script>
     <style>
         body {
             background-color: white;
@@ -104,7 +105,7 @@
     <div id="center">
         <h3 class="page-header">公告表</h3>
         <div class="announce" v-for="(ann,id) in anns" :key="id">
-            <span :class="[{'color':ann.status==1}]" data-toggle="modal" :data-target="'#'+id" style="margin-left: 15px;">
+            <span :class="[{'color':ann.status==1}]" data-toggle="modal" :data-target="'#'+id" @click="changeStatus(ann.id, id)" style="margin-left: 15px;">
                 <span class="glyphicon glyphicon-asterisk" style="font-size: 15px;color: #8f0008">
                 </span> {{ann.title}}
                 <span class="pull-right" style="margin-right: 10px">{{ann.time}}</span>
@@ -130,6 +131,17 @@
                     </div>
                 </div>
             </div>
+
+        </div>
+        <div class="pagination-container pull-right" style="margin-top: 5px">
+            <el-pagination
+                    class="pagiantion"
+                    @current-change="handleCurrentChange"
+                    :current-page="pagination.currentPage"
+                    :page-size="pagination.pageSize"
+                    layout="total, prev, pager, next, jumper"
+                    :total="pagination.total">
+            </el-pagination>
         </div>
     </div>
 </div>
@@ -142,11 +154,51 @@
                {id:1,title:'系统维护公告',content:'由于系统出现故障，将要进行维护，给您带来不变还请谅解',time:'2012-12-25',status:0},
                {id:2,title:'净网公告',content:'近期将展开净网行动',time:'2012-12-26',status:0},
                {id:3,title:'审核公告',content:'审核流程如下',time:'2012-12-27',status:1},
-           ]
+           ],
+            pagination: {//分页相关模型数据
+                currentPage: 1,//当前页码
+                pageSize:8,//每页显示的记录数
+                total:0,//总记录数
+                queryString:null//查询条件
+            },
+        },
+
+        created(){
+           this.findPage();
         },
 
         methods: {
-
+            changeStatus(aid , index){
+                // 如果该通知的状态已经为 1 ，则不需要在改变其状态了
+                if ( this.anns[index].status == 1) {
+                    return false;
+                }
+                axios.get("/announce/changStatus.do?uid="+getId()+"&aid="+aid).then((res) => {
+                    if ( res.data.flag ) {
+                        this.anns[index].status = 1;
+                    }else {
+                        this.$message.error( res.data.message ) ;
+                    }
+                })
+            },
+            findPage(){
+                let param = {
+                    currentPage:this.pagination.currentPage,
+                    pageSize:this.pagination.pageSize
+                }
+                axios.post("/announce/getByPage.do?id="+getId(), param).then((res)=>{
+                    if (res.data.flag ) {
+                        this.pagination.total = res.data.total;
+                        this.anns = res.data.rows ;
+                    } else {
+                        this.$message.error(res.data.message) ;
+                    }
+                })
+            },
+            handleCurrentChange:function(currentPage) {
+                this.pagination.currentPage = currentPage;
+                this.findPage();
+            },
         }
     })
 </script>

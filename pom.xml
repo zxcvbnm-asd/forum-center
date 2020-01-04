@@ -13,6 +13,8 @@
         <module>forum-center</module>
         <module>forum-admin</module>
         <module>forum-service-provider</module>
+        <module>forum-search</module>
+        <module>forum-search-service-provider</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -35,6 +37,8 @@
         <poi.version>3.14</poi.version>
         <jedis.version>2.9.0</jedis.version>
         <quartz.version>2.2.1</quartz.version>
+        <elasticsearch.version>6.2.1</elasticsearch.version>
+
     </properties>
 
     <dependencyManagement>
@@ -233,6 +237,18 @@
                 <artifactId>xml-apis</artifactId>
                 <version>1.4.01</version>
             </dependency>
+            <dependency>
+                <groupId>org.elasticsearch</groupId>
+                <artifactId>elasticsearch</artifactId>
+                <version>${elasticsearch.version}</version>
+            </dependency>
+
+            <dependency>
+               <groupId>org.elasticsearch.client</groupId>
+               <artifactId>elasticsearch-rest-high-level-client</artifactId>
+               <version>${elasticsearch.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
     <dependencies>

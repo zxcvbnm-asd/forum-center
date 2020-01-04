@@ -2,15 +2,20 @@ package cn.hegongda.service;
 
 import cn.hegongda.constant.MessageConstant;
 import cn.hegongda.constant.RedisConstant;
+import cn.hegongda.mapper.TArticleMapper;
 import cn.hegongda.mapper.TCommentMapper;
+import cn.hegongda.mapper.TCommentReportMapper;
 import cn.hegongda.mapper.TUserMapper;
-import cn.hegongda.pojo.CommentExpan;
-import cn.hegongda.pojo.TComment;
-import cn.hegongda.pojo.TUser;
+import cn.hegongda.pojo.*;
+import cn.hegongda.result.PageResult;
+import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.AbstractTransactionManagementConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -28,6 +33,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Autowired
     private TUserMapper userMapper;
+
+    @Autowired
+    private TCommentReportMapper commentReportMapper;
+
+    @Autowired
+    private TArticleMapper articleMapper;
 
     /*
      * 获取文章的评论信息
@@ -53,6 +64,42 @@ public class CommentServiceImpl implements CommentService {
         return new Result(true, MessageConstant.OPERATION_SUCCESS, comments);
     }
 
+    /*
+     * 通过分页的方式获取文章的评论信息
+     */
+    @Override
+    public PageResult getCommentsByPage(Integer customerId, QueryPageBean queryPageBean, Integer type){
+        if (customerId == null || queryPageBean == null ){
+            return new PageResult(MessageConstant.PARAM_NULL_MESSAGE , false);
+        }
+
+        PageHelper.startPage(queryPageBean.getCurrentPage(),queryPageBean.getPageSize()) ;
+        // 设置list集合，封装一级评论
+        List<CommentExpan> comments = new ArrayList<>();
+        List<CommentExpan> parentComments = commentMapper.getParentCommentByCustomerId(customerId, type);
+        for (CommentExpan parentComment : parentComments) {
+            // 封装回复信息
+            List<CommentExpan> replyComments  = new ArrayList<>();
+            parentComment.setReplyComments(replyComments);
+            // 获取评论人信息
+            TUser user = userMapper.selectByPrimaryKey(parentComment.getCustomerId());
+            parentComment.setCustomerName(user.getUsername());
+            parentComment.setAvatarName(user.getAvatarName());
+
+            // 获取其评论的文章的标题
+            TArticle article = articleMapper.selectByPrimaryKey(parentComment.getContentId());
+            parentComment.setTitle(article.getTitle());
+
+            // 封装其回复信息
+            getChildComments(replyComments, parentComment.getContentId(), type, parentComment.getId(),parentComment.getCustomerName());
+
+            comments.add(parentComment);
+        }
+
+        PageInfo info = new PageInfo(comments) ;
+
+        return new PageResult(info.getTotal() ,comments, MessageConstant.OPERATION_SUCCESS, true) ;
+    }
 
     // 获取回复信息
     private void getChildComments(List<CommentExpan> replyComments, Integer content_id, Integer type, Long parentId, String customerName) {
@@ -81,11 +128,17 @@ public class CommentServiceImpl implements CommentService {
         }
         // 补全参数
         commentExpan.setStatus(1);
+        commentExpan.setSupportNum(0);
         commentExpan.setCommentDate(new Date());
+        String replyCustomerName = commentExpan.getCustomerName();
         commentMapper.insert(commentExpan);
         if (commentExpan.getParentId() != 0){
-            String replyCustomerName = commentMapper.getCustomerName(commentExpan.getParentId());
+            // 查询出评论人
+            String customerName = commentMapper.getCustomerName(commentExpan.getParentId());
+            commentExpan.setCustomerName(customerName);
+            // 设置回复人， 当前评论人
             commentExpan.setReplyCustomerName(replyCustomerName);
+
         }else {
             List<CommentExpan> replyCommentCustomers = new ArrayList<>();
             commentExpan.setReplyComments(replyCommentCustomers);
@@ -119,5 +172,44 @@ public class CommentServiceImpl implements CommentService {
         for (TComment comment : list) {
             deleteHelpComment(comment.getId());
         }
+    }
+
+    /*
+     * 投诉评论
+     */
+
+    @Override
+    @Transactional
+    public Result reportComment(TCommentReport commentReport) {
+        if (commentReport == null ){
+            return new Result(false, MessageConstant.PARAM_NULL_MESSAGE);
+        }
+        commentReport.setReportTime(new Date());
+        commentReport.setStatus(0);   // 代表没有读取
+        Integer number = commentReportMapper.save(commentReport);
+        if (number < 1){
+            return new Result(false, "投诉失败");
+        }
+        return new Result(true,MessageConstant.OPERATION_SUCCESS);
+    }
+
+    /*
+     * 为评论进行点赞
+     */
+    @Override
+    @Transactional
+    public Result addSupportNum(Integer num, Integer id) {
+        if (num == null || id ==null ){
+            return new Result(false, MessageConstant.PARAM_NULL_MESSAGE);
+        }
+
+        // 先查询出来,在进行更新
+        TComment comment = commentMapper.selectByPrimaryKey(Long.valueOf(id + ""));
+        if (comment != null ){
+            comment.setSupportNum(comment.getSupportNum() + num);
+            commentMapper.updateByPrimaryKey(comment);
+            return new Result(true, MessageConstant.OPERATION_SUCCESS);
+        }
+        return new Result(false, MessageConstant.OPERATION_FAIL);
     }
 }

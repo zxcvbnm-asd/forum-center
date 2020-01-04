@@ -1,11 +1,15 @@
 package cn.hegongda.controller.fan_atten;
 
 import cn.hegongda.constant.MessageConstant;
+import cn.hegongda.result.PageResult;
+import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
 import cn.hegongda.service.FanAttenService;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -82,7 +86,7 @@ public class FanAttenController {
     /*
      * 查询作者的关注
      */
-    @RequestMapping("/writerOfAttens.do")
+    @RequestMapping(value="/writerOfAttens.do")
     @ResponseBody
     public Result getWriterAtten(Integer id){
         try {
@@ -106,6 +110,61 @@ public class FanAttenController {
         } catch (Exception e){
             e.printStackTrace();
             return new Result(false, MessageConstant.EXCEPTION_MESSAGE);
+        }
+    }
+
+    /*
+     * 分页查询哟用户的关注
+     */
+    @RequestMapping( value = "/getUserAttens.do",method = RequestMethod.POST)
+    @ResponseBody
+    public PageResult getUserAttens(Integer id, @RequestBody  QueryPageBean queryPageBean){
+        try {
+            PageResult pageResult = fanAttenService.getUserAttens(id, queryPageBean);
+            return pageResult ;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new PageResult(MessageConstant.EXCEPTION_MESSAGE,false);
+        }
+    }
+
+    /*
+     * 查询粉丝总数
+     */
+    @RequestMapping("/getSumFans.do")
+    @ResponseBody
+    public Result getSumFans(Integer id) {
+        try {
+            Result result = fanAttenService.getSumFans(id);
+            return result ;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new Result(false,MessageConstant.EXCEPTION_MESSAGE);
+        }
+    }
+
+
+    @RequestMapping("/getFansByDays.do")
+    @ResponseBody
+    public Result getFansByDays(Integer id, Integer days){
+        try {
+            Result result = fanAttenService.getFansByDays(id, days);
+            return result ;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new Result(false,MessageConstant.EXCEPTION_MESSAGE);
+        }
+    }
+
+    @RequestMapping("/getFansByTime.do")
+    @ResponseBody
+    public Result getFansByDays(Integer id, @RequestBody QueryPageBean queryPageBean){
+        try {
+            Result result = fanAttenService.getFansByTime(id, queryPageBean);
+            return result ;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new Result(false,MessageConstant.EXCEPTION_MESSAGE);
         }
     }
 }

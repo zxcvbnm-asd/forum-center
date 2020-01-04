@@ -8,11 +8,17 @@ public class CommentExpan extends TComment {
     private String replyCustomerName;   // 回复人信息
     private String avatarName;     // 评论和回复人的头像
 
-
+    private String title;  // 评论的文章
 
     private List<CommentExpan> replyComments;
 
+    public String getTitle() {
+        return title;
+    }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public String getAvatarName() {
         return avatarName;

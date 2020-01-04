@@ -44,7 +44,7 @@
         }
 
         .first{
-            position: absolute;
+
             margin-left: 50px;
             margin-top: -37px;
         }
@@ -183,10 +183,10 @@
           <div id="commnet">
                <div class="comment" v-for="(comment,index) in comments" @key="index">
                    <div class="one">
-                       <img src="../img/3.png" class="img-circle" width="40px" height="40px"/>
+                       <img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+comment.avatarName" class="img-circle" width="40px" height="40px"/>
                        <div class="first" style="font-size: 18px">
-                           <span style="font-weight:bold">{{comment.username}}</span> <span style="color: #bebfbf;">评论了你的文章</span>
-                           <span class="pull-right" style="margin-left: 544px;padding-top: 1px;color: #bebfbf">{{comment.commentTime}}</span>
+                           <span style="font-weight:bold">{{comment.customerName}}</span> <span style="color: #bebfbf;">评论了你的文章</span>
+                           <span class="pull-right" style="margin-left: 544px;padding-top: 1px;color: #bebfbf;">{{comment.commentDate}}</span>
                        </div>
                    </div>
                    <div class="two">
@@ -195,18 +195,18 @@
                        </div>
                        <div class="second">
                            <i class="fa fa-link" aria-hidden="true" style="margin-left: 15px"></i>
-                          &nbsp;<a class="title" @click="showArticleDetail(comment.artId)">{{comment.title}}</a>
+                          &nbsp;<a class="title" @click="showArticleDetail(comment.contentId)">{{comment.title}}</a>
                        </div>
                    </div>
                    <div class="three">
                        <div class="third">
                            <div class="i">
-                               <a @click="showComment(index)"><i class="fa fa-commenting-o" style="font-size: 15px" aria-hidden="true"></i></a>&nbsp;&nbsp;<span>2</span>&nbsp;&nbsp;
-                               <a><i class="fa fa-thumbs-o-up" style="font-size: 15px" aria-hidden="true"></i></a>&nbsp;&nbsp;<span>2</span>
+                               <a @click="showComment(index)"><i class="fa fa-commenting-o" style="font-size: 15px" aria-hidden="true"></i></a>&nbsp;&nbsp;<span>{{comment.replyComments.length}}</span>&nbsp;&nbsp;
+                               <a @click="addSupportNum(index,comment.id)"><i :id="index+'support'" class="fa fa-thumbs-o-up" style="font-size: 15px" aria-hidden="true"></i></a>&nbsp;&nbsp;<span>{{comment.supportNum}}</span>
 
                                <div class="operate pull-right">
                                    <a class="replys" :id="index+'reply'" @click="reply(index)">回复</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                   <a data-toggle="modal" data-target="#myModal">举报</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                   <a data-toggle="modal" data-target="#myModal" @click="setCommentId(comment.id)">举报</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                    <a @click="delComment(comment.id)">删除</a>
                                </div>
                            </div>
@@ -216,18 +216,18 @@
                        <div class="forth">
                            <textarea class="reply-text" rows="3" v-model="newComment.content" placeholder="写下您的回复"></textarea>
                            <div class="tips"><span>最多不超1000字</span>&nbsp;&nbsp;&nbsp;&nbsp;
-                               <button class="btn btn-primary btn-sm" style="width: 100px"  @click="commit(index)">提交</button></div>
+                               <button class="btn btn-primary btn-sm" style="width: 100px"  @click="commit(index,comment.id,comment.contentId)">提交</button></div>
                        </div>
                    </div>
                    <div class="five" :id="index+'show'">
                        <div class="fifth" v-for="(rcomment,rindex) in comment.replyComments" @key="rindex">
-                           <img src="../img/3.png" class="img-circle" width="25px" height="25px"/>
-                           <span style="color: #6bb10a;font-weight: bold">{{rcomment.username}}</span>
+                           <img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+ rcomment.avatarName" class="img-circle" width="25px" height="25px"/>
+                           <span style="color: #6bb10a;font-weight: bold">{{rcomment.replyCustomerName}}</span>
                            <div class="pull-right" style="margin-right: 10px;font-size: 15px;color:#bebfbf ">
-                               <span>{{rcomment.commentTime}}</span>
+                               <span>{{rcomment.commentDate}}</span>
                            </div>
                            <div class="show-comment">
-                               回复 <span style="color: #9f9f9f">@{{rcomment.custome_name}}</span>: {{rcomment.content}}
+                               回复 <span style="color: #9f9f9f">@{{rcomment.customerName}}</span>: {{rcomment.content}}
                            </div>
                            <div style="margin-left: 749px;padding-bottom: 10px">
                                <a @click="reply1(rindex,index)">回复</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a @click="delComment(rcomment.id)" style="color: #069ee9">删除</a>
@@ -238,7 +238,7 @@
                                <div class="sixth">
                                    <textarea class="reply-text1" rows="3" v-model="newCommnent1.content" placeholder="写下您的回复"></textarea>
                                    <div class="tips"><span>最多不超1000字</span>&nbsp;&nbsp;&nbsp;&nbsp;
-                                       <button class="btn btn-primary btn-sm" style="width: 100px"  @click="rcommit(rindex,index)">提交</button></div>
+                                       <button class="btn btn-primary btn-sm" style="width: 100px"  @click="rcommit(rindex,index,rcomment.id,rcomment.contentId)">提交</button></div>
                                </div>
                            </div>
 
@@ -246,8 +246,19 @@
                    </div>
 
                </div>
+              <div class="pagination-container pull-right" style="margin-top: 5px">
+                  <el-pagination
+                          class="pagiantion"
+                          @current-change="handleCurrentChange"
+                          :current-page="pagination.currentPage"
+                          :page-size="pagination.pageSize"
+                          layout="total, prev, pager, next, jumper"
+                          :total="pagination.total">
+                  </el-pagination>
+              </div>
           </div>
     </div>
+
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -272,7 +283,7 @@
                     <div style="margin-top: 10px">
                         <span style="font-weight: bold">补充说明（选填）</span>
                         <div style="margin-top: 10px">
-                            <textarea style="width: 561px" placeholder="请填写附加的补充内容" v-model="complaint.content"></textarea>
+                            <textarea style="width: 561px" placeholder="请填写附加的补充内容" v-model="complaint.mark"></textarea>
                         </div>
                     </div>
                     <div style="margin-left: 467px;margin-top: 15px">
@@ -285,39 +296,95 @@
             </div>
         </div>
     </div>
+ </div>
 
 
-</div>
 </body>
 <script>
     $(".four").hide()
     $(".five").hide()
     $(".six").hide()
 
+
+    function getId() {
+        var qs = location.search.substr(1), // 获取url中"?"符后的字串
+            args = {}, // 保存参数数据的对象
+            items = qs.length ? qs.split("&") : [], // 取得每一个参数项,
+            len = items.length;
+        var id = items[0].split("=")[1];
+
+        return id;
+    }
+
     var vm = new Vue({
         el:"#app",
         data:{
-            complaint:{id:1,type:1,content:'',remark:''},
-            newComment:{},
-            newCommnent1:{},
+            complaint:{id:1,type:'',mark:'',commentId:''},
+            newComment:{},    // 以及评论的回复
+            newCommnent1:{},   // 二级评论的回复
+            user:{},
+            flag:true,  // 第一次点赞，然后变为false
             comments:[
-                {id:1,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:00:00',parentId:0,customeId:1,username:'王五',title:'射雕英雄传',
+                {id:1,conetentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:00:00',parentId:0,customeId:1,customerName:'王五',title:'射雕英雄传',
                   replyComments:[
-                      {id:2,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:06:00',parentId:1,customeId:1,username:'詹丹',custome_name:'王五'},
-                      {id:3,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:05:00',parentId:1,customeId:1,username:'李四',custome_name:'王五'},
-                      {id:4,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:05:00',parentId:1,customeId:1,username:'赵柳',custome_name:'天气'},
+                      {id:2,contentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:06:00',parentId:1,customeId:1,replyCustomerName:'詹丹',customeName:'王五'},
+                      {id:2,contentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:06:00',parentId:1,customeId:1,replyCustomerName:'詹丹',customeName:'王五'},
+                      {id:2,contentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:06:00',parentId:1,customeId:1,replyCustomerName:'詹丹',customeName:'王五'},
                   ]
                 },
-                {id:1,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:00:00',parentId:0,customeId:1,username:'王五',title:'射雕英雄传',
+                {id:1,conetentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:00:00',parentId:0,customeId:1,customerName:'王五',title:'射雕英雄传',
                     replyComments:[
-                        {id:2,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:06:00',parentId:1,customeId:1,username:'詹丹',custome_name:'王五'},
-                        {id:3,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:05:00',parentId:1,customeId:1,username:'李四',custome_name:'王五'},
-                        {id:4,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:05:00',parentId:1,customeId:1,username:'赵柳',custome_name:'天气'},
+                        {id:2,contentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:06:00',parentId:1,customeId:1,replyCustomerName:'詹丹',customeName:'王五'},
+                        {id:2,contentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:06:00',parentId:1,customeId:1,replyCustomerName:'詹丹',customeName:'王五'},
+                        {id:2,contentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:06:00',parentId:1,customeId:1,replyCustomerName:'詹丹',customeName:'王五'},
                     ]
                 },
-            ]
+                {id:5,parentId:0,content:'真好',customerName:'阿东',avatarName:'li.jpg',
+                    replyComments:[
+                        {id:6,parentId:5,customerName:'adog',replyCustomerName:'gougang',content:'还好',avatarName:'li.jpg'},
+                        {id:7,parentId:5,customerName:'adog',replyCustomerName:'张三',content:'垃圾',avatarName:'li.jpg'},
+                        {id:8,parentId:5,customerName:'adog',replyCustomerName:'gougang',content:'还好',avatarName:'li.jpg'},
+
+                    ]
+                }
+            ],
+            pagination: {//分页相关模型数据
+                currentPage: 1,//当前页码
+                pageSize:8,//每页显示的记录数
+                total:0,//总记录数
+                queryString:null//查询条件
+            },
         },
+
+        created(){
+
+            this.findPage();
+
+            // 查询用户
+            axios.get("/user/getUserById.do?id="+getId()).then((res)=>{
+                if(res.data.flag) {
+                    this.user = res.data.data;
+                }else {
+                    this.$message.error(res.data.messae)
+                }
+            })
+        },
+
         methods: {
+            findPage(){
+                let param = {
+                    currentPage:this.pagination.currentPage,
+                    pageSize:this.pagination.pageSize
+                }
+                axios.post("/comment/getCommentsByPage.do?customerId="+getId()+"&type=1", param).then((res)=>{
+                    if (res.data.flag ) {
+                        this.pagination.total = res.data.total;
+                        this.comments = res.data.rows ;
+                    } else {
+                        this.$message.error(res.data.message) ;
+                    }
+                })
+            },
             // 一级评论，显示评论框
             reply(index){
                 $("#"+index+"write").toggle(function () {
@@ -338,53 +405,130 @@
 
             // 根据文章标题舔砖到文章的具体页面
             showArticleDetail(id){
-                window.location.href="article-detail.html?id="+id;
+//                window.location.href="article.html?id="+id;
+                window.open("article.html?id="+id);
             },
 
             // 删除评论(将其子品论也删除)
             delComment(id){
-              alert(id);
+                // 点击确认执行此处代码
+                axios.get("/comment/deleteById.do?id="+id).then((res)=>{
+                    if(res.data.flag){
+                        this.$message({
+                            message:res.data.message,
+                            type:"success"
+                        })
+                       this.findPage();
+                    }else{
+                        this.$message("删除失败")
+                    }
+                })
             },
 
             // 取消投诉，取消后，将模态框进行隐藏
             rescind(){
                 $('#myModal').modal('hide')
             },
+            setCommentId(id){
+               this.complaint.commentId=id;
+            },
+
+            // 点赞 (点赞的位置， 点赞的评论id)
+            addSupportNum(index,id){
+                if (this.flag) {
+                    this.helper(1 , index, id)
+                    $("#"+index+"support").css("color","red");
+                } else {
+                    this.helper(-1 , index, id)
+                    $("#"+index+"support").css("color","blue");
+                }
+                this.flag = !this.flag;
+            },
+
+            // 点赞辅助类
+
+            helper(num, index, id) {
+                axios.get("/comment/addSupportNum.do?num="+num+"&id="+id).then((res)=>{
+                    if (res.data.flag) {
+                        this.comments[index].supportNum += num;
+                    }else {
+                        res.$message.error(res.data.message);
+                        return false ;
+                    }
+                })
+            },
             // 发送投诉信息
             sure(){
                 // 将complaint对象出入数据库中，举报成功后将模态框关闭
-                $('#myModal').modal('hide')
+                this.complaint.uid = this.user.id;
+                if (this.complaint.type == '' ){
+                    this.$message.error("请勾选相应的投诉选项");
+                    return false;
+                }
+                axios.post("/comment/report.do", this.complaint).then((res)=>{
+                    if (res.data.flag) {
+                        this.$message.success(res.data.message);
+                        $('#myModal').modal('hide')
+                        this.complaint.type = 0;
+                        this.complaint.mark='';
+                    } else {
+                        this.$message.error(res.data.error)
+                    }
+                })
+
             },
 
             // 提交回复
-            commit(index) {
+            commit(index, parentId, contentId) {
                 // 将comment进行提交
-
-                // （通过sql语句查询已该条评论id作为父id，并且评论人id为userid的人，num是否为1）
-                $("#"+index+"reply").text("已经回复")
-                $("#"+index+"reply").css({"color":"grey"})
-
-
-                // 将回复插入到数据库中，并且插入到评论数组中最前位置
-                var comment = {id:2,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:06:00',parentId:1,customeId:1,username:'詹丹'};
-                this.comments[index].replyComments.unshift(comment)
-                this.newComment = {},  // 将评论框进行置空
-                // 显示列表框
-                $("#"+index+"show").show()
+                this.newComment.parentId=parentId ;
+                this.newComment.customerId = this.user.id;
+                this.newComment.content_id = contentId;
+                this.newComment.avatarName = this.user.avatarName;
+                this.newComment.customerName = this.user.username;
+                this.newComment.type=1
+                axios.post("/comment/pubComment.do", this.newComment).then((res) => {
+                    if (res.data.flag ) {
+                        // （通过sql语句查询已该条评论id作为父id，并且评论人id为userid的人，num是否为1）
+                        $("#"+index+"reply").text("已经回复")
+                        $("#"+index+"reply").css({"color":"grey"})
+                        this.comments[index].replyComments.unshift(res.data.data);
+                        this.newComment = {}; // 将评论框进行置空
+                        // 显示列表框
+                        $("#"+index+"show").show()
+                    } else {
+                        this.$message.error(res.data.message)
+                    }
+                });
 
 
             },
+            // 切换页码
+            handleCurrentChange:function(currentPage) {
+                this.pagination.currentPage = currentPage;
+                this.findPage()
+            },
 
 
-            // 下方进行评论
-            rcommit(rindex,index){
-
-                  var comment = {id:2,artId:1,content:'这篇文章真好',commentTime:'2012-25-12 12:06:00',parentId:1,customeId:1,username:'仇晓',custome_name:'NCV'};
-                  // unshift向数组中进行头添加
-                  this.comments[index].replyComments.unshift(comment)
-
-                  $('#'+rindex+"rwrite"+index).hide()  // 隐藏评论框
-                  this.newCommnent1={}  // 将评论框置空
+            // 下方进行评论(二级评论)
+            rcommit(rindex,index,parentId,contentId){
+                // 将comment进行提交
+                this.newCommnent1.parentId=parentId ;
+                this.newCommnent1.customerId = this.user.id;
+                this.newCommnent1.content_id = contentId;
+                this.newCommnent1.avatarName = this.user.avatarName;
+                this.newCommnent1.customerName = this.user.username;
+                this.newCommnent1.type=1
+                axios.post("/comment/pubComment.do", this.newCommnent1).then((res) => {
+                    if (res.data.flag ) {
+                        // 在指定位置插入回复信息
+                        this.comments[index].replyComments.splice(rindex+1, 0 ,res.data.data);
+                        $('#'+rindex+"rwrite"+index).hide()  // 隐藏评论框
+                        this.newCommnent1 = {}; // 将评论框进行置空
+                    } else {
+                        this.$message.error(res.data.message)
+                    }
+                });
             }
 
         }

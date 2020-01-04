@@ -21,8 +21,8 @@
     </select>
 
     <select id="getUserAtten" parameterType="java.lang.Integer" resultType="java.util.Map">
-        SELECT u.id AS id, u.avatar_name AS avatarName,u.username AS username
-        FROM t_user u,(SELECT tid FROM t_atten_fan WHERE fid=#{value}) t
+        SELECT u.id AS id, u.avatar_name AS avatarName,u.username AS username,t.atten_time AS attenTime
+        FROM t_user u,(SELECT tid,atten_time FROM t_atten_fan WHERE fid=#{value}) t
         WHERE u.id=t.tid
     </select>
 
@@ -30,5 +30,19 @@
         SELECT u.id AS id, u.avatar_name AS avatarName,u.username AS username
         FROM t_user u,(SELECT fid FROM t_atten_fan WHERE tid=#{value}) t
         WHERE u.id=t.fid
+    </select>
+
+    <select id="getUserAttens" resultType="java.util.Map">
+        SELECT u.id AS id, u.avatar_name AS avatarName,u.username AS username,t.atten_time AS attenTime
+        FROM t_user u,(SELECT tid,atten_time FROM t_atten_fan WHERE fid=#{id}) t
+        WHERE u.id=t.tid
+        <if test="queryString != null">
+            AND u.username=#{queryString}
+        </if>
+        ORDER BY t.atten_time DESC
+    </select>
+
+    <select id="getFansCountByDays" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM t_atten_fan WHERE   atten_time &lt;= CONCAT(#{date},'24:00:00') AND tid=#{id}
     </select>
 </mapper>

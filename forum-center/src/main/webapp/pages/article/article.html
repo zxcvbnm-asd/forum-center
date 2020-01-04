@@ -354,7 +354,7 @@
                                 <div style="width: 96%">
                                     <a><img  class="head-pic img-circle" :src="'http://q2rcyhwpl.bkt.clouddn.com/'+comment.avatarName" @click="writerDetail(comment.customerId)"></a><div id="CN">{{comment.customerName}}</div>
                                     <span class="pull-right">
-                                        <el-button type="text" data-toggle="modal" data-target="#myModal">举报</el-button>
+                                        <el-button type="text" data-toggle="modal" @click="report(comment.id)">举报</el-button>
                                         &nbsp;&nbsp;&nbsp;<a v-if="comment.customerId==user.id" @click="deleteCommentById(comment.id,index,comment.parentId)">删除</a>
                                         &nbsp;&nbsp;&nbsp;<a @click="reply(comment.id,comment.customerName,index)">回复</a>
                                         &nbsp;&nbsp;&nbsp;<a @click="showReplyComment(comment.id,index)"><span :id="comment.id+'show'">查看回复</span></a></span>
@@ -373,7 +373,7 @@
                                             <span style="color: #999999">回复了</span>&nbsp;&nbsp;&nbsp;<span>{{replyComment.customerName}}</span>
                                             <div style="margin-left: 701px;margin-top: -20px">
 
-                                                <el-button type="text" data-toggle="modal" data-target="#myModal">举报</el-button>
+                                                    <el-button type="text" data-toggle="modal" @click="report(replyComment.id)">举报</el-button>
                                                 &nbsp;&nbsp;&nbsp;&nbsp;<a v-if="replyComment.customerId==user.id" @click="deleteCommentById(replyComment.id,index,replyComment.parentId,index2)">删除</a>
                                                 &nbsp;&nbsp;&nbsp;&nbsp;<a @click="reply(replyComment.id,replyComment.replyCustomerName,index)">回复</a>
                                             </div>
@@ -434,7 +434,7 @@
                     <div style="margin-top: 10px">
                         <span style="font-weight: bold">补充说明（选填）</span>
                         <div style="margin-top: 10px">
-                              <textarea id="textarea" cols="86" placeholder="请填写附加的补充内容" v-model="complaint.content"></textarea>
+                              <textarea id="textarea" cols="86" placeholder="请填写附加的补充内容" v-model="complaint.mark"></textarea>
                         </div>
                     </div>
                     <div style="margin-left: 467px;margin-top: 15px">
@@ -474,7 +474,7 @@
     var vm = new Vue({
         el:"#app",
         data:{
-            complaint:{id:1,type:1,content:'',remark:''},
+            complaint:{id:1,type:'',mark:'',status:''},
             comment:{content:''}, // 评论对象
             attention_flag:false,  //判断用（测试时使用，后台会出传递回来true 或者false）
             user:{},  // 用户数据模型
@@ -507,7 +507,7 @@
         },
 
         created(){
-            alert(JSON.stringify(this.user)=='{}')
+           /* alert(JSON.stringify(this.user)=='{}')*/
             // 获取文章id查询文章内容
            let id = getId();
            // 发送axios请求获取文章数据
@@ -521,9 +521,7 @@
                             // 获取用户信息
                             axios.get("/user/getUserByToken.do").then((res)=>{
                                 if(res.data.flag){
-                                    alert("已经查到用户")
                                     this.user = res.data.data;
-                                    alert(this.user.id)
                                     // 根据用户信息和作者信息到数据库中查询是否已经关注，返回条数若为以说明已经关注
                                     axios.get("/fan-atten/relation.do?fid=" + this.user.id + "&tid=" + this.article.uid).then((res) => {
                                         if (res.data.flag) {
@@ -580,29 +578,47 @@
                 $("#pub").show();
             },
 
+            // 举报，显示弹出框
+            report(id){
+                if (!this.isLogin()) {
+                    this.$message.error("登陆后才能投诉");
+                    return false ;
+                }
+                this.complaint.commentId =id;
+                $('#myModal').modal('show')
+            },
+
             // 取消投诉，取消后，将模态框进行隐藏
             rescind(){
                 $('#myModal').modal('hide')
             },
             // 发送投诉信息
             sure(){
-                if (!this.isLogin()) {
-                    this.$message.error("登陆后才能投诉");
+                if (this.complaint.type='') {
+                    this.$message.error("请勾选相应的选项");
                     return false ;
                 }
+                // 发送ajax请求将数据入库
+                this.complaint.uid=this.user.id;
+                axios.post("/comment/report.do", this.complaint).then((res)=>{
+                   if (res.data.flag) {
+                       this.$message.success("投诉成功");
+                       this.complaint.mark='';
+                   } else {
+                       this.$message.error(res.data.message)
+                   }
+                });
                 // 将complaint对象出入数据库中，举报成功后将模态框关闭
                 $('#myModal').modal('hide')
             },
             // 当点击回复某一条评论，改变textare中的placeholder，让其获取焦点，并将撤销按钮显示出来
             reply(id,name,index){
-                alert(index)
                 if (!this.isLogin()) {
                     this.$message.error("登陆后才能回复");
                     return false ;
                 }
                 $("#"+id).show(500) ;
                 $("#"+id+"show").text("收起回复");
-                //alert(index)
                 this.arrayIndex = index
                 this.parentId = id;
                 this.placeholder="回复:"+name
@@ -624,7 +640,6 @@
                     this.$message.error("登陆后方可评论");
                     return false ;
                 }
-                alert(this.arrayIndex)
                 this.comment.parentId=this.parentId
                 this.comment.customerId = this.user.id;
                 this.comment.content_id = this.article.id;
@@ -677,7 +692,7 @@
 
             //判断用户是否登陆
             isLogin(){
-              if (this.user == null) {
+              if (JSON.stringify(this.user) == "{}") {
                   return false;
               }
               return true;
