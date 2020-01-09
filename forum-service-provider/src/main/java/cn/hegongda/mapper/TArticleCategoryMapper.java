@@ -13,4 +13,6 @@ public interface TArticleCategoryMapper {
 
     @Select("select * from t_article_category where parent_id=#{parentId}")
     List<TArticleCategory> findChildByParentId(Integer parentId);
+
+    TArticleCategory getCategoryNameById(Integer cid);
 }

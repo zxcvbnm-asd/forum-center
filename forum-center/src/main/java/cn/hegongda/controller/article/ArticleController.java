@@ -7,7 +7,9 @@ import cn.hegongda.result.PageResult;
 import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
 import cn.hegongda.service.ArticleService;
+import cn.hegongda.service.SearchService;
 import com.alibaba.dubbo.config.annotation.Reference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,9 @@ public class ArticleController {
 
     @Reference
     private ArticleService articleService;
+
+    @Reference
+    private SearchService searchService;
 
     // 查询一级分类
     @RequestMapping("/findFirstCate.do")
@@ -114,7 +119,7 @@ public class ArticleController {
          }
     }
 
-    // 根据id查询文章
+    // 根据id查询文章(浏览文章)
     @RequestMapping("/findById.do")
     @ResponseBody
     public Result findById(Integer id){
@@ -187,6 +192,69 @@ public class ArticleController {
             return new Result(false,"系统繁忙，请稍后再试");
         }
     }
+
+    /*
+     * 根据条件查询进行搜索文章
+     */
+    @RequestMapping("/findAtricleByQuery.do")
+    @ResponseBody
+    public PageResult findByQuery(@RequestBody QueryPageBean queryPageBean){
+        try {
+            PageResult pageResult = searchService.findAtricleByQuery(queryPageBean);
+            return pageResult;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new PageResult("查询出错",false);
+        }
+    }
+
+    /*
+     *  根据cid分类搜索文章
+     */
+    @RequestMapping("/findArticleByCid.do")
+    @ResponseBody
+    public PageResult findArticleByCid(Integer cid,  @RequestBody QueryPageBean queryPageBean ) {
+        try {
+            PageResult pageResult = searchService.findArticleByCid(cid , queryPageBean);
+            return pageResult;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new PageResult("查询出错",false);
+        }
+    }
+
+    /*
+     * 根据父分类进进行文章的搜索
+     */
+    @RequestMapping("/findArticleByParentId.do")
+    @ResponseBody
+    public PageResult findArticleByParentId(Integer parentId,  @RequestBody QueryPageBean queryPageBean ) {
+        try {
+            PageResult pageResult = searchService.findArticleByParentId(parentId , queryPageBean);
+            return pageResult;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new PageResult("查询出错",false);
+        }
+    }
+
+
+    /*
+     * 根据cid 或者 parentid 外加条件进行查询
+     */
+    @RequestMapping("/findArticleByIdAndQueryString.do")
+    @ResponseBody
+    public PageResult findArticleByIdAndQueryString(Integer cid, Integer parentId, @RequestBody QueryPageBean queryPageBean){
+        try {
+            PageResult pageResult = searchService.findArticleByIdAndQueryString(cid , parentId, queryPageBean);
+            return pageResult;
+        } catch (Exception e){
+            e.printStackTrace();
+            return new PageResult("查询出错",false);
+        }
+    }
+
+
 
 
 }

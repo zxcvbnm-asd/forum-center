@@ -13,8 +13,8 @@
         <module>forum-center</module>
         <module>forum-admin</module>
         <module>forum-service-provider</module>
-        <module>forum-search</module>
         <module>forum-search-service-provider</module>
+        <module>forum-schedule-task</module>
     </modules>
 
     <packaging>pom</packaging>

@@ -13,30 +13,37 @@
     <script type="text/javascript" src="../../js/vue.js"></script>
     <script src="../../plugins/elementui/index.js"></script>
     <script type="text/javascript" src="../../js/axios-0.18.0.js"></script>
+    <script type="text/javascript" src="../../js/link-param.js"></script>
 
     <style>
 
+        .eslight{
+            color: red;
+        }
 
+        .pagination-container{
+            margin-left: 251px;
+        }
     </style>
 </head>
 <body>
 <div id="app">
     <div id="header">
-        <img src="../../images/3.png">
+        <a href="../protal.html"><img src="../../images/3.png"></a>
         <img src="../../images/logo_right.jpg" class="pull-right" style="margin-right:120px">
-        <div class="pic"  v-if="user!=''">
+        <div class="pic"  v-if="JSON.stringify(user)!='{}'">
 
-            <img src="../../images/0.jpg" width="20px" height="20px" class="img-circle" style="margin-left: 5px;margin-bottom: 5px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-            <span v-cloak class='item' style="font-size: 13px"  data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">{{user.name}}</span>
+            <img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+user.avatarName"  id="headPic" width="40px" height="40px" class="img-circle" style="margin-left: -21px;margin-bottom: 5px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            <span v-cloak class='item' style="font-size: 13px"  data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">{{user.username}}</span>
         </div>
-        <div class="collapse" style="margin-left: 1233px;margin-top: -81px;position: absolute" id="collapseExample">
+        <div class="collapse" style="margin-left: 1233px;margin-top: -62px;position: absolute" id="collapseExample">
             <div  style="width: 110px;height: 70px; background-color: #ecf0f1;border-radius: 5% 5% 5% 5%">
                 <div style="padding-left: 10px;padding-top: 10px;"><a href="../user/edit_password.html" style="color: #8f0008;font-weight: bold"> 修改密码</a></div>
                 <div style="padding-left: 10px;margin-top: 10px;"><a style="font-weight: bold" href="#" @click="layout">退出</a></div>
             </div>
         </div>
-        <div class="pic" v-if="user==''">
-            <a href="../user/login.html" class="login" style="text-decoration: none;color: skyblue;font-weight: bold; font-size: 15px">登&nbsp;&nbsp;&nbsp;陆</a>
+        <div class="pic" v-if="JSON.stringify(user)=='{}'">
+            <a href="#" class="login" @click="login" style="text-decoration: none;color: skyblue;font-weight: bold; font-size: 15px">登&nbsp;&nbsp;&nbsp;陆</a>
         </div>
     </div>
 
@@ -62,42 +69,46 @@
 
         <div id="main">
             <div id="search">
-                <input type="text" class="form-control" placeholder="请输入查询的文章标题或者作者名"/>
-                <button class="btn btn-primary">搜索</button>
-
+                <input type="text" class="form-control" v-model="pagination.queryString" placeholder="请输入查询的文章标题或者作者名"/>
+                <button class="btn btn-primary" @click="search">搜索</button>
                 <div id="content">
-                    <div></div>
+                    <div style="margin-top: 5px">&nbsp;</div>
                     <div class="media" v-for="article in articles">
                         <div class="media-left">
-                            <a href="#" @click="articleDetail(article.id)">
-                                <img class="tic_img" :src="article.coverUrl"  alt="...">
+                            <a href="#" @click.prevent="articleDetail(article.id)">
+                                <img class="tic_img" :src="'http://q2rcyhwpl.bkt.clouddn.com/'+article.coverUrl"  alt="...">
                             </a>
                         </div>
                         <div class="media-body">
-                            <h4 class="media-heading"><a href="#" @click="articleDetail(article.id)"> {{article.title}}</a></h4>
-                            <span>标签：
-                                 <span class="labels" v-for="label in article.labels">{{label}}&nbsp;</span>
-                             </span><br>
-                            <span>阅读量:<code style="font-size: 14px">{{article.num}}</code></span><br>
-                            <span>作者：<span class="writer"><a href="#" @click="showWriter(article.writerId)">{{article.writer}}</a></span></span>
+                            <h4 class="media-heading"><a href="#" @click.prevent="articleDetail(article.id)" v-html="article.title"></a></h4>
+                            <span>阅读量:<code style="font-size: 14px">{{article.num}}</code></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span>分类:<a href="#" @click="findByCid(article.cid)"><code style="font-size: 14px;color: green">{{article.cname}}<a></a></code></span><br>
+                            <span>作者：<span class="writer"><a href="#" @click="showWriter(article.uid)">{{article.username}}</a></span></span><br>
+                            <span v-if="article.labels != null">标签：
+                                 <span  class="labels" v-for="label in article.labels.split('，')">
+                                     {{label}}&nbsp;&nbsp;&nbsp;
+                                 </span>
+                             </span>
+                            <span class="pull-right"><code style="font-size: 14px;color: red;">{{article.pubTime}}</code></span>
                         </div>
                     </div>
-
-
                 </div>
+            </div>
 
-            </div>
-            <div class="pagination-container">
-                <el-pagination
-                        class="pagiantion"
-                        @current-change="handleCurrentChange"
-                        :current-page="pagination.currentPage"
-                        :page-size="pagination.pageSize"
-                        layout="total, prev, pager, next, jumper"
-                        :total="pagination.total">
-                </el-pagination>
-            </div>
+
+
         </div>
+        <div class="pagination-container" style=" margin-top: 757px;width: 846px; text-align: center;">
+            <el-pagination
+                    class="pagiantion"
+                    @current-change="handleCurrentChange"
+                    :current-page="pagination.currentPage"
+                    :page-size="pagination.pageSize"
+                    layout="total, prev, pager, next, jumper"
+                    :total="pagination.total">
+            </el-pagination>
+        </div>
+
         <div id="raside">
             <div id="box2">
                 <h4 style="border-bottom: 3px #96b97d solid; padding-bottom: 4px;color: #761c19">热点话题</h4>
@@ -148,29 +159,9 @@
     var vm = new Vue({
         el:"#app",
         data:{
-            dialogTableVisible: false,
-            /*   user:{
-                   id:1,
-                   name:'阿三',
-                   flag:false,
-                   status:1,          // 会员状态 0 不是会员  1 是会员
-                   time:'2019-12-4',  // 会员到期时间
-               },*/
-            user:'',  // 用户数据模型
-            categories:[    // 分类信息
-                {id:1,cname:'oracle'},
-                {id:2,cname:'mysql'},
-                {id:3,cname:'redis'},
-                {id:3,cname:'sqlServer'},
-                {id:3,cname:'mongeDB'},
-            ],
-
-            articles:[  // 查询的文章信息
-                {id:1,title:'mysql入门与放弃',labels:['mysql','数据库'],num:396,writer:'阿三',writerId:2,coverUrl:'./images/0.jpg'},
-                {id:2,title:'mysql入门与放弃',labels:['java','javase'],num:396,writer:'的概念',writerId:2,coverUrl:'./images/0.jpg'},
-                {id:3,title:'mysql入门与放弃',labels:['spring','javaee'],num:1000,writer:'凶手你',writerId:2,coverUrl:'./images/0.jpg'},
-                {id:4,title:'mysql入门与放弃',labels:['html','WEBPage'],num:396,writer:'vhfui',writerId:2,coverUrl:'./images/0.jpg'},
-            ],
+            user:{},  // 用户数据模型
+            categories:[],    // 分类信息
+            articles:[ ], // 查询的文章信息
 
             topics:[  // 热门话题
                 {id:1,topic:'你发头阿拉时发v'},
@@ -188,43 +179,135 @@
             ],
             pagination: {//分页相关模型数据
                 currentPage: 1,//当前页码
-                pageSize:10,//每页显示的记录数
+                pageSize:5,//每页显示的记录数
                 total:0,//总记录数
                 queryString:null//查询条件
             },
 
+            parentId:-1,
+            childId:-1
         },
 
         created(){
-            setInterval(function(){
-                var imgs = $(".window img");
-                $(imgs[2]).fadeOut(1000, function(){
-                    $(this).show().prependTo(".window");
-                })
-            }, 3000);
+            // 赋值一级分类
+            var id = getParam("id");
+            this.parentId = parseInt(id);
+            // 查询用户判断其是否登陆
+            // 在token中获取user
+            axios.get("/user/getUserByToken.do").then((res)=>{
+                if (res.data.flag) {
+                    this.user = res.data.data;
+                }
+            });
+            // 先查询出二级分类
+            axios.get("/article/findSecondCate.do?parentId="+id).then((res)=>{
+                if (res.data.flag ){
+                    this.categories = res.data.data;
+                } else {
+                    this.$message.error(res.data.message)
+                }
+            })
+
+            this.findPage();
         },
 
 
 
         methods:{
+
+            findPage(){
+                var param = {
+                    currentPage:this.pagination.currentPage,
+                    pageSize:this.pagination.pageSize,
+                    queryString:this.pagination.queryString
+                }
+
+             /*   alert(this.pagination.queryString == null)*/
+                 if (this.pagination.queryString != null && this.pagination.queryString !="null") {
+                     axios.post("/article/findArticleByIdAndQueryString.do?cid="+this.childId+"&parentId="+this.parentId, param).then((res)=>{
+                         if (res.data.flag) {
+                             this.articles = res.data.rows;
+                             this.pagination.total = res.data.total;
+                         } else {
+                             this.$message.error(res.data.message);
+                         }
+                     })
+                 }
+                // 父分页查询
+                 else if (this.parentId != -1){
+                    // 根据父分类进行查询
+                    axios.post("/article/findArticleByParentId.do?parentId="+this.parentId, param).then((res)=>{
+                        if (res.data.flag) {
+                            this.articles = res.data.rows;
+                            this.pagination.total = res.data.total;
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
+                    })
+                } else if (this.childId != -1) {
+                    // 子分页查询
+                    axios.post("/article/findArticleByCid.do?cid="+this.childId,param).then((res)=>{
+                        if (res.data.flag) {
+                            this.articles = res.data.rows;
+                            this.pagination.total = res.data.total;
+                        } else {
+                            this.$message.error(res.data.message);
+                        }
+                    })
+                }
+            },
+
+            // 根据输入的条件进行查询
+            search(){
+                this.pagination.currentPage = 1;
+                var param = {
+                    currentPage:this.pagination.currentPage,
+                    pageSize:this.pagination.pageSize,
+                    queryString:this.pagination.queryString
+                }
+
+                axios.post("/article/findArticleByIdAndQueryString.do?cid="+this.childId+"&parentId="+this.parentId, param).then((res)=>{
+                    if (res.data.flag) {
+                        this.articles = res.data.rows;
+                        this.pagination.total = res.data.total;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                })
+            },
             // 登陆时跳转页面
             login(){
-                window.location.href='../user/login.html'
+                var url = window.location.href ;
+                window.location.href='../user/login.html?redirectUrl='+url
             },
 
             // 按照分类id查询某一分类下的所有文章
             find(id){
-                //alert(id);
+                this.pagination.queryString = null; // 避免输入查询的干扰
+                this.childId = id;  // 将子id设置分页查询
+                this.parentId = -1;
+                this.pagination.currentPage = 1;
+                var param = {
+                    currentPage:this.pagination.currentPage,
+                    pageSize:this.pagination.pageSize
+                }
+               axios.post("/article/findArticleByCid.do?cid="+id,param).then((res)=>{
+                   if (res.data.flag) {
+                       this.articles = res.data.rows;
+                       this.pagination.total = res.data.total;
+                   } else {
+                       this.$message.error(res.data.message);
+                   }
+               })
             },
 
             // 查看文章具体详情
             articleDetail(id){
-                window.location.href='article.html?id='+id
+                window.open('article.html?id='+id);
             },
             // 根据作者id查看作者详细信息
             showWriter(writerId){
-                alert(writerId);
-                window.location.href='../fan-atten/attention_detail.html'
+                window.open('../fan-atten/attention_detail.html?id='+writerId);
             },
             // elementui 的下拉选择，弹出command的值
             handleCommand(command) {
@@ -234,17 +317,21 @@
 
             // 用户退出
             layout(){
-
                 // 发送ajax,参数为用户id，通过id使session 失效
-
-                // 将user置空
-                this.user=''
-                $('.collapse').collapse('hide')
+                axios.get("/user/layout.do").then((res) => {
+                    if (res.data.flag) {
+                        window.location.href = "/pages/protal.html"
+                    } else {
+                        this.$message.error(res.data.message)
+                    }
+                });
 
             },
             // 切换页码
             handleCurrentChange: function (currentPage) {
                 this.pagination.currentPage = currentPage;
+                this.findPage();
+
             },
 
 

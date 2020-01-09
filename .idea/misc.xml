@@ -4,6 +4,7 @@
     <file type="web" url="file://$PROJECT_DIR$/forum-admin" />
     <file type="web" url="file://$PROJECT_DIR$/forum-center" />
     <file type="web" url="file://$PROJECT_DIR$/forum-eduitor" />
+    <file type="web" url="file://$PROJECT_DIR$/forum-schedule-task" />
     <file type="web" url="file://$PROJECT_DIR$/forum-search" />
     <file type="web" url="file://$PROJECT_DIR$/forum-search-service-provider" />
     <file type="web" url="file://$PROJECT_DIR$/forum-service-provider" />
@@ -22,6 +23,7 @@
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/forum-eduitor/pom.xml" />
+        <option value="$PROJECT_DIR$/forum-search/pom.xml" />
         <option value="$PROJECT_DIR$/forumsearchserviceprovider/pom.xml" />
       </set>
     </option>

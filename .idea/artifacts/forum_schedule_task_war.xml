@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="forum-schedule-task:war">
+    <output-path>$PROJECT_DIR$/forum-schedule-task/target</output-path>
+    <root id="archive" name="forum-schedule-task-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="forum-schedule-task:war exploded" />
+    </root>
+  </artifact>
+</component>

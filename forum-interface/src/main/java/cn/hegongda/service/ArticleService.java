@@ -33,4 +33,6 @@ public interface ArticleService {
     Result getSupportNum(Integer aid);
     // 增加点赞数
     Result addSupportNum(Integer aid, Integer number);
+    // 将阅读数记录插入到数据库中
+    Result readRecoderToDatabase(Integer total, String uid, String cid);
 }

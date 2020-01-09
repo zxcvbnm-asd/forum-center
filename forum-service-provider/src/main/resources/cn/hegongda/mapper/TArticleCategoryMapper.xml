@@ -2,5 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.hegongda.mapper.TArticleCategoryMapper" >
 
+   <resultMap id="BaseResultMap" type="cn.hegongda.pojo.TArticleCategory">
+       <id property="id" column="id"></id>
+       <result property="cname" column="cname"/>
+       <result property="parentId" column="parent_id"/>
+       <result property="rmark" column="rmark"/>
+       <result property="createTime" column="create_time"/>
+   </resultMap>
+
+    <select id="getCategoryNameById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from t_article_category where id=#{value}
+    </select>
 
 </mapper>

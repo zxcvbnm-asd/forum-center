@@ -1,18 +1,10 @@
 package cn.hegongda;
 
-import cn.hegongda.mapper.FanAttenMapper;
-import cn.hegongda.mapper.TArticleMapper;
-import cn.hegongda.mapper.TCommentMapper;
-import cn.hegongda.pojo.CommentExpan;
-import cn.hegongda.pojo.TArticle;
-import cn.hegongda.pojo.TComment;
-import cn.hegongda.pojo.TCommentReport;
+import cn.hegongda.mapper.*;
+import cn.hegongda.pojo.*;
 import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
-import cn.hegongda.service.AnnounceService;
-import cn.hegongda.service.ArticleServiceImpl;
-import cn.hegongda.service.CommentService;
-import cn.hegongda.service.FanAttenService;
+import cn.hegongda.service.*;
 import cn.hegongda.utils.DateUtils;
 import cn.hegongda.utils.JsonUtils;
 import org.junit.Test;
@@ -54,6 +46,48 @@ public class TestSpring {
 
     @Autowired
     private AnnounceService announceService;
+
+    @Autowired
+    TArticleCategoryMapper tArticleCategoryMapper;
+
+    @Autowired
+    TUserMapper userMapper;
+
+    @Autowired
+    ArticleReportService articleReportService ;
+
+     @Test
+     public void test(){
+         Result result = articleReportService.getPreMonthsTotal(11);
+         Map data = (Map) result.getData();
+     }
+
+    // 向logstash的数据库表中添加数据
+    @Test
+    public void test2(){
+        List<TArticle> published = articleMapper.findPublished();
+        for (TArticle article : published) {
+            ArticlePub articlePub = new ArticlePub();
+            articlePub.setCid(article.getCid());
+            TArticleCategory articleCategory = tArticleCategoryMapper.getCategoryNameById(article.getCid());
+            articlePub.setCname(articleCategory.getCname());
+            Integer parentId = articleCategory.getParentId();
+            articlePub.setParentId(parentId);
+            articlePub.setCoverUrl(article.getCoverUrl());
+            articlePub.setLabels(article.getLabels());
+            articlePub.setTitle(article.getTitle());
+            articlePub.setNum(article.getNum());
+            articlePub.setUid(article.getUid());
+            Date pubTime = article.getPubTime();
+            articlePub.setPubTime(DateUtils.format2(article.getPubTime()));
+            TUser user = userMapper.selectByPrimaryKey(article.getUid());
+            articlePub.setUsername(user.getUsername());
+            articlePub.setId(article.getId());
+            articlePub.setTimestamp(new Date());
+            articleMapper.addArticlePub(articlePub);
+
+        }
+    }
 
 
     @Test
@@ -144,6 +178,11 @@ public class TestSpring {
 
        announceService.changeNoticeStatus(1);
 
+    }
+
+    @Test
+    public void testMap(){
+       articleService.findById(403);
     }
 
 

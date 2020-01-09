@@ -24,7 +24,7 @@ public class ControllerInterceptor implements HandlerInterceptor{
 
     @Autowired
     private HttpServletResponse res;
-    private HttpServletRequest req;
+
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

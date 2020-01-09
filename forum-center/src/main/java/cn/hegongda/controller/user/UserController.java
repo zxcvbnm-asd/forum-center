@@ -1,6 +1,7 @@
 package cn.hegongda.controller.user;
 
 
+import cn.hegongda.constant.MessageConstant;
 import cn.hegongda.constant.RedisConstant;
 import cn.hegongda.pojo.TUser;
 import cn.hegongda.result.Result;
@@ -12,6 +13,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.objenesis.instantiator.annotations.Instantiator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 /**
@@ -40,6 +43,9 @@ public class UserController {
     @Autowired
     private HttpServletRequest request;
 
+    @Autowired
+    private HttpServletResponse response;
+
     /*
      *  登陆main.html页面时，查询用户信息，显示用户头像等信息
      */
@@ -47,8 +53,10 @@ public class UserController {
     @ResponseBody
     public Result findUserById(Integer id){
         try{
-            TUser user = userService.getUserById(id);
-            return new Result(true,"用户查询成功",user);
+            // 根据cookie的token和jedis判断用户先判断用户是否进行登陆
+            String token = CookieUtils.getCookieValue(request, RedisConstant.USER_TOKEN);
+            Result result = userService.getUserById(id,token);
+            return result;
         }catch (Exception e){
             e.printStackTrace();
             return new Result(false,"系统出现错误，请稍后进行查询");
@@ -66,6 +74,8 @@ public class UserController {
         String token = CookieUtils.getCookieValue(request, RedisConstant.USER_TOKEN);
         // 判断token是否存在存在则从jedis中获取用户信息并返回
         if (StringUtils.isNotBlank(token)){
+            //将token保存到客户端从新设置其过期时间
+            CookieUtils.setCookie(request,response, RedisConstant.USER_TOKEN, token,60 * 60 * 12);
             String json = jedis.get(RedisConstant.USER_TOKEN + token);
             if (StringUtils.isNotBlank(json)){
                 TUser user = JsonUtils.jsonToPojo(json, TUser.class);
@@ -109,9 +119,62 @@ public class UserController {
     @RequestMapping("/edit.do")
     @ResponseBody
     public Result eidtUser(@RequestBody TUser user){
+        System.out.println(userService);
         String token = CookieUtils.getCookieValue(request, RedisConstant.USER_TOKEN);
         Result result = userService.editUser(user, token);
         return result;
     }
 
+
+    /*
+     * 修改密码
+     */
+    @RequestMapping("/modifyPassword.do")
+    @ResponseBody
+    public Result modifyPassword(@RequestBody TUser user){
+        try {
+            String token = CookieUtils.getCookieValue(request, RedisConstant.USER_TOKEN);
+            Result result = userService.changePassword(user,token);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, MessageConstant.OPERATION_FAIL);
+        }
+    }
+
+    /*
+     * 用户退出登录
+     */
+    @RequestMapping("/layout.do")
+    @ResponseBody
+    public Result layout(){
+        try {
+            String token = CookieUtils.getCookieValue(request, RedisConstant.USER_TOKEN);
+            // 删除jedis缓存
+            Jedis jedis = jedisPool.getResource();
+            jedis.del(RedisConstant.USER_TOKEN + token);
+            // 删除cookie
+            CookieUtils.deleteCookie(request, response, RedisConstant.USER_TOKEN);
+
+            return new Result(true, MessageConstant.OPERATION_SUCCESS);
+        } catch (Exception e ){
+            e.printStackTrace();
+            return new Result(false , MessageConstant.OPERATION_FAIL) ;
+        }
+    }
+
+    /*
+     * 当点击文章具体详情时，根据id查询作者
+     */
+    @RequestMapping("/getWriterById.do")
+    @ResponseBody
+    public Result getWriterById(Integer id) {
+        try {
+            Result result = userService.getWriterById(id);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, MessageConstant.OPERATION_FAIL);
+        }
+    }
 }

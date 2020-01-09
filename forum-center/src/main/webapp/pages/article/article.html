@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="../../css/bootstrap-theme.min.css"/>
     <link rel="stylesheet" href="../../css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../../css/article.css"/>
     <script type="text/javascript" src="../../js/jquery.min.js"></script>
     <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../../js/vue.js"></script>
@@ -14,291 +15,21 @@
     <script type="text/javascript" src="../../js/axios-0.18.0.js"></script>
 
     <style>
-        body{
-            position: relative;
-
-        }
-
-        nav{
-            background-color:#8f0008
-        }
-
-        #header{
-            background-color: #8f0008;
-            width: 1347px;
-            height: 120px;
-        }
-
-
-
-        .item{
-            color: #ffffe7;
-            font-weight: bold;
-            font-size: 15px;
-
-        }
-
-
-        #nav table tr td a:hover{
-            text-decoration: none;
-            color:#ffffe7;
-        }
-
-
-        td {
-            text-align: center;
-            width: 200px;
-            height: 38px;
-        }
-
-        table{
-            margin-left: 90px;
-        }
-
-
-
-        .window  img{
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-
-
-
-
-
-        #footer{
-            position: absolute;
-            width: 1347px;
-            height: 145px;
-            background-color: #8f0008;
-
-        }
-        h3{
-            border-bottom: 2px #ffd401 solid;
-            color: #990000;
-        }
-
-        .list-group a{
-            border-bottom-color: red ;
-            font-weight: bold;
-            color: #2b669a;
-        }
-        .attention{
-            width: 500px;
-            height: 130px;
-            margin-left: 500px;
-            margin-top: 20px;
-            color: #ffffe7;
-            font-weight: bold;
-        }
-
-        .erweima{
-            position: absolute;
-            margin-left: 120px;
-            margin-top: 20px;
-        }
-        .erweima2{
-            position: absolute;
-            margin-left: 1000px;
-            margin-top: 20px;
-        }
-
-
-
-        table tr td:hover{
-            cursor: pointer;
-        }
-
-
-
-        .pic{
-            position: absolute;
-            z-index:1;
-            margin-left: 1255px;
-            margin-top: -104px;
-            cursor: pointer;
-        }
-
-
-
-
         [v-cloak]{
             display: none;
         }
-
-        a{
-            text-decoration: none;
-        }
-
-
-
-
-
-        .containers{
-            display: flex;
-        }
-
-        #aside{
-            flex: 1.5;
-            background-image: url("../../images/z.jpg");
-            background-size: 200px 200px;
-            border-right: 1px #ecf0f1 solid;
-
-        }
-
-        #main{
-            flex: 7;
-
-
-        }
-
-        #raside{
-            flex: 1.5;
-            background-image: url("../../images/b.jpg");
-            background-size: 200px 200px;
-            border-left: 1px #ecf0f1 solid;
-           
-        }
-
-        .login:hover{
-            color: blue;
-        }
-
-        #content{
-            width: 96%;
-            margin-left: 2%;
-            border-top: 1px #ecf0f1 solid;
-        }
-
-        #title{
-            margin-top: 20px;
-            margin-left: 300px;
-            font-family: DFKai-SB;
-            font-size: 35px;
-        }
-
-        #time{
-            margin-top: 20px;
-            font-size: 20px;
-            font-family: DFKai-SB;
-            margin-left: 733px;
-        }
-
-        #text{
-            margin-top: 20px;
-            margin-left: 60px;
-        }
-
-        #writer{
-            margin-left: 800px;
-            margin-top: 25px;
-        }
-
-        #atten:hover{
-            text-decoration: none;
-            cursor: pointer;
-            color: orange;
-        }
-
-        #atten{
-            font-size: 18px;
-            position: absolute;
-            margin-top: 3px;
-            font-weight: bold;
-        }
-
-        #suport{
-            position: absolute;
-            margin-top: 0;
-            margin-left: -757px;
-            cursor: pointer;
-        }
-
-        .zi{
-            font-size: 25px;
-            color: red;
-        }
-
-        .zi1{
-            font-size: 25px;
-            color: grey;
-        }
-
-
-        #CN{
-            position: absolute;
-            margin-top: -20px;
-            margin-left: 24px;
-            font-weight: bold;
-        }
-
-        .first-con{
-            margin-left: 41px;
-            margin-top: 3px;
-            color: #4d4d4d;
-        }
-
-        a:hover{
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .back{
-            margin-left: 37px;
-            margin-top: 6px;
-            margin-bottom: 6px;
-        }
-
-        .head-pic{
-            width: 20px;
-            height: 20px;
-        }
-
-        .ss{
-            position: absolute;
-            margin-left: 26px;
-            margin-top: -20px;
-        }
-
-        .reply-content{
-            margin-left: 26px;
-            margin-top: 10px;
-            color: #814d67;
-        }
-
-        .cate{
-            font-size: 15px;
-            color: orange;
-            font-weight: bold;
-        }
-
-        #user-name{
-             color: white;
-             font-weight: bold;
-             margin-left: 9px;
-             margin-top: -8px;
-        }
-
-        #support-num{
-            font-weight:bold;;
-            margin-left: -717px;
-            margin-top:-26px;
-            position: absolute;
-            letter-spacing: 0.5px;
-            color: #4cae4c;
-        }
-
     </style>
+
 </head>
 <body>
 <div id="app">
     <div id="header">
-        <img src="../../images/3.png">
+        <a href="../protal.html"><img src="../../images/3.png"></a>
         <img src="../../images/logo_right.jpg" class="pull-right" style="margin-right:120px">
         <div class="pic"  v-if="JSON.stringify(this.user)!='{}'">
 
-            <img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+user.avatarName" width="30px" height="30px" class="img-circle" style="margin-left: -23px;margin-bottom: -17px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><div id="user-name">{{user.username}}</div>
-            <span v-cloak class='item' style="font-size: 13px"  data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">{{user.name}}</span>
+            <img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+user.avatarName" v-cloak width="30px" height="30px" class="img-circle" style="margin-left: -23px;margin-bottom: -17px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><div id="user-name">{{user.username}}</div>
+            <span v-cloak class='item' style="font-size: 13px"  data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample" v-cloak>{{user.name}}</span>
         </div>
         <div class="collapse" style="margin-left: 1233px;margin-top: -69px;position: absolute" id="collapseExample">
             <div  style="width: 110px;height: 70px; background-color: #ecf0f1;border-radius: 5% 5% 5% 5%">
@@ -319,9 +50,9 @@
         <div id="main">
            <div id="content">
               <div></div>
-              <div id="title">{{article.title}}</div>
+              <div id="title" v-cloak>{{article.title}}</div>
            </div>
-            <div id="time">
+            <div id="time" v-cloak>
                 {{article.pubTime}}
             </div>
             <div id="text" v-html="article.content">
@@ -330,8 +61,8 @@
             <hr>
             <div id="writer">
                 <a id="suport" @click="add"><span  :class="['glyphicon','glyphicon-thumbs-up', {'zi':flag},{'zi1':!flag}]" ></span> </a>&nbsp;&nbsp;&nbsp;<div id="support-num">{{support_num>10000?Math.floor(support_num/10000)+'0000+':support_num}}</div>
-                <a href="#" @click="writerDetail(article.uid)">
-                <img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+avatarName" class="img-circle" width="30px" height="30px"/></a>&nbsp;&nbsp;&nbsp;<a ref="atten" id="atten" @click="isAttention">关注</a>
+                <a href="#" >
+                <img @click="writerDetail(article.uid)" :src="'http://q2rcyhwpl.bkt.clouddn.com/'+avatarName" class="img-circle" width="30px" height="30px"/></a>&nbsp;&nbsp;&nbsp;<a ref="atten" id="atten" @click="isAttention">关注</a>
             </div>
             <hr>
             <div id="comments" style="margin-bottom: 20px">
@@ -352,13 +83,13 @@
                         <div style="margin-left: 10px">
                             <div>
                                 <div style="width: 96%">
-                                    <a><img  class="head-pic img-circle" :src="'http://q2rcyhwpl.bkt.clouddn.com/'+comment.avatarName" @click="writerDetail(comment.customerId)"></a><div id="CN">{{comment.customerName}}</div>
+                                    <a><img  class="head-pic img-circle" :src="'http://q2rcyhwpl.bkt.clouddn.com/'+comment.avatarName" @click="writerDetail(comment.customerId)"></a><div id="CN" v-cloak>{{comment.customerName}}</div>
                                     <span class="pull-right">
                                         <el-button type="text" data-toggle="modal" @click="report(comment.id)">举报</el-button>
                                         &nbsp;&nbsp;&nbsp;<a v-if="comment.customerId==user.id" @click="deleteCommentById(comment.id,index,comment.parentId)">删除</a>
                                         &nbsp;&nbsp;&nbsp;<a @click="reply(comment.id,comment.customerName,index)">回复</a>
                                         &nbsp;&nbsp;&nbsp;<a @click="showReplyComment(comment.id,index)"><span :id="comment.id+'show'">查看回复</span></a></span>
-                                    <div class="first-con" >
+                                    <div class="first-con" v-cloak >
                                         {{comment.content}}
                                     </div>
                                 </div>
@@ -367,10 +98,10 @@
                             <div  class="second-con" :id="comment.id">
                                 <div v-for="(replyComment,index2) in comment.replyComments" :key="index2">
                                     <div class="back">
-                                        <a><img class="head-pic img-circle" :src="'http://q2rcyhwpl.bkt.clouddn.com/'+replyComment.avatarName" @click="writerDetail(replyComment.customerId)"/></a>
+                                        <a><img v-cloak class="head-pic img-circle" :src="'http://q2rcyhwpl.bkt.clouddn.com/'+replyComment.avatarName" @click="writerDetail(replyComment.customerId)"/></a>
                                         <div class="ss">
-                                            <span style="font-weight: bold;font-size: 16px">{{replyComment.replyCustomerName}}</span>&nbsp;&nbsp;&nbsp;
-                                            <span style="color: #999999">回复了</span>&nbsp;&nbsp;&nbsp;<span>{{replyComment.customerName}}</span>
+                                            <span v-cloak style="font-weight: bold;font-size: 16px">{{replyComment.replyCustomerName}}</span>&nbsp;&nbsp;&nbsp;
+                                            <span style="color: #999999">回复了</span>&nbsp;&nbsp;&nbsp;<span v-cloak>{{replyComment.customerName}}</span>
                                             <div style="margin-left: 701px;margin-top: -20px">
 
                                                     <el-button type="text" data-toggle="modal" @click="report(replyComment.id)">举报</el-button>
@@ -379,7 +110,7 @@
                                             </div>
                                 </div>
                                         <div class="reply-content">
-                                            <span>{{replyComment.content}}</span>
+                                            <span v-cloak>{{replyComment.content}}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -468,7 +199,11 @@
         return id;
     }
 
-
+    function getParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return decodeURI(r[2]); return null; //返回参数值
+    }
 
 
     var vm = new Vue({
@@ -515,7 +250,7 @@
                 if (res.data.flag){
                     this.article = res.data.data
                     // 获取作者id查询作者头像信息
-                    axios.get("/user/getUserById.do?id="+this.article.uid).then(res=>{
+                    axios.get("/user/getWriterById.do?id="+this.article.uid).then(res=>{
                         if (res.data.flag) {
                             this.avatarName = res.data.data.avatarName;
                             // 获取用户信息
@@ -539,7 +274,7 @@
                                 }
                             });
                         }else {
-                            this.$message.error(res.data.message);
+
                         }
                     });
 
@@ -572,8 +307,8 @@
         },
 
 
-
         methods:{
+
             showPub(){
                 $("#pub").show();
             },
@@ -731,7 +466,7 @@
 
             // 点击关注，再次点击取消关注
             isAttention(){
-                if (this.user == null){
+                if (!this.isLogin()){
                     this.$message.error("登陆后才能关注")
                     return;
                 }
@@ -761,13 +496,14 @@
 
             // 用户退出
             layout(){
-
                 // 发送ajax,参数为用户id，通过id使session 失效
-
-                // 将user置空
-                this.user=''
-                $('.collapse').collapse('hide')
-
+                axios.get("/user/layout.do").then((res) => {
+                    if (res.data.flag) {
+                        window.location.href = "/pages/protal.html"
+                    } else {
+                        this.$message.error(res.data.message)
+                    }
+                });
             },
 
 

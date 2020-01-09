@@ -5,9 +5,9 @@
     <file url="file://$PROJECT_DIR$/forum-center" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/forum-common" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/forum-interface" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/forum-schedule-task" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/forum-search" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/forum-search-service-provider" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/forum-service-provider" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/forumsearchserviceprovider" charset="UTF-8" />
   </component>
 </project>

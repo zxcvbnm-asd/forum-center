@@ -12,11 +12,14 @@
     <script src="../../js/vue.js"></script>
     <script src="../../plugins/elementui/index.js"></script>
     <script src="../../js/axios-0.18.0.js"></script>
+    <script src="../../js/link-param.js"></script>
     <style>
         body{
             background-color: white;
-            overflow: hidden;
+        }
 
+        [v-cloak]{
+            display: none;
         }
     </style>
 </head>
@@ -30,18 +33,18 @@
          <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
              <el-tab-pane label="全部文章" name="first">
                  <el-table size="small" current-row-key="id" :data="dataList" stripe highlight-current-row>
-                     <el-table-column type="index" align="center" label="序号"></el-table-column>
-                     <el-table-column prop="title" label="标题" align="center"></el-table-column>
-                     <el-table-column prop="num" label="点击量" align="center"></el-table-column>
-                     <el-table-column label="状态" align="center">
+                     <el-table-column v-cloak  type="index" align="center" label="序号"></el-table-column>
+                     <el-table-column v-cloak  prop="title" label="标题" align="center"></el-table-column>
+                     <el-table-column v-cloak  prop="num" label="点击量" align="center"></el-table-column>
+                     <el-table-column v-cloak  label="状态" align="center">
                          <template slot-scope="scope">
-                             <span>{{ scope.row.status == '1' ? '审核中':scope.row.status == '2' ? '已发布' : scope.row.status == '3' ? '草稿箱':
+                             <span v-cloak >{{ scope.row.status == '1' ? '审核中':scope.row.status == '2' ? '已发布' : scope.row.status == '3' ? '草稿箱':
                                  scope.row.status == '4'? '发布失败':'定时发布'}}</span>
                          </template>
                      </el-table-column>
-                     <el-table-column prop="pubTime" label="发布时间" align="center"></el-table-column>
-                     <el-table-column prop="category" label="所属类别" align="center"></el-table-column>
-                     <el-table-column label="操作" align="center">
+                     <el-table-column v-cloak  prop="pubTime" label="发布时间" align="center"></el-table-column>
+                     <el-table-column v-cloak  prop="category" label="所属类别" align="center"></el-table-column>
+                     <el-table-column v-cloak  label="操作" align="center">
                          <template slot-scope="scope">
                              <el-button type="primary" size="mini" @click="handleVisit(scope.row)">查看</el-button>
                              <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
@@ -193,23 +196,41 @@
                 queryString:null//查询条件
             },
 
-            mark:1
+            mark:null  // 标记是哪种状态
         },
 
-        created(){
-            // 查看全部文章
-            let param = {
-                currentPage:this.pagination.currentPage,
-                pageSize:this.pagination.pageSize,
-                total:this.pagination.total,
-                queryString:this.pagination.queryString
-            };
+        // 查看全部文章
+    created(){
+        var mark = getParam("mark");
+        var queryString = getParam("queryString");
+        var currentPage = getParam("currentPage");
 
-            axios.post("/article/findAllByPage.do",param).then((res)=>{
-                this.dataList = res.data.rows ;
-                this.pagination.total = res.data.total
-            })
-        },
+        if (mark == null ){
+            this.pagination.queryString=null
+            this.findPage();
+        } else {
+            if (mark == 1) {
+                this.activeName = 'first';
+            } else if (mark == 2) {
+                this.activeName = 'second';
+            }else if (mark == 3) {
+                this.activeName = 'third';
+            }else if (mark == 4) {
+                this.activeName = 'fourth';
+            }else if (mark == 5) {
+                this.activeName = 'fifth';
+            }
+
+            this.mark = parseInt(mark);
+            if (queryString == "null") {
+                queryString = null;
+            }
+            this.pagination.queryString = queryString;
+            this.pagination.currentPage = parseInt(currentPage);
+            this.findPage();
+        }
+
+    },
 
         methods: {
 
@@ -219,7 +240,6 @@
                     pageSize:this.pagination.pageSize,
                     queryString:this.pagination.queryString
                 } ;
-
                 axios.post("/article/findAllByPage.do",param).then((res)=>{
                     if(this.mark === 1){
                         this.dataList = res.data.rows ;
@@ -241,7 +261,7 @@
 
             // 查看文章
             handleVisit(row){
-                window.location.href='/pages/article/article-detail.html?id='+row.id
+                window.location.href='/pages/article/article-detail.html?id='+row.id+'&mark='+this.mark+'&queryString='+this.pagination.queryString+"&currentPage="+this.pagination.currentPage;
             },
 
             // 删除文章
@@ -293,6 +313,7 @@
                     this.pagination.queryString = 5 ;
                     this.mark=6;
                 }
+                this.pagination.currentPage=1
                 this.findPage();
 
             },

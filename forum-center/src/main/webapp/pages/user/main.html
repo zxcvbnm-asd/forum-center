@@ -33,7 +33,7 @@
             <el-header  class="main-header" style="height:70px;">
                 <nav class="navbar navbar-static-top" :class=''>
                     <!-- Logo -->
-                    <a href="#" class="logo" style="text-align:center">
+                    <a href="../protal.html" class="logo" style="text-align:center">
                         <span class="logo-lg"><img src="../../img/hebeu_logo.png" width="200px" height="50px"></span>
                     </a>
                     <div class="right-menu">
@@ -45,11 +45,11 @@
                             </div>
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item divided>
-                                    <span style="display:block;">修改密码</span>
+                                    <span style="display:block;" @click="modifyPassword">修改密码</span>
                                 </el-dropdown-item>
                                 <el-dropdown-item divided>
                                         <span style="display:block;">
-                                            <a href="/logout.do">退出 </a></span>
+                                            <a href=#" @click="layout">退出 </a></span>
                                     </el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
@@ -215,13 +215,27 @@
                         this.flag = !this.flag
                     }
                 }else{
-                    this.$message.error(response.data.message)
+                    // 没有进行登陆
+                    var url = window.location.href;
+                    window.location.href="/pages/user/login.html?redirectUrl="+url;
                 }
             });
         },
 
         methods:{
-
+            modifyPassword(){
+                window.location.href = '/pages/user/edit_password.html'
+            },
+            layout(){
+                // 发送ajax,参数为用户id，通过id使session 失效
+                axios.get("/user/layout.do").then((res)=>{
+                    if (res.data.flag ) {
+                        window.location.href="/pages/protal.html"
+                    } else {
+                        this.$message.error(res.data.message)
+                    }
+                });
+            }
 
         }
     });

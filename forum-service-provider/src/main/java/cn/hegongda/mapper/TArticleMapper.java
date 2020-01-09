@@ -1,5 +1,6 @@
 package cn.hegongda.mapper;
 
+import cn.hegongda.pojo.ArticlePub;
 import cn.hegongda.pojo.TArticle;
 import cn.hegongda.pojo.TArticleExample;
 import java.util.List;
@@ -11,6 +12,7 @@ import com.alibaba.dubbo.config.annotation.Service;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 public interface TArticleMapper {
     int countByExample(TArticleExample example);
@@ -62,4 +64,24 @@ public interface TArticleMapper {
 
     @Insert("INSERT INTO t_article_expan (support_num,aid,attention) VALUES (#{count},#{aid},NULL)")
     void insertArticleExpan(@Param("count") int count,@Param("aid") Integer aid);
+
+    @Update("UPDATE t_article SET num =num + 1 WHERE id=#{id}")
+    void addReadNum(Integer id);
+
+    // 将阅读记录插入到数据中
+    void readRecoderToDatabase(@Param("total") Integer total, @Param("uid") String uid, @Param("cid") String cid, @Param("date") String date);
+
+    // 查询状态为二的所有文章信息
+
+    List<TArticle>  findPublished();
+
+    // 向logstash中插入数据
+    @Insert("INSERT INTO t_article_pub  (id,title,num,labels,cover_url,pub_time,uid,cid,username,cname,`timestamp`,parent_id)   \n" +
+            "VALUES (#{id},#{title},#{num},#{labels},#{coverUrl},#{pubTime},#{uid},#{cid},#{username},#{cname},#{timestamp},#{parentId})\n")
+    void addArticlePub(ArticlePub articlePub);
+
+    @Select(" SELECT SUM(total)\n" +
+            " FROM t_read_recoder\n" +
+            " GROUP BY `date`,uid HAVING uid=#{id} AND `date`=#{datetime}")
+    Integer getDayNumbers(@Param("id") Integer id, @Param("datetime") String datetime);
 }

@@ -13,6 +13,9 @@
           <element id="archive" name="forum-common-1.0-SNAPSHOT.jar">
             <element id="module-output" name="forum-common" />
           </element>
+          <element id="library" level="project" name="Maven: org.quartz-scheduler:quartz:2.2.1" />
+          <element id="library" level="project" name="Maven: c3p0:c3p0:0.9.1.1" />
+          <element id="library" level="project" name="Maven: org.quartz-scheduler:quartz-jobs:2.2.1" />
           <element id="library" level="project" name="Maven: org.apache.poi:poi:3.14" />
           <element id="library" level="project" name="Maven: com.qiniu:qiniu-java-sdk:7.2.0" />
           <element id="library" level="project" name="Maven: com.squareup.okhttp3:okhttp:3.3.1" />

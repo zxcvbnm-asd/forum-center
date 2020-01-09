@@ -82,8 +82,8 @@ public class TaskTimer {
 
     @Test
     public void testTime() {
-         Calendar calendar = Calendar.getInstance();
-         calendar.add(Calendar.DAY_OF_YEAR,-40);
-        System.out.println(calendar.getTime());
+         String name = "liuweiod";
+        String[] split = name.split(",");
+        System.out.println(split[0]);
     }
 }

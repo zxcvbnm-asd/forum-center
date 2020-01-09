@@ -82,6 +82,10 @@
             margin: 200px auto;
 
         }
+
+        [v-cloak]{
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -115,8 +119,8 @@
                                        <th>阅读量</th>
                                    </tr>
                                    <tr v-for="item in tableData" >
-                                       <td>{{item.date|timeformat}}</td>
-                                       <td>{{item.total}}</td>
+                                       <td v-cloak >{{item.date|timeformat}}</td>
+                                       <td v-cloak >{{item.total}}</td>
                                    </tr>
                              </table>
                          </div>

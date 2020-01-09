@@ -1,4 +1,4 @@
-package cn.hegongda.config;
+package cn.hegongda.search.config;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;

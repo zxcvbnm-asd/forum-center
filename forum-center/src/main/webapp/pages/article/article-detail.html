@@ -14,6 +14,7 @@
     <script src="../../js/vue.js"></script>
     <script src="../../plugins/elementui/index.js"></script>
     <script src="../../js/axios-0.18.0.js"></script>
+    <script src="../../js/link-param.js"></script>
     <style>
         body{
             background-color: white;
@@ -133,21 +134,7 @@
 
 <script>
 
-
-
-    function getId(){
-        var qs = location.search.substr(1), // 获取url中"?"符后的字串
-            args = {}, // 保存参数数据的对象
-            items = qs.length ? qs.split("&") : [], // 取得每一个参数项,
-            len = items.length;
-        var id = items[0].split("=")[1];
-
-        return id;
-    }
-
-
-
-    var vm = new Vue({
+        var vm = new Vue({
         el:"#app",
         data:{
             article:{
@@ -161,8 +148,18 @@
             },
             labels:['java','javase','html','德玛西亚'],
         },
+            mounted(){
+                if (window.history && window.history.pushState) {
+                    history.pushState(null, null, document.URL);
+                    window.addEventListener('popstate', this.goBack, false);
+                }
+            },
+            destroyed(){
+                window.removeEventListener('popstate', this.goBack, false);
+            },
+
         created(){
-            let id = getId();
+            var id = getParam("id");
             axios.get("/article/findById.do?id="+id).then((res)=>{
                 if (res.data.flag){
                     res.data.data.content=res.data.data.content.replace(/<img/g,"<img style='max-width:100%;height:auto;'");
@@ -172,6 +169,13 @@
             })
         },
         methods: {
+            // 点击返回的按钮时，会触发该路径，跳转到指定的页面
+            goBack(){
+                var mark = getParam("mark");
+                var queryString = getParam("queryString");
+                var currentPage = getParam("currentPage");
+                window.location.href="/pages/user/myartic.html?mark="+mark+"&queryString="+queryString+"&currentPage="+currentPage; // 返回上一页并刷新
+            },
             // 删除文章
             handleDelete(row){
                 this.$confirm("确认删除吗？","提示",{type:"warning"}).then(()=>{
@@ -183,7 +187,10 @@
                                 type:"success"
                             })
                             // 删除完之后重新更新页面
-                            window.location.href=document.referrer; // 返回上一页并刷新
+                            var mark = getParam("mark");
+                            var queryString = getParam("queryString");
+                            var currentPage = getParam("currentPage");
+                            window.location.href="/pages/user/myartic.html?mark="+mark+"&queryString="+queryString+"&currentPage="+currentPage; // 返回上一页并刷新
                         }else{
                             this.$message("删除失败")
                         }

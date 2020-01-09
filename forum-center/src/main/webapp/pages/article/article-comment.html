@@ -168,6 +168,10 @@
             height: 38px;
         }
 
+        [v-cloak]{
+            display: none;
+        }
+
 
     </style>
 </head>
@@ -185,24 +189,24 @@
                    <div class="one">
                        <img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+comment.avatarName" class="img-circle" width="40px" height="40px"/>
                        <div class="first" style="font-size: 18px">
-                           <span style="font-weight:bold">{{comment.customerName}}</span> <span style="color: #bebfbf;">评论了你的文章</span>
-                           <span class="pull-right" style="margin-left: 544px;padding-top: 1px;color: #bebfbf;">{{comment.commentDate}}</span>
+                           <span style="font-weight:bold" v-cloak>{{comment.customerName}}</span> <span style="color: #bebfbf;">评论了你的文章</span>
+                           <span class="pull-right" style="margin-left: 544px;padding-top: 1px;color: #bebfbf;" v-cloak>{{comment.commentDate}}</span>
                        </div>
                    </div>
                    <div class="two">
-                       <div style="margin-left: 54px;width: 100%;margin-bottom: 5px">
+                       <div style="margin-left: 54px;width: 100%;margin-bottom: 5px" v-cloak>
                            {{comment.content}}
                        </div>
                        <div class="second">
                            <i class="fa fa-link" aria-hidden="true" style="margin-left: 15px"></i>
-                          &nbsp;<a class="title" @click="showArticleDetail(comment.contentId)">{{comment.title}}</a>
+                          &nbsp;<a class="title" @click="showArticleDetail(comment.contentId)" v-cloak>{{comment.title}}</a>
                        </div>
                    </div>
                    <div class="three">
                        <div class="third">
                            <div class="i">
-                               <a @click="showComment(index)"><i class="fa fa-commenting-o" style="font-size: 15px" aria-hidden="true"></i></a>&nbsp;&nbsp;<span>{{comment.replyComments.length}}</span>&nbsp;&nbsp;
-                               <a @click="addSupportNum(index,comment.id)"><i :id="index+'support'" class="fa fa-thumbs-o-up" style="font-size: 15px" aria-hidden="true"></i></a>&nbsp;&nbsp;<span>{{comment.supportNum}}</span>
+                               <a @click="showComment(index)"><i class="fa fa-commenting-o" style="font-size: 15px" aria-hidden="true"></i></a>&nbsp;&nbsp;<span v-cloak>{{comment.replyComments.length}}</span>&nbsp;&nbsp;
+                               <a @click="addSupportNum(index,comment.id)"><i :id="index+'support'" class="fa fa-thumbs-o-up" style="font-size: 15px" aria-hidden="true"></i></a>&nbsp;&nbsp;<span v-cloak>{{comment.supportNum}}</span>
 
                                <div class="operate pull-right">
                                    <a class="replys" :id="index+'reply'" @click="reply(index)">回复</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -222,12 +226,12 @@
                    <div class="five" :id="index+'show'">
                        <div class="fifth" v-for="(rcomment,rindex) in comment.replyComments" @key="rindex">
                            <img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+ rcomment.avatarName" class="img-circle" width="25px" height="25px"/>
-                           <span style="color: #6bb10a;font-weight: bold">{{rcomment.replyCustomerName}}</span>
+                           <span style="color: #6bb10a;font-weight: bold" v-cloak>{{rcomment.replyCustomerName}}</span>
                            <div class="pull-right" style="margin-right: 10px;font-size: 15px;color:#bebfbf ">
-                               <span>{{rcomment.commentDate}}</span>
+                               <span v-cloak>{{rcomment.commentDate}}</span>
                            </div>
                            <div class="show-comment">
-                               回复 <span style="color: #9f9f9f">@{{rcomment.customerName}}</span>: {{rcomment.content}}
+                               回复 <span style="color: #9f9f9f" v-cloak>@{{rcomment.customerName}}</span>: {{rcomment.content}}
                            </div>
                            <div style="margin-left: 749px;padding-bottom: 10px">
                                <a @click="reply1(rindex,index)">回复</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a @click="delComment(rcomment.id)" style="color: #069ee9">删除</a>
@@ -325,28 +329,14 @@
             user:{},
             flag:true,  // 第一次点赞，然后变为false
             comments:[
-                {id:1,conetentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:00:00',parentId:0,customeId:1,customerName:'王五',title:'射雕英雄传',
+               /* {id:1,conetentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:00:00',parentId:0,customeId:1,customerName:'王五',title:'射雕英雄传',
                   replyComments:[
                       {id:2,contentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:06:00',parentId:1,customeId:1,replyCustomerName:'詹丹',customeName:'王五'},
                       {id:2,contentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:06:00',parentId:1,customeId:1,replyCustomerName:'詹丹',customeName:'王五'},
                       {id:2,contentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:06:00',parentId:1,customeId:1,replyCustomerName:'詹丹',customeName:'王五'},
                   ]
-                },
-                {id:1,conetentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:00:00',parentId:0,customeId:1,customerName:'王五',title:'射雕英雄传',
-                    replyComments:[
-                        {id:2,contentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:06:00',parentId:1,customeId:1,replyCustomerName:'詹丹',customeName:'王五'},
-                        {id:2,contentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:06:00',parentId:1,customeId:1,replyCustomerName:'詹丹',customeName:'王五'},
-                        {id:2,contentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:06:00',parentId:1,customeId:1,replyCustomerName:'詹丹',customeName:'王五'},
-                    ]
-                },
-                {id:5,parentId:0,content:'真好',customerName:'阿东',avatarName:'li.jpg',
-                    replyComments:[
-                        {id:6,parentId:5,customerName:'adog',replyCustomerName:'gougang',content:'还好',avatarName:'li.jpg'},
-                        {id:7,parentId:5,customerName:'adog',replyCustomerName:'张三',content:'垃圾',avatarName:'li.jpg'},
-                        {id:8,parentId:5,customerName:'adog',replyCustomerName:'gougang',content:'还好',avatarName:'li.jpg'},
+                },*/
 
-                    ]
-                }
             ],
             pagination: {//分页相关模型数据
                 currentPage: 1,//当前页码

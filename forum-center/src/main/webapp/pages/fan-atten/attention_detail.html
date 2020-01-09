@@ -12,6 +12,7 @@
     <script src="../../js/vue.js"></script>
     <script src="../../plugins/elementui/index.js"></script>
     <script src="../../js/axios-0.18.0.js"></script>
+    <script src="../../js/link-param.js"></script>
     <style>
         body {
             background-color: #e6f1fe;
@@ -42,7 +43,7 @@
 
         ul li {
             width: 500px;
-            height: 100px;
+            height: 113px;
             float: left;
             list-style: none;
             background-color: #f0f7ff;
@@ -183,16 +184,6 @@
 </body>
 <script>
 
-    // 获取作者（用户id）
-    function getId() {
-        var qs = location.search.substr(1), // 获取url中"?"符后的字串
-            args = {}, // 保存参数数据的对象
-            items = qs.length ? qs.split("&") : [], // 取得每一个参数项,
-            item = null,
-            len = items.length;
-        var id = items[0].split("=")[1];
-        return id;
-    }
     var vm = new Vue({
         el:"#app",
         data:{
@@ -210,28 +201,19 @@
             },
             articles:[
                 {id:1,coverUrl:'../img/9.png',pubTime:'2012-6-5',num:6555,category:'JAVASE',title:'射雕英雄传重复的设计费好滴哦输入覅瓯都市'},
-                {id:2,coverUrl:'../img/hebeu_logo.png',pubTime:'2012-6-5',num:6555,category:'JAVASE',title:'射雕英雄传'},
-                {id:3,coverUrl:'../img/9.png',pubTime:'2012-6-5',num:6555,category:'JAVASE',title:'射雕英雄传'},
-                {id:4,coverUrl:'../img/9.png',pubTime:'2012-6-5',num:6555,category:'JAVASE',title:'射雕英雄传'}
             ],
 
             attentions:[
                 {id:1,username:'张三',avatarName:'./images/0.jpg'},
-                {id:1,username:'张三',avatarName:'../img/9.png'},
-                {id:1,username:'张三',avatarName:'../img/9.png'},
-                {id:1,username:'张三',avatarName:'../img/9.png'},
             ],
 
             fans:[
-                {id:1,username:'张三',avatarName:'../img/9.png'},
-                {id:1,username:'张三',avatarName:'../img/9.png'},
-                {id:1,username:'张三',avatarName:'../img/9.png'},
                 {id:1,username:'张三',avatarName:'../img/9.png'},
             ],
         },
 
         created(){
-            var id = getId();
+            var id = getParam("id");
             // 根据此Id查询作者详细信息
             axios.get("/fan-atten/writerDetail.do?id="+id).then((res)=>{
                 if (res.data.flag){
@@ -252,6 +234,7 @@
             })
         },
         methods:{
+
             handleClick(tab, event) {
                 // 用于查询其关注的人以及粉丝
                 if (tab.name == "first"){

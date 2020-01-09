@@ -17,6 +17,11 @@ public class DateUtils {
          return sdf.format(date);
      }
 
+    public static String format2(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(date);
+    }
+
     /**
      * 日期转换-  String -> Date
      *
@@ -328,9 +333,30 @@ public class DateUtils {
     }
 
 
+    //获得上月一日的日期
+    public static Date getFirstDay4LastMonth(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH,-1);
+        calendar.set(Calendar.DAY_OF_MONTH,1);
+        return calendar.getTime();
+    }
+
+    //获取上月的最后一天
+    public static Date getLasttDay4LastMonth(){
+        Calendar ca = Calendar.getInstance();
+        ca.add(Calendar.MONTH, -1);
+        ca.set(Calendar.DAY_OF_MONTH, ca.getActualMaximum(Calendar.DAY_OF_MONTH));
+        return ca.getTime();
+    }
+
+
+
+
     public static void main(String[] args) {
-        String yesterday = getYesterday();
-        System.out.println(yesterday);
+        Date date = DateUtils.getFirstDay4LastMonth();
+        System.out.println(date);
+        Date date2 = DateUtils.getLasttDay4LastMonth();
+        System.out.println(date2);
 
     }
 

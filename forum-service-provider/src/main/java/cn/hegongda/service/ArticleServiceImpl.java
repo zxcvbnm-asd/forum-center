@@ -1,5 +1,6 @@
 package cn.hegongda.service;
 
+import cn.hegongda.constant.MessageConstant;
 import cn.hegongda.constant.RedisConstant;
 import cn.hegongda.mapper.TArticleCategoryMapper;
 import cn.hegongda.mapper.TArticleMapper;
@@ -8,6 +9,7 @@ import cn.hegongda.pojo.TArticleCategory;
 import cn.hegongda.result.PageResult;
 import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
+import cn.hegongda.utils.DateUtils;
 import cn.hegongda.utils.JsonUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSONObject;
@@ -168,13 +170,24 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
 
-    // 根据id查询文章
+    // 根据id查询文章（浏览文章）
     @Override
+    @Transactional
     public Result findById(Integer id) {
         if (id == null){
             return new Result(false, "传入参数有误");
         }
         TArticle article =  articleMapper.selectByPrimaryKey(id);
+
+        // 直接将阅读记录放到redis中的hash结构中（用于定时任务，每天晚上12:00自动插入到数据库中）
+        Jedis jedis = jedisPool.getResource();
+        if (jedis.hexists(RedisConstant.ARTICLE_READ_RECODER ,article.getUid()+"-"+article.getCid() )){
+            jedis.hincrBy(RedisConstant.ARTICLE_READ_RECODER ,article.getUid()+"-"+article.getCid() ,1);
+        } else {
+            jedis.hset(RedisConstant.ARTICLE_READ_RECODER,article.getUid()+"-"+article.getCid() , 1+"");
+        }
+        // 将该篇文章的阅读量增加 1
+        articleMapper.addReadNum(id);
         return new Result(true,"成功",article);
     }
 
@@ -187,6 +200,9 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         int number = articleMapper.deleteByPrimaryKey(id);
+        // 文章删除之后，将redis中门户页面保存的文章进行清除
+        Jedis jedis = jedisPool.getResource();
+        jedis.ltrim(RedisConstant.MAX_NUM_ARTICLE_LIST , 1, 0);
         if (number > 0){
             return new Result(true, "删除成功");
         }
@@ -260,5 +276,17 @@ public class ArticleServiceImpl implements ArticleService {
         Jedis jedis = jedisPool.getResource();
         jedis.hincrBy(RedisConstant.SUPPOT_NUM_ARTICLE,aid+"",number);
         return new Result(true,"操作成功");
+    }
+
+    // 将阅读数插入到数据库中
+    @Override
+    @Transactional
+    public Result readRecoderToDatabase(Integer total, String uid, String cid) {
+        if(StringUtils.isBlank(uid) || StringUtils.isBlank(cid)){
+            return new Result(false, MessageConstant.OPERATION_FAIL);
+        }
+        // 插入到数据库中
+        articleMapper.readRecoderToDatabase(total,uid,cid, DateUtils.format(new Date()));
+        return new Result(true, MessageConstant.OPERATION_SUCCESS);
     }
 }

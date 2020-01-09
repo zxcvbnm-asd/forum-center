@@ -24,4 +24,7 @@ public class RedisConstant {
 
     // 文章点赞数前缀
     public static final String SUPPOT_NUM_ARTICLE = "SUPPOT_NUM_ARTICLE";
+
+    // 文章当天阅读数统计前缀
+    public static final String ARTICLE_READ_RECODER = "ARTICLE_READ_RECODER";
 }

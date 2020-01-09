@@ -10,7 +10,7 @@
         <module name="forum-center" />
         <module name="forum-common" />
         <module name="forum-interface" />
-        <module name="forum-search" />
+        <module name="forum-schedule-task" />
         <module name="forum-search-service-provider" />
         <module name="forum-service-provider" />
       </profile>
@@ -21,6 +21,7 @@
       <module name="forum-common" target="1.8" />
       <module name="forum-eduitor" target="1.8" />
       <module name="forum-interface" target="1.8" />
+      <module name="forum-schedule-task" target="1.8" />
       <module name="forum-search" target="1.8" />
       <module name="forum-search-service-provider" target="1.8" />
       <module name="forum-service-provider" target="1.8" />

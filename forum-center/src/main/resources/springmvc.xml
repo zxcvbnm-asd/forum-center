@@ -43,7 +43,7 @@
 
 
     <!--注册拦截器-->
-  <!--   <mvc:interceptors>
+    <!-- <mvc:interceptors>
     <mvc:interceptor>
         <mvc:mapping path="/user/**"/>
         <mvc:exclude-mapping path="/user/login.do"/>

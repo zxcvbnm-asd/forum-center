@@ -38,4 +38,7 @@ public interface TUserMapper {
     public TUser findUserByUsername(String username);
 
     TUser findUserByMobile(String mobile);
+
+    @Select("select * from t_user where username=#{username}")
+    TUser findByUsername(String  username);
 }

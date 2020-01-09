@@ -215,7 +215,7 @@ a{
 #content{
     margin-top: 20px;
     width: 98%;
-    height: 600px;
+    height: 676px;
     margin-left: 1%;
     background-color: #f6f6f6;
 }
@@ -223,9 +223,9 @@ a{
 .media{
     margin-left: 19px;
     margin-top: 12px;
-    width: 400px;
+    width: 814px;
     height: 100px;
-    float: left;
+    border-bottom: 1px red dotted;
 }
 
 .pagination-container{

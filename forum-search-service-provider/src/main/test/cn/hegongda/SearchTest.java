@@ -1,5 +1,8 @@
 package cn.hegongda;
 
+import cn.hegongda.result.PageResult;
+import cn.hegongda.result.QueryPageBean;
+import cn.hegongda.service.SearchService;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
@@ -44,11 +47,46 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:springmvc.xml")
+@ContextConfiguration(locations = "classpath:spring-service.xml")
 public class SearchTest {
 
     @Autowired
     private RestHighLevelClient restHighLevelClient ;
+
+    @Autowired
+    private SearchService searchService;
+
+    @Test
+    public void test04() throws IOException {
+        QueryPageBean queryPageBean = new QueryPageBean();
+        queryPageBean.setCurrentPage(1);
+        queryPageBean.setPageSize(5);
+        queryPageBean.setQueryString("Mysql数据库");
+        PageResult result = searchService.findArticleByIdAndQueryString(-1, 3, queryPageBean);
+        result.getTotal();
+        List rows = result.getRows();
+
+    }
+
+    @Test
+    public void test03() throws IOException {
+        QueryPageBean queryPageBean = new QueryPageBean();
+        queryPageBean.setCurrentPage(1);
+        queryPageBean.setPageSize(5);
+        queryPageBean.setQueryString("Spring");
+        PageResult result = searchService.findArticleByCid(5, queryPageBean);
+        Long total = result.getTotal();
+        System.out.println(total);
+    }
+
+    @Test
+    public void test02() throws IOException {
+        QueryPageBean queryPageBean = new QueryPageBean();
+        queryPageBean.setCurrentPage(1);
+        queryPageBean.setPageSize(5);
+        queryPageBean.setQueryString("java");
+        searchService.findAtricleByQuery(queryPageBean);
+    }
 
 
     @Test
@@ -205,7 +243,7 @@ public class SearchTest {
        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
        // 匹配name description属性
-       MultiMatchQueryBuilder multiMatchQueryBuilder = QueryBuilders.multiMatchQuery("spring框架", "name", "description").minimumShouldMatch("50%");
+       MultiMatchQueryBuilder multiMatchQueryBuilder = QueryBuilders.multiMatchQuery("java编程基础", "name", "description").minimumShouldMatch("50%");
        multiMatchQueryBuilder.field("name",10);  // 将name的权重提升十倍
        searchSourceBuilder.query(multiMatchQueryBuilder);
        searchSourceBuilder.fetchSource(new String[]{"name","description"}, new String[]{});
@@ -364,5 +402,13 @@ public class SearchTest {
             System.out.println(description);
             System.out.println("=======================");
         }
+    }
+
+    @Test
+    public void testById() throws IOException {
+        GetRequest getRequest = new GetRequest("stu","doc","1");
+        GetResponse response = restHighLevelClient.get(getRequest);
+        Map<String, Object> sourceAsMap = response.getSourceAsMap();
+        System.out.println(sourceAsMap);
     }
 }

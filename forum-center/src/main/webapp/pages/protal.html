@@ -265,7 +265,7 @@
                       this.$message.error("查询条件不能为空")
                       return false
                   }
-                  window.location.href='search-article.html?query='+this.queryString
+                  window.location.href='/pages/article/search-article.html?query='+this.queryString
               },
 
               // 跳转到文章详情页面
@@ -284,10 +284,17 @@
               layout(){
 
                   // 发送ajax,参数为用户id，通过id使session 失效
+                  axios.get("/user/layout.do").then((res)=>{
+                      if (res.data.flag ) {
+                          // 将user置空
+                          this.user=null
+                          $('.collapse').collapse('hide')
+                      } else {
+                          this.$message.error(res.data.message)
+                      }
+                  });
 
-                  // 将user置空
-                  this.user=null
-                  $('.collapse').collapse('hide')
+
 
               },
               showBrief() {
