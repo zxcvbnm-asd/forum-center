@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+   <!-- <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/style.css">-->
+    <link rel="stylesheet" href="../../css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <!-- 引入组件库 -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+    <script src="../../js/link-param.js"></script>
+
+
+    <style>
+        body{
+            background-color: #d2d6de;
+        }
+        .row{
+            margin-right: 50px;
+            margin-top: 5px;
+            margin-left: 50px;
+        }
+
+        .container{
+            width: 1152px;
+        }
+
+        h3{
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 1px;
+            font-family: Dialog;
+        }
+
+        #btns{
+            margin-left: 320px;
+        }
+
+        .bs{
+            width: 120px;
+        }
+
+        #content{
+            margin-left: 23px;
+            margin-right: 20px;
+        }
+
+        #label{
+            margin-left: 24px;
+        }
+
+        #label .first{
+            color: orange;
+            font-size: 18px;
+        }
+
+        #label .second{
+            color: purple;
+            font-size: 17px;
+            font-weight: bold;
+            font-family: "Courier New", Courier, monospace;
+        }
+
+        .cate{
+            font-size: 15px;
+            color: brown;
+            font-weight: bold;
+        }
+
+        .models tr td{
+            text-align: center;
+            width: 200px;
+            height: 38px;
+        }
+
+    </style>
+
+</head>
+<body>
+    <div id="app">
+        <div id="box" class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="thumbnail">
+                        <div class="caption">
+                            <h3>{{article.title}}</h3>
+                            <div class="pull-right"><span style="margin-right: 15px;font-size: 18px;color: red">{{article.pubTime}}</span></div>
+                            <br><br>
+                            <p id="content" v-html="article.content"></p>
+                            <br>
+                            <div id="label" v-if="article.labels != null"><span class="first">标签:</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="second" v-for="label in article.labels.split('，')">{{label}}&nbsp;&nbsp;&nbsp;</span></div>
+                            <div class="pull-right" style="margin-right: 30px; font-size: 20px"><a href="#">作者：{{article.writerName}}</a></div>
+                            <br><br><br>
+                            <p id="btns"><a href="#" class="btn btn-success bs" @click="success(article.id)">审核通过</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <a href="#" class="btn btn-danger bs" data-toggle="modal" data-target="#myModal"  >审核不通过</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+
+                        <div class="modal-body">
+                            <h4 style="font-weight: bold">违规类型</h4>
+
+                            <table class="models" style="margin-left:15px;margin-top: 10px">
+                                <tr>
+                                    <td><input type="radio" name="cate" @click="type=0"> &nbsp;<span class="cate">内容涉黄</span></td>
+                                    <td><input type="radio" name="cate" @click="type=1"> &nbsp;<span class="cate">政治相关</span></td>
+                                    <td><input type="radio" name="cate" @click="type=2"> &nbsp;<span class="cate">内容抄袭</span></td>
+                                    <td><input type="radio" name="cate" @click="type=3"> &nbsp;<span class="cate">涉嫌广告</span></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="radio" name="cate" @click="type=4"> &nbsp;<span class="cate">内容侵权</span></td>
+                                    <td><input type="radio" name="cate" @click="type=5"> &nbsp;<span class="cate">侮辱谩骂</span></td>
+                                    <td><input type="radio" name="cate" @click="type=6"> &nbsp;<span class="cate">文不对题</span></td>
+                                    <td><input type="radio" name="cate" @click="type=7"> &nbsp;<span class="cate">歪曲事实</span></td>
+
+                                </tr>
+                            </table>
+                            <div style="margin-left: 467px;margin-top: 15px">
+                        <span>
+                            <button class="btn btn-sm btn-info form-inline" @click="rescind">取消</button>
+                            <button class="btn btn-sm btn-danger form-inline" @click="sure">确定</button>
+                        </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</body>
+      <script>
+
+
+          var arr = ['内容涉黄','政治相关','内容抄袭','涉嫌广告','内容侵权','侮辱谩骂','文不对题','歪曲事实'];
+
+          var vm = new Vue({
+              el:'#app',
+              data:{
+                  article:{id:1,content:'',title:'射雕英雄传',time:'2017-12-25',writer:'liuweidong'
+                  },
+                  notice:{id:1,content:'您的文章《》存在违规行为，请改正后重新发布，如有疑问到<a href="www.baidu.com">河工程管理中心</a>咨询',title:'',uid:11},
+                  type:-1
+              },
+
+              created(){
+                  var id = getParam("id")
+                  // 根据id查询出文章的内容
+                  axios.get("/article-manager/getArticleById.do?id="+id).then((res)=>{
+                      if (res.data.flag) {
+                          this.article = res.data.data;
+                          this.article.writerName = getParam("writerName");
+                      } else {
+                          this.$message.error(res.data.message)
+                      }
+                  })
+              },
+              methods:{
+                  success(id){
+                      axios.get("/article-manager/approved.do?id="+id).then((res)=>{
+                          if (res.data.flag) {
+                              window.location.href='/pages/article/check-article.html?queryString='+getParam("queryString");
+                          } else {
+                              this.$message.error(res.data.message);
+                          }
+                      })
+                  },
+
+                  rescind(){
+                      $('#myModal').modal('hide')
+                  },
+                  sure(){
+                      this.notice.title = '文章违规';
+                      this.notice.content="您的文章《"+ this.article.title +"》存在违规<span style='color: red'>"+arr[this.type]+"</span>行为，请改正后重新发布，如有疑问到<a href='www.baidu.com'>河工程管理中心</a>进行咨询"
+                      this.notice.uid = this.article.uid;
+                      axios.post("/article-manager/failPublish.do",this.notice).then((res)=>{
+                          if ( res.data.flag) {
+                              window.location.href='/pages/article/check-article.html?queryString='+getParam("queryString");
+                          } else {
+                              this.$message.error(res.data.message)
+                          }
+                      })
+                  }
+              }
+          })
+      </script>
+</html>

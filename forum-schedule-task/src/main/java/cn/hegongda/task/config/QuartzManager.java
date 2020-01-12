@@ -1,8 +1,7 @@
 package cn.hegongda.task.config;
 
-import cn.hegongda.service.ScheduleTask;
+import cn.hegongda.service.common.ScheduleTask;
 import org.quartz.*;
-import org.springframework.stereotype.Component;
 
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;

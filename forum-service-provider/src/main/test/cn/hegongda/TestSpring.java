@@ -1,18 +1,23 @@
 package cn.hegongda;
 
+import cn.hegongda.constant.RedisConstant;
 import cn.hegongda.mapper.*;
 import cn.hegongda.pojo.*;
+import cn.hegongda.result.PageResult;
 import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
 import cn.hegongda.service.*;
+import cn.hegongda.service.article.ArticleManagerService;
+import cn.hegongda.service.article.ArticleReportService;
+import cn.hegongda.service.fan_atten.FanAttenService;
 import cn.hegongda.utils.DateUtils;
 import cn.hegongda.utils.JsonUtils;
+import cn.hegongda.utils.QiniuUtils;
+import com.alibaba.druid.support.json.JSONUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -22,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring-dao.xml","classpath:spring-service.xml"
@@ -56,10 +62,28 @@ public class TestSpring {
     @Autowired
     ArticleReportService articleReportService ;
 
+    @Autowired
+    private ArticleManagerService articleManagerService;
+
      @Test
      public void test(){
          Result result = articleReportService.getPreMonthsTotal(11);
          Map data = (Map) result.getData();
+     }
+
+     // 测试查询待审核文章
+     @Test
+     public void testCheck() throws InterruptedException {
+         /*QueryPageBean queryPageBean = new QueryPageBean();
+         queryPageBean.setPageSize(8);
+         queryPageBean.setCurrentPage(1);
+         queryPageBean.setQueryString("2020-01-04");
+         PageResult checkArticles = articleManagerService.getCheckArticles(queryPageBean);
+         System.out.println(checkArticles.getRows());*/
+       /*  Result approved = articleManagerService.approved(19);
+         System.out.println(approved.isFlag());*/
+       articleManagerService.autoCheckArticle();
+         TimeUnit.SECONDS.sleep(20);
      }
 
     // 向logstash的数据库表中添加数据
@@ -86,6 +110,17 @@ public class TestSpring {
             articlePub.setTimestamp(new Date());
             articleMapper.addArticlePub(articlePub);
 
+        }
+    }
+
+
+    @Test
+    public void testRedis(){
+        Jedis jedis = jedisPool.getResource();
+        List<TArticle> articles = articleMapper.findPublished();
+        for (TArticle article : articles) {
+            String json = JsonUtils.objectToJson(article);
+            jedis.rpush(RedisConstant.CHECK_ARTICLE, json);
         }
     }
 

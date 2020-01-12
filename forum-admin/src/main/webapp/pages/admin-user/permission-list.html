@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/component.css">
+    <!-- 引入组件库 -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+
+    <style>
+        a:hover{
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="app">
+       <mk-page></mk-page>
+    </div>
+
+    <template id="temp">
+        <div id="box">
+            <div id="inner_box">
+                <div id="one_tip">
+                    <span id="one_title">系统管理</span>
+                    <span class="pull-right" id="right">首页&nbsp;&nbsp;>&nbsp;&nbsp;系统管理&nbsp;&nbsp;>&nbsp;&nbsp;资源权限管理</span>
+                </div>
+
+                <div id="table">
+                    <div id="list_form">
+                     <div class="btn-group" role="group" aria-label="...">
+                        <button type="button" class="btn btn-default btn-sm" @click="add">创建</button>
+                        <button type="button" class="btn btn-default btn-sm" @click="flush">刷新</button>
+                    </div>
+
+                        <div class="input-group" style="width: 300px;height:20px;margin-left: 780px">
+                            <input type="text" class="form-control" v-model="pagination.queryString" placeholder="请输入权限名">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" @click="search">搜索</button>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div id="list">
+                        <table class="table table-hover table-bordered table-striped">
+                            <tr>
+                                <th class="sorting_asc">序号</th>
+                                <th class="sorting_desc">权限名称</th>
+                                <th class="sorting_asc sorting_asc_disabled">描述</th>
+                                <th class="text-center">操作</th>
+                            </tr>
+                            <tr v-for="(permission,index) in permissions" @key="index">
+                                <td>{{index+1}}</td>
+                                <td>{{permission.permissionName}}</td>
+                                <td>{{permission.keyword}}</td>
+                                <td class="text-center">
+                                    <a href="#" @click.prevent="del(permission.id)">删除</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div id="page">
+                        <div class="pagination-container">
+                            <el-pagination
+                                    class="pagiantion"
+                                    @current-change="handleCurrentChange"
+                                    :current-page="pagination.currentPage"
+                                    :page-size="pagination.pageSize"
+                                    layout="total, prev, pager, next, jumper"
+                                    :total="pagination.total">
+                            </el-pagination>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</body>
+      <script>
+
+          //<!--:href="'article-detail.html?id='+article.id"-->
+          Vue.component("mkPage",{
+              template:"#temp",
+              data(){
+                  return{
+                      permissions:[
+                          {id:1,permissionName:'添加用户',keyword:'ADD_USER'},
+                          {id:2,permissionName:'删除用户',keyword:'DELETE_USER'},
+                          {id:3,permissionName:'编辑用户',keyword:'EDIT_USER'},
+                      ],
+                      pagination: {//分页相关模型数据
+                          currentPage: 1,//当前页码
+                          pageSize:10,//每页显示的记录数
+                          total:100,//总记录数
+                          queryString:null//查询条件
+                      },
+                  }
+              },
+              methods:{
+                  // 切换页码
+                  handleCurrentChange:function(currentPage) {
+                      this.pagination.currentPage = currentPage;
+                      this.findPage();
+                  },
+                  // 传递的是roleId
+                  del(id){
+                     // 删除权限
+                  },
+
+                  flush(){
+
+                  },
+
+                  add(){
+                      // 添加新的权限
+                      window.location.href='permission-add.html'
+                  },
+                  search(){
+                      alert(this.pagination.queryString)
+                  }
+              }
+          })
+          var vm = new Vue({
+              el:'#app',
+              data:{
+
+              },
+              methods:{
+
+              }
+          })
+      </script>
+</html>

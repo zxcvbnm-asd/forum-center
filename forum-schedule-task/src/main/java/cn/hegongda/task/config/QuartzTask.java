@@ -1,6 +1,6 @@
 package cn.hegongda.task.config;
 
-import cn.hegongda.service.ScheduleTask;
+import cn.hegongda.service.common.ScheduleTask;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;

@@ -4,14 +4,13 @@ import cn.hegongda.mapper.TArticleMapper;
 import cn.hegongda.result.PageResult;
 import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
+import cn.hegongda.service.article.ArticleReportService;
 import cn.hegongda.utils.DateUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service(interfaceClass = ArticleReportService.class)

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/component.css">
+    <!-- 引入组件库 -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+
+    <style>
+
+        body{
+
+        }
+
+        .table{
+            border: 1px red solid;
+        }
+        a:hover{
+            cursor: pointer;
+        }
+
+        tr th{
+            border: 1px red solid;
+        }
+
+
+    </style>
+
+</head>
+<body>
+    <div id="app">
+       <mk-page></mk-page>
+    </div>
+
+    <template id="temp">
+        <div id="box">
+            <div id="inner_box">
+                <div id="one_tip">
+                    <span id="one_title">用户管理</span>
+                    <span class="pull-right" id="right">首页&nbsp;&nbsp;>&nbsp;&nbsp;用户管理&nbsp;&nbsp;>&nbsp;&nbsp;封号用户信息</span>
+                </div>
+
+                <div id="table">
+                    <div id="list_form">
+                     <div class="btn-group" role="group" aria-label="...">
+                      <!--  <button type="button" class="btn btn-default btn-sm">新建</button>-->
+                        <button type="button" class="btn btn-default btn-sm" @click="flush">刷新</button>
+                    </div>
+
+                        <div class="input-group" style="width: 300px;height:20px;margin-left: 780px">
+                            <input type="text" class="form-control" v-model="pagination.queryString" placeholder="按照用户名进行查询">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" @click="search">搜索</button>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div id="list">
+                        <table class="table table-hover table-bordered table-striped">
+                             <tr class="danger">
+                                 <th>序号</th>
+                                 <th>用户名</th>
+                                 <th>电话</th>
+                                 <th>邮箱</th>
+                                 <th>封号时间</th>
+                                 <th>到期时间</th>
+                                 <th>操作</th>
+                             </tr>
+                            <tr class="warning" v-for="(user,index) in users">
+                                <td>{{index+1}}</td>
+                                <td>{{user.username}}</td>
+                                <td>{{user.mobile}}</td>
+                                <td>{{user.email}}</td>
+                                <td>{{user.gag_begin_time}}</td>
+                                <td>{{user.gag_end_time}}</td>
+                                <td width="240px">
+                                   <a class="detail" @click="un_aga(user.id)">立刻解封</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div id="page">
+                        <div class="pagination-container">
+                            <el-pagination
+                                    class="pagiantion"
+                                    @current-change="handleCurrentChange"
+                                    :current-page="pagination.currentPage"
+                                    :page-size="pagination.pageSize"
+                                    layout="total, prev, pager, next, jumper"
+                                    :total="pagination.total">
+                            </el-pagination>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</body>
+      <script>
+
+          //<!--:href="'article-detail.html?id='+article.id"-->
+          Vue.component("mkPage",{
+              template:"#temp",
+              data(){
+                  return{
+                      pagination: {//分页相关模型数据
+                          currentPage: 1,//当前页码
+                          pageSize:10,//每页显示的记录数
+                          total:0,//总记录数
+                          queryString:null//查询条件
+                      },
+                      users:[
+                          {id:1,username:'liu',mobile:'18832030387',email:'1198423961@qq.com',gag_begin_time:'2012-6-5',gag_end_time:'2012-7-8'},
+                          {id:1,username:'liu',mobile:'18832030387',email:'1198423961@qq.com',gag_begin_time:'2012-6-5',gag_end_time:'2012-7-8'},
+                          {id:1,username:'liu',mobile:'18832030387',email:'1198423961@qq.com',gag_begin_time:'2012-6-5',gag_end_time:'2012-7-8'},
+                          {id:1,username:'liu',mobile:'18832030387',email:'1198423961@qq.com',gag_begin_time:'2012-6-5',gag_end_time:'2012-7-8'},
+                      ]
+                  }
+              },
+              methods:{
+                  // 切换页码
+                  handleCurrentChange:function(currentPage) {
+                      this.pagination.currentPage = currentPage;
+                      this.findPage();
+                  },
+
+                  search(){
+                      // 按照时间进行搜索为审核的文章
+                      alert(this.pagination.queryString)
+                  },
+                  flush(){
+                      alert("进行刷新")
+                  },
+                  un_aga(){
+                      alert("已经解封")
+                 }
+
+              }
+          })
+          var vm = new Vue({
+              el:'#app',
+              data:{
+
+              },
+              methods:{
+
+              }
+          })
+      </script>
+</html>

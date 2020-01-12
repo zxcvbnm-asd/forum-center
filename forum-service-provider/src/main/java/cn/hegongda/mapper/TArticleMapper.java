@@ -1,5 +1,6 @@
 package cn.hegongda.mapper;
 
+import cn.hegongda.pojo.ArticleExpan;
 import cn.hegongda.pojo.ArticlePub;
 import cn.hegongda.pojo.TArticle;
 import cn.hegongda.pojo.TArticleExample;
@@ -84,4 +85,7 @@ public interface TArticleMapper {
             " FROM t_read_recoder\n" +
             " GROUP BY `date`,uid HAVING uid=#{id} AND `date`=#{datetime}")
     Integer getDayNumbers(@Param("id") Integer id, @Param("datetime") String datetime);
+
+    // 按条件和分页查询出待审核的文章
+    List<ArticleExpan> getAritcleByStatus(@Param("status") Integer status,@Param("queryString") String queryString);
 }

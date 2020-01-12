@@ -2,7 +2,7 @@ package cn.hegongda.controller.user;
 
 import cn.hegongda.pojo.TUser;
 import cn.hegongda.result.Result;
-import cn.hegongda.service.RegisterService;
+import cn.hegongda.service.user.RegisterService;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;

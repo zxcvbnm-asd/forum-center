@@ -1,10 +1,8 @@
 package cn.hegongda.task.schedule;
 
 import cn.hegongda.constant.RedisConstant;
-import cn.hegongda.result.Result;
-import cn.hegongda.service.ArticleService;
+import cn.hegongda.service.article.ArticleService;
 import cn.hegongda.utils.QiniuUtils;
-import cn.hegongda.utils.SMSUtils;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.Jedis;

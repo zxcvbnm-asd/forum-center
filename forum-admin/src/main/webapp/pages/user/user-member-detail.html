@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!--<link rel="stylesheet" href="../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/style.css">-->
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap-theme.min.css">
+    <!-- 引入组件库 -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+    <style>
+        body {
+            background-color: #e6f1fe;
+        }
+
+        table tr th {
+            text-align: center;
+        }
+
+        table tr td {
+            text-align: center;
+        }
+
+        #picture {
+            margin-left: 500px;
+            float: right;
+        }
+
+        #head {
+            margin-top: 20px;
+        }
+
+        #head h3 {
+            float: left;
+        }
+
+        /*#medias .media{
+            width: 400px;
+            height: 70px;
+            border: 1px red solid;
+            margin-left: 20px;
+            float: left;
+        }*/
+
+        ul li {
+            width: 500px;
+            height: 100px;
+            float: left;
+            list-style: none;
+            background-color: #f0f7ff;
+            margin-top: 5px;
+            margin-left: 3px;
+        ;
+
+        }
+
+        .media-body h4 a{
+            text-decoration: none;
+        }
+
+        .label{
+            background-color: blue;
+        }
+
+        .media{
+            margin-left:  25px;
+            padding-top: 10px;
+        }
+        .media-heading{
+            font-weight: bold;
+        }
+
+
+    </style>
+</head>
+<body>
+<div id="app"/>
+<div class="container" >
+    <div id="head">
+        <h3 class="page-header">作者详细信息:</h3>
+        <img :src="writer.img" class="img-circle" height="40px" width="40px" id="picture">
+    </div>
+
+
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th>昵称</th>
+            <th>性别</th>
+            <th>年龄</th>
+            <th>学院</th>
+            <th>专业</th>
+            <th>班级</th>
+        </tr>
+        <tr class="danger">
+            <td>{{writer.name}}</td>
+            <td>{{writer.sex}}</td>
+            <td>{{writer.age}}</td>
+            <td>{{writer.collage}}</td>
+            <td>{{writer.major}}</td>
+            <td>{{writer.cla}}</td>
+        </tr>
+    </table>
+    <div class="alert alert-success" role="alert">
+        该作者已发布的文章列表
+    </div>
+    <ul>
+        <li v-for="article in articles">
+            <div class="media" >
+                <div class="media-left">
+                    <a href="#">
+                        <img class="media-object" :src="article.img" width="100px" height="75px" alt="NO PICTURE">
+                    </a>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading"><a href="#">{{article.title}}</a></h4>
+                    <p style="margin-top: 8px">发布时间：<span class="mark">{{article.pubTime}}</span></p>
+                    <p style="margin-top: 6px">阅读量：<code>{{article.count}}</code> &nbsp;&nbsp;&nbsp;&nbsp;分类：<span class="label">{{article.category}}</span></p>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+
+</div>
+</body>
+<script>
+    var vm = new Vue({
+        el:"#app",
+        data:{
+            writer:{
+                name:'小明',
+                sex:'男',
+                age:25,
+                collage:'信电',
+                major:'电气',
+                cla:'7班',
+                img:'../img/9.png',
+            },
+            articles:[
+                {img:'../img/9.png',pubTime:'2012-6-5',count:6555,category:'JAVASE',title:'射雕英雄传'},
+                {img:'../img/hebeu_logo.png',pubTime:'2012-6-5',count:6555,category:'JAVASE',title:'射雕英雄传'},
+                {img:'../img/9.png',pubTime:'2012-6-5',count:6555,category:'JAVASE',title:'射雕英雄传'},
+                {img:'../img/9.png',pubTime:'2012-6-5',count:6555,category:'JAVASE',title:'射雕英雄传'}
+            ],
+        }
+    })
+</script>
+</html>

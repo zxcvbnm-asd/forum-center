@@ -1,7 +1,7 @@
 package cn.hegongda.task.service;
 
-import cn.hegongda.service.QuartzService;
-import cn.hegongda.service.ScheduleTask;
+import cn.hegongda.service.common.QuartzService;
+import cn.hegongda.service.common.ScheduleTask;
 import cn.hegongda.task.config.QuartzManager;
 import cn.hegongda.task.config.QuartzTask;
 import com.alibaba.dubbo.config.annotation.Service;

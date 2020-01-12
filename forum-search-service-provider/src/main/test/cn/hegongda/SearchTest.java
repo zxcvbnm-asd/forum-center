@@ -2,7 +2,7 @@ package cn.hegongda;
 
 import cn.hegongda.result.PageResult;
 import cn.hegongda.result.QueryPageBean;
-import cn.hegongda.service.SearchService;
+import cn.hegongda.service.common.SearchService;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;

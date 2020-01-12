@@ -3,6 +3,7 @@ package cn.hegongda.service;
 import cn.hegongda.constant.RedisConstant;
 import cn.hegongda.pojo.TUser;
 import cn.hegongda.result.Result;
+import cn.hegongda.service.user.TokenService;
 import cn.hegongda.utils.JsonUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 import org.apache.commons.lang.StringUtils;

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+
+    <!-- 引入组件库 -->
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script src="../js/vue.js"></script>
+    <script src="../plugins/elementui/index.js"></script>
+    <script src="../js/axios-0.18.0.js"></script>
+    <style>
+        body{
+            margin-left: 10px;
+            overflow: hidden;
+            background-image: url("../img/snow2.jpg");
+            background-repeat: no-repeat;
+            background-size: 1367px 650px;
+
+        }
+
+        #login{
+            width: 350px;
+            height: 250px;
+            border: 1px #e5e5e5 solid;
+            margin-left: 730px;
+            margin-top:150px;
+            background-color: #ffffff;
+            opacity: 0.7;
+        }
+
+        #title{
+
+            margin-left: 10px;
+            font-size: 25px;
+            font-family: DFKai-SB;
+            margin-top: 20px;
+            color: #720808;
+            font-weight: bold;
+
+        }
+
+        #form{
+            margin-left: -47px;
+            margin-top: 30px;
+        }
+
+        .item{
+            width: 200px;
+        }
+
+        .t2{
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+
+    </style>
+</head>
+<body>
+<div id="app">
+   <div id="login">
+
+       <div></div>
+
+       <div id="title">河工程JAVA论坛后台管理系统</div>
+
+       <el-form :model="admin" status-icon  size="small" ref="admin" label-width="100px" id="form" class="demo-ruleForm">
+           <el-form-item label="" prop="name">
+               <span class="t2">姓名</span>&nbsp;&nbsp;&nbsp;<el-input class="item" type="text" v-model="admin.name" autocomplete="off"></el-input>
+           </el-form-item>
+           <el-form-item prop="pass">
+               <span class="t2">密码</span>&nbsp;&nbsp;&nbsp;<el-input class="item" type="password" v-model="admin.pass" autocomplete="off"></el-input>
+           </el-form-item>
+           <el-form-item>
+               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<el-button type="primary" @click="submitForm()">登陆</el-button>
+               <el-button @click="resetForm('admin')">重置</el-button>
+           </el-form-item>
+       </el-form>
+   </div>
+
+</div>
+</body>
+<script>
+    var vm = new Vue({
+        el:"#app",
+        data:{
+            admin:{
+                name:'',
+                pass:'',
+                pass_tip:'',
+                name_tip:'fvfdsf'
+            }
+        },
+        methods:{
+            submitForm(){
+                if(this.admin.name.trim() == ''){
+                    this.$message.error("姓名不能为空")
+                    return false;
+                }
+                if(this.admin.name.length < 2){
+                    this.$message.error("姓名长度不能小于2")
+                    return false;
+                }
+                if(this.admin.pass.trim() == ''){
+                    this.$message.error("密码不能为空")
+                    return false;
+                }
+
+                // 提交表单数据
+             /*   axios.get("http://www.baidu.com").then(()=>{
+
+                })*/
+
+                window.location.href='work.html'
+
+            },
+            resetForm(forName){
+                this.$refs[forName].resetFields()
+            }
+        }
+
+
+    })
+</script>
+</html>

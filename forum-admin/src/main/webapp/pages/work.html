@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>河工程JAVA论坛</title>
+    <meta name="description" content="河工程JAVA论坛">
+    <meta name="keywords" content="河工程JAVA论坛">
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+
+
+    <style type="text/css">
+    .el-main {
+        position: absolute;
+        top: 70px;
+        bottom: 0px;
+        left: 200px;
+        right: 10px;
+        padding: 0;
+    }
+
+        #menu{
+
+            width:100%;
+            line-height: 40px;
+            background-color: #1a2226;
+            text-align: center;
+            color:#ffffff;
+        }
+
+        a:hover{
+            text-decoration: none;
+        }
+
+        #title{
+            position: absolute;
+            margin-left: 50px;
+            margin-top: 15px;
+            font-size: 25px;
+            color: #ffffff;
+            letter-spacing: 1.5px;
+            font-weight: bold;
+            font-family: Latha;
+        }
+
+
+
+
+    </style>
+</head>
+<body class="hold-transition skin-purple sidebar-mini">
+    <div id="app">
+        <el-container>
+            <el-header  class="main-header" style="height:70px;">
+                <nav class="navbar navbar-static-top" :class=''>
+                    <!-- Logo -->
+                    <div id="title">河北工程大学JAVA论坛后台管理中心</div>
+                    <div class="right-menu">
+
+                        <span class="help"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>帮助</span>
+                        <el-dropdown class="avatar-container right-menu-item" trigger="click">
+                            <div class="avatar-wrapper">
+                                <img src="../img/avatar5.png" class="user-avatar">
+                                {{username}}
+                            </div>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item divided>
+                                    <span style="display:block;">修改密码</span>
+                                </el-dropdown-item>
+                                <el-dropdown-item divided>
+                                        <span style="display:block;">
+                                            <a href="/logout.do">退出 </a></span>
+                                    </el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                    </div>
+                </nav>
+            </el-header>
+            <el-container>
+                <el-aside width="200px" style="border-right: 1px  #1a2226 dotted" >
+                    <div id="menu">菜&nbsp;&nbsp;&nbsp;单</div>
+                    <el-menu style="background-color: #222d32;height: 660px;">
+                        <el-submenu v-for="menu in menuList" :index="menu.path">
+                            <template slot="title">
+                                <i class="fa" :class="menu.icon" style="color: #b8c7ce"></i>
+                                <span style="color: #b8c7ce">{{menu.title}}</span>
+                            </template>
+                            <template v-for="child in menu.children" >
+                                <el-menu-item :index="child.path">
+
+                                    <a :href="child.linkUrl"  target="right">  <span class="glyphicon glyphicon-record" style="padding-bottom: 5px">&nbsp;</span>{{child.title}}</a>
+                                </el-menu-item>
+                            </template>
+                        </el-submenu>
+                    </el-menu>
+                </el-aside>
+                <el-container>
+                    <iframe name="right"  class="el-main" src="./picture.html" width="400px" height="700px" frameborder="0"></iframe>
+                </el-container>
+            </el-container>
+        </el-container>
+    </div>
+</body>
+<!-- 引入组件库 -->
+<script src="../js/vue.js"></script>
+<script src="../plugins/elementui/index.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/axios-0.18.0.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data:{
+            username:"",
+            menuList:[
+                {
+                    "path": "1",
+                    "title": "系统管理",
+                    "icon":"fa-dashboard",
+                    "linkUrl":"love.html",
+                    "children": [
+                        {
+                            "path": "/1-1",
+                            "title": "管理员信息",
+                            "linkUrl":"admin-user/admin-user.html",
+                            "children":[]
+                        },
+                        {
+                            "path": "/1-2",
+                            "title": "角色管理",
+                            "linkUrl":"admin-user/role-list.html",
+                            "children":[]
+                        },
+                        {
+                            "path": "/1-3",
+                            "title": "资源权限管理",
+                            "linkUrl":"admin-user/permission-list.html",
+                            "children":[]
+                        },
+                        {
+                            "path": "/1-4",
+                            "title": "访问日志",
+                            "linkUrl":"",
+                            "children":[]
+                        }
+                    ]
+                },
+                {
+                    "path": "2",
+                    "title": "文章管理",
+                    "icon":"fa-edit",
+                    "children": [
+                        {
+                            "path": "/2-1",
+                            "title": "待审核文章",
+                            "linkUrl":"article/check-article.html",
+                            "children":[]
+                        },
+                        {
+                            "path": "/2-2",
+                            "title": "被投诉文章",
+                            "linkUrl":"article/report-article.html",
+                            "children":[]
+                        },
+                        {
+                            "path": "/2-3",
+                            "title": "新增分类",
+                            "linkUrl":"article/add-category.html",
+                            "children":[]
+                        },
+                        {
+                            "path": "/2-4",
+                            "title": "热门图书",
+                            "linkUrl":"article/book-manager.html",
+                            "children":[]
+                        },
+                        {
+                            "path": "/2-5",
+                            "title": "热门话题",
+                            "linkUrl":"article/hot-topic.html",
+                            "children":[]
+                        },
+                    ]
+                },
+                {
+                    "path": "3",
+                    "title": "文章统计",
+                    "icon":"fa-cog",
+                    "children": [
+                        {
+                            "path": "/3-1",
+                            "title": "违规文章",
+                            "linkUrl":"article/breach-article.html",
+                            "children":[]
+                        },
+                        {
+                            "path": "/3-2",
+                            "title": "综合数据分析",
+                            "linkUrl":"article/analyze-article.html",
+                            "children":[]
+                        },
+                    ]
+                },
+                {
+                    "path": "4",
+                    "title": '用户管理',
+                    "icon":"fa-stethoscope",
+                    "children":[
+                        {
+                            "path": "/4-1",
+                            "title": "用户信息",
+                            "linkUrl":"user/user.html",
+                            "children":[]
+                        },
+                        {
+                            "path": "/4-2",
+                            "title": "会员信息",
+                            "linkUrl":"user/member.html",
+                            "children":[]
+                        },
+                        {
+                            "path": "/4-3",
+                            "title": "封号用户",
+                            "linkUrl":"user/gag_user.html",
+                            "children":[]
+                        },
+                        {
+                            "path": "/4-4",
+                            "title": "禁言用户",
+                            "linkUrl":"user/taboo_user.html",
+                            "children":[]
+                        },
+                    ]
+                },
+                {
+                    "path": "5",     //菜单项所对应的路由路径
+                    "title": "公告通知",     //菜单项名称
+                    "icon":"fa-envelope-square",
+                    "children":[
+                        {
+                            "path": "/5-1",
+                            "title": "发布公告",
+                            "linkUrl":"announce/release-announce.html",
+                            "children":[]
+                        },
+                    ]
+                },
+            ]
+        },
+        created(){
+            //发送请求获取当前登录用户的用户名
+           /* axios.get('/user/getUsername.do').then((response)=>{
+                this.username = response.data.data;
+            });*/
+        }
+    });
+    $(function() {
+            var wd = 200;
+            $(".el-main").css('width', $('body').width() - wd + 'px');
+    });
+</script>
+</html>

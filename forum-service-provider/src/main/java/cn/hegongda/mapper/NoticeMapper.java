@@ -1,6 +1,7 @@
 package cn.hegongda.mapper;
 
 import cn.hegongda.pojo.TNotice;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -14,4 +15,7 @@ public interface NoticeMapper {
     TNotice getNoticeById(Integer id);
 
     void updateNotice(TNotice notice);
+
+    @Insert("insert into t_notice (title,content,time,status,uid) values (#{title},#{content},#{time},#{status},#{uid})")
+    Integer addNotice(TNotice notice);
 }

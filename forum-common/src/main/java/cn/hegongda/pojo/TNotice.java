@@ -9,7 +9,7 @@ public class TNotice implements Serializable{
     private String title;
     private String content ;
     private Date time;
-    private Integer status ;
+    private Integer status ;  // 1 代表已读  0 代表未读
     private Integer uid ;
 
     public Integer getId() {

@@ -1,8 +1,7 @@
 package cn.heongda.schedule;
 
 
-import cn.hegongda.service.QuartzService;
-import com.sun.corba.se.impl.orb.ParserTable;
+import cn.hegongda.service.common.QuartzService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -9,20 +9,17 @@ import cn.hegongda.pojo.TArticleCategory;
 import cn.hegongda.result.PageResult;
 import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
+import cn.hegongda.service.article.ArticleService;
 import cn.hegongda.utils.DateUtils;
 import cn.hegongda.utils.JsonUtils;
 import com.alibaba.dubbo.config.annotation.Service;
-import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
-import org.aspectj.lang.annotation.AfterThrowing;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisSentinelPool;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -80,10 +77,9 @@ public class ArticleServiceImpl implements ArticleService {
             // 没有定时发布只需要直接插入数据库中即可
              number = articleMapper.insert(article);
         }
+
+        /* 待优化 */
         if (number > 0){
-            // 将待审核的文章放入到redis中，以便于管理员从中获取审核
-            Jedis jedis = jedisPool.getResource();
-            jedis.rpush(RedisConstant.CHECK_ARTICLE, JsonUtils.objectToJson(article));
             return new Result(true, "审核通过后即可发布");
         }
         return new Result(false, "发布失败",article);

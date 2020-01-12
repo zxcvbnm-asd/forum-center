@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/component.css">
+    <!-- 引入组件库 -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+
+    <style>
+        body{
+            overflow: hidden;
+        }
+
+        a:hover{
+            cursor: pointer;
+        }
+
+        #bxs{
+            margin-left: 250px;
+            margin-top: 50px;
+        }
+
+        .put{
+            width: 360px;
+            font-weight: bold;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="app">
+       <mk-page></mk-page>
+    </div>
+
+    <template id="temp">
+        <div id="box">
+            <div id="inner_box">
+                <div id="one_tip">
+                    <span id="one_title">发布公告</span>
+                    <span class="pull-right" id="right">首页&nbsp;&nbsp;>&nbsp;&nbsp;公告通知&nbsp;&nbsp;>&nbsp;&nbsp;发布公告</span>
+                </div>
+
+                <div id="table" style="height: 490px">
+                   <div id="bxs">
+                        <el-form ref="form" :model="announce" label-width="80px">
+                            <el-form-item label="公告名称">
+                                <el-input class="put" v-model="announce.title"></el-input>
+                            </el-form-item>
+                            <el-form-item label="公告内容">
+                                <el-input  class="put" rows="9" type="textarea" v-model="announce.content"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click="onSubmit">发布</el-button>
+                                <el-button>取消</el-button>
+                            </el-form-item>
+                        </el-form>
+                   </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</body>
+      <script>
+
+          //<!--:href="'article-detail.html?id='+article.id"-->
+          Vue.component("mkPage",{
+              template:"#temp",
+              data(){
+                  return{
+                      announce: {
+                          title: '',
+                          content: '',
+                          time:''
+                      }
+
+                  }
+              },
+              methods:{
+                  onSubmit() {
+                      if(this.announce.title == ''){
+                          this.$message.error("公告名称不能为空")
+                          return false
+                      }
+                      if(this.announce.content == ''){
+                          this.$message.error("公告内容不能为空")
+                          return false
+                      }
+                      alert(this.announce.title)
+                  }
+              }
+          })
+          var vm = new Vue({
+              el:'#app',
+              data:{
+
+              },
+              methods:{
+
+              }
+          })
+      </script>
+</html>

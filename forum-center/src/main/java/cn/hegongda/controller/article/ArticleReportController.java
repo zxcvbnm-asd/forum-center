@@ -4,16 +4,12 @@ package cn.hegongda.controller.article;
 import cn.hegongda.result.PageResult;
 import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
-import cn.hegongda.service.ArticleReportService;
-import cn.hegongda.utils.DateUtils;
+import cn.hegongda.service.article.ArticleReportService;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.jws.WebResult;
-import java.util.Date;
 
 
 /**

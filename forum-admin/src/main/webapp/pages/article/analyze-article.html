@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <!-- 引入组件库 -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+    <script src="../../js/echarts.js"></script>
+
+    <style>
+        body{
+            font-family: DFKai-SB;
+            background-color: #d2d6de;
+        }
+        #box{
+            width: 94%;
+            margin-left: 3%;
+            background-color: #ffffff;
+        }
+
+        th{
+            text-align: center;
+            color: red;
+            font-size: 20px;
+        }
+
+        td{
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+   <div id="app">
+       <div id="box">
+           <h3 class="page-header">文章数据统计</h3>
+           <table class="table table-striped table-hover table-bordered">
+               <tr>
+                   <th>昨日发文总数</th>
+                   <th>上周发文总数</th>
+                   <th>上月发文总数</th>
+               </tr>
+               <tr>
+                   <td>2500</td>
+                   <td>250000</td>
+                   <td>3000000</td>
+               </tr>
+           </table>
+           <h3 class="page-header">各类文章上月发文统计分析</h3>
+           <div id="main" style="width: 600px;height:400px;margin-left: 300px"></div>
+           <h3 class="page-header">近一周发文情况</h3>
+           <div id="main1" style="width: 600px;height:400px;margin-left: 300px"></div>
+           <h3 class="page-header">技术受欢迎程度排名</h3>
+           <div id="main2" style="width: 600px;height:600px;margin-left: 300px"></div>
+       </div>
+   </div>
+</body>
+    <script>
+
+        var vm = new Vue({
+            el:'#app',
+            data:{
+                count:[100,300,250,500],
+                monthCount:[
+                   [1,2,3,4,5,6,7],
+                   [10,20,30,40,50,60,70]
+                ],
+                techonolyCount:[
+                    ['java', '多线程', 'spring', 'mybatis', 'struts2', 'hibernate', 'html', 'vue', 'mysql', 'redis'],
+                    [10,20,30,40,50,60,70,80,90,100]
+                ]
+            },
+            mounted(){
+                var myChart = echarts.init(document.getElementById('main'));
+                var option = {
+                    title: {
+                        text: '各一级分类文章发文数目统计'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data:['数量']
+                    },
+                    xAxis: {
+                        data: ["JAVAEE","JAVASE","DATABASE","WEBPAGE"]
+                    },
+                    yAxis: {},
+                    series: [{
+                        name: '数量',
+                        type: 'bar',
+                        data: this.count,
+                    }]
+                };
+
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option);
+
+
+
+                var myChart1 = echarts.init(document.getElementById('main1'));
+                option1 = {
+                    xAxis: {
+                        type: 'category',
+                        data: this.monthCount[0]
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: [{
+                        data: this.monthCount[1],
+                        type: 'line'
+                    }]
+                };
+
+                myChart1.setOption(option1)
+
+
+                var myChart2 = echarts.init(document.getElementById('main2'));
+
+                app.title = '技术文章排名 - 条形图';
+
+                var labelRight = {
+                    normal: {
+                        position: 'right'
+                    }
+                };
+                option2 = {
+                    title: {
+                        text: '技术排名',
+                        subtext: 'The Population Of Technology',
+                        sublink: 'http://e.weibo.com/1341556070/AjwF2AgQm'
+                    },
+                    tooltip : {
+                        trigger: 'axis',
+                        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                        }
+                    },
+                    grid: {
+                        top: 80,
+                        bottom: 30
+                    },
+                    xAxis: {
+                        type : 'value',
+                        position: 'top',
+                        splitLine: {lineStyle:{type:'dashed'}},
+                    },
+                    yAxis: {
+                        type : 'category',
+                        axisLine: {show: false},
+                        axisLabel: {show: false},
+                        axisTick: {show: false},
+                        splitLine: {show: false},
+                        data :this.techonolyCount[0]
+                    },
+                    series : [
+                        {
+                            name:'发文数',
+                            type:'bar',
+                            stack: '总量',
+                            label: {
+                                normal: {
+                                    show: true,
+                                    formatter: '{b}'
+                                }
+                            },
+                            data:this.techonolyCount[1]
+                        }
+                    ]
+                };
+
+
+                myChart2.setOption(option2)
+
+            }
+        })
+    </script>
+</html>

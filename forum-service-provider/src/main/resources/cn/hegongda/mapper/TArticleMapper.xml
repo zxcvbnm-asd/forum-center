@@ -446,4 +446,15 @@
        select * from t_article where status=2
   </select>
 
+
+  <select id="getAritcleByStatus" resultType="cn.hegongda.pojo.ArticleExpan">
+    SELECT a.id AS id,a.title AS title, a.pub_time AS pubTime, c.cname AS cname, u.username AS username
+    FROM t_article a, t_article_category c,t_user u
+    WHERE a.uid=u.id AND a.cid=c.id AND a.status=#{status}
+    <if test="queryString != null">
+       AND  DATE_FORMAT(a.pub_time,'%Y-%m-%d')=#{queryString}
+    </if>
+    ORDER  BY  a.pub_time ASC
+  </select>
+
 </mapper>

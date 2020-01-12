@@ -4,7 +4,7 @@ import cn.hegongda.constant.MessageConstant;
 import cn.hegongda.pojo.ArticlePub;
 import cn.hegongda.result.PageResult;
 import cn.hegongda.result.QueryPageBean;
-import cn.hegongda.service.SearchService;
+import cn.hegongda.service.common.SearchService;
 import com.alibaba.dubbo.config.annotation.Service;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
