@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/component.css">
+    <!-- 引入组件库 -->
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+
+    <style>
+        a:hover{
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="app">
+       <mk-page></mk-page>
+    </div>
+
+    <template id="temp">
+        <div id="box">
+            <div id="inner_box">
+                <div id="one_tip">
+                    <span id="one_title">文章统计</span>
+                    <span class="pull-right" id="right">首页&nbsp;&nbsp;>&nbsp;&nbsp;文章管理&nbsp;&nbsp;>&nbsp;&nbsp;违规文章列表</span>
+                </div>
+
+                <div id="table">
+                    <div id="list_form">
+                     <div class="btn-group" role="group" aria-label="...">
+                      <!--  <button type="button" class="btn btn-default btn-sm">新建</button>-->
+                        <button type="button" class="btn btn-default btn-sm" @click="flush">刷新</button>
+                    </div>
+
+                      <!--  <div class="input-group" style="width: 300px;height:20px;margin-left: 780px">
+                            <input type="text" class="form-control" v-model="pagination.queryString" placeholder="按违规信息作者或标题进行查找">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" @click="search">搜索</button>
+                            </span>
+                        </div>-->
+                    </div>
+
+                    <div id="list">
+                        <table class="table table-hover table-bordered table-striped">
+                             <tr>
+                                 <th>序号</th>
+                                 <th>举报人</th></thj></th>
+                                 <th>被举报人</th>
+                                 <th>时间</th>
+                                 <th>违规信息</th>
+                                 <th>操作</th>
+                             </tr>
+                            <tr v-for="(report,index) in reports">
+                                <td>{{index+1}}</td>
+                                <td>{{report.reporter}}</td>
+                                <td>{{report.publisher}}</td>
+                                <td>{{report.reportTime}}</td>
+                                <td>{{arr[report.type]}}</td>
+                                <td width="240px">
+                                    <a class="detail"  @click="showDetail(index)" >详情</a>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 id="h4" style="color: red;text-align: center">举报详情</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <span style="color: brown">被举报人发表的评论：</span>
+                                        &nbsp; &nbsp; &nbsp;<p id="content" style="font-size: 16px;margin-left: 30px;margin-top: 8px">你还女偶数时都是覅定时</p>
+                                        <span style="color: purple">举报人的举报内容：</span>
+                                        &nbsp; &nbsp; &nbsp;<p id="content2" style="font-size: 16px;margin-left: 30px;margin-top: 8px">是粉丝粉丝佛山房价殴打 </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-success" data-dismiss="modal" @click="ignore">忽略</button>
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal" @click="del">删除</button>
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal" @click="illegal">封号</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="page">
+                        <div class="pagination-container">
+                            <el-pagination
+                                    class="pagiantion"
+                                    @current-change="handleCurrentChange"
+                                    :current-page="pagination.currentPage"
+                                    :page-size="pagination.pageSize"
+                                    layout="total, prev, pager, next, jumper"
+                                    :total="pagination.total">
+                            </el-pagination>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</body>
+      <script>
+
+          //<!--:href="'article-detail.html?id='+article.id"-->
+          Vue.component("mkPage",{
+              template:"#temp",
+              data(){
+                  return{
+                      pagination: {//分页相关模型数据
+                          currentPage: 1,//当前页码
+                          pageSize:10,//每页显示的记录数
+                          total:0,//总记录数
+                          queryString:null//查询条件
+                      },
+                      index:-1,
+                      reports:[
+                          {id:1,publisher:'林肯',reporter:'liuwe',reportTime:'2016-10-25',type:1},
+                          {id:1,publisher:'华盛顿',reporter:'liuwe',reportTime:'2016-10-25',type:1},
+                          {id:1,publisher:'奥巴马',reporter:'liuwe',reportTime:'2016-10-25',type:1},
+                          {id:1,publisher:'克林顿',reporter:'liuwe',reportTime:'2016-10-25',type:1},
+                      ],
+                      arr:['内容涉黄','政治相关','内容抄袭','涉嫌广告','内容侵权','侮辱谩骂','其他方面'],
+                      status:0,
+                      rule:{},    // 禁言
+                  }
+              },
+
+              created(){
+                this.findPage();
+              },
+              methods:{
+                  findPage(){
+                      var param = {
+                          currentPage:this.pagination.currentPage,
+                          pageSize:this.pagination.pageSize,
+                          queryString:this.pagination.queryString
+                      };
+                      axios.post("/report/getCommentReport.do?status="+this.status+"&cate=1", param).then((res)=>{
+                          if (res.data.flag) {
+                              this.reports = res.data.rows;
+                              this.pagination.total = res.data.total;
+                          } else {
+                              this.$message.error(res.data.message);
+                          }
+                      })
+                  },
+                  // 切换页码
+                  handleCurrentChange:function(currentPage) {
+                      this.pagination.currentPage = currentPage;
+                      this.findPage();
+                  },
+                  showDetail(index){
+                      this.index = index;
+                      var comment = this.reports[index].content2;
+                      var content = this.reports[index].content1;
+                      $('#myModal').modal('show');
+                      $("#content").text(comment);
+                      $("#content2").text(content);
+                  },
+                  search(){
+                      // 按照时间进行搜索为审核的文章
+                      alert(this.pagination.queryString)
+                  },
+                  flush(){
+                      this.findPage();
+                  },
+
+                  changeStatus(){
+                      axios.get("/report/changeStats.do?id="+this.reports[this.index].id).then((res=>{
+                          if (res.data.flag) {
+                              this.findPage();
+                          } else {
+                              this.$message.error(res.data.flag);
+                          }
+                      }))
+                  },
+
+                  deleteComment(){
+                      axios.get("/report/deleteCommentById.do?id="+this.reports[this.index].cid).then((res)=>{
+                          if (res.data.flag ){
+                              this.changeStatus();
+                          } else {
+                              this.$message.error(res.data.message);
+                          }
+                      })
+                  },
+
+                  // 删除被投诉文章
+                  del(){
+                      this.deleteComment();
+                  },
+
+                  ignore(){
+                     this.changeStatus();
+                  },
+                  illegal(){
+                      this.rule.uid  = this.reports[this.index].pid;
+                      this.rule.status = 2;
+                      /*var title = this.lists[this.index].title;
+                      var type = arr[this.lists[this.index].type];*/
+                      // 封号
+                      axios.post("/user-manager/closeAccount.do", this.rule).then((res)=>{
+                          if (res.data.flag) {
+                              this.deleteComment();
+                          } else {
+                              this.$message.error( res.data.message );
+                          }
+                      })
+                  }
+              }
+          })
+          var vm = new Vue({
+              el:'#app',
+              data:{
+
+              },
+              methods:{
+
+              }
+          })
+      </script>
+</html>

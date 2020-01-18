@@ -88,4 +88,20 @@ public interface TArticleMapper {
 
     // 按条件和分页查询出待审核的文章
     List<ArticleExpan> getAritcleByStatus(@Param("status") Integer status,@Param("queryString") String queryString);
+
+    // 查询昨天的发文总数
+    Integer getYearsToday(String dateStr);
+
+    // 获取上周发文总数
+    Integer getLastWeekArticleNumber(@Param("monday") String monday, @Param("sunday") String sunday);
+
+    // 获取上月发文总数
+    @Select("SELECT COUNT(*) FROM t_article WHERE  DATE_FORMAT(pub_time,'%Y-%m')=#{month} AND status=2")
+    Integer getLastMonthArticleNumber(String month);
+
+    // 获取上月一级分类发文总数
+    Integer getLastMonthCategoryArticleNumber(@Param("month") String month, @Param("id") Integer id);
+
+    @Select("SELECT COUNT(*) AS total,cid FROM t_article  WHERE DATE_FORMAT(pub_time,'%Y-%m')=#{month} AND status=2 GROUP BY cid ORDER BY total DESC LIMIT 0,9")
+    List<Map> getPopularTechonolgy(String month);
 }

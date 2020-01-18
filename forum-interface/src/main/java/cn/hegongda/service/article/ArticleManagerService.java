@@ -22,4 +22,7 @@ public interface ArticleManagerService {
 
     // 审核不通过
     Result failPub(TNotice notice);
+
+    // 文章线下
+    Result offLineArticle(Integer id);
 }

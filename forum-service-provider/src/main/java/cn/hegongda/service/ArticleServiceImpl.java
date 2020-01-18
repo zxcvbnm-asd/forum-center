@@ -18,6 +18,7 @@ import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -284,5 +285,24 @@ public class ArticleServiceImpl implements ArticleService {
         // 插入到数据库中
         articleMapper.readRecoderToDatabase(total,uid,cid, DateUtils.format(new Date()));
         return new Result(true, MessageConstant.OPERATION_SUCCESS);
+    }
+
+    /*
+     * 新增分类
+     */
+
+    @Override
+    @Transactional
+    public Result addCategory(TArticleCategory category) {
+        if ( category == null ) {
+            return new Result(false, MessageConstant.PARAM_NULL_MESSAGE);
+        }
+        TArticleCategory articleCategory = articleCategoryMapper.findByCname(category.getCname());
+        if (articleCategory == null) {
+            category.setCreateTime(new Date());
+            articleCategoryMapper.save(category);
+            return new Result( true, MessageConstant.OPERATION_SUCCESS);
+        }
+        return new Result(false, MessageConstant.OPERATION_FAIL);
     }
 }

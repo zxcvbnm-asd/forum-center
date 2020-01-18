@@ -21,7 +21,7 @@
                 uid = #{uid}
             </if>
         </set>
-        where uid=#{uid}
+        where id=#{id}
 
     </update>
 

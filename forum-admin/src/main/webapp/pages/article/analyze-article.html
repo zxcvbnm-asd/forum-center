@@ -50,9 +50,9 @@
                    <th>上月发文总数</th>
                </tr>
                <tr>
-                   <td>2500</td>
-                   <td>250000</td>
-                   <td>3000000</td>
+                   <td>{{count[0]}}</td>
+                   <td>{{count[1]}}</td>
+                   <td>{{count[2]}}</td>
                </tr>
            </table>
            <h3 class="page-header">各类文章上月发文统计分析</h3>
@@ -69,7 +69,7 @@
         var vm = new Vue({
             el:'#app',
             data:{
-                count:[100,300,250,500],
+                count:[],
                 monthCount:[
                    [1,2,3,4,5,6,7],
                    [10,20,30,40,50,60,70]
@@ -79,106 +79,136 @@
                     [10,20,30,40,50,60,70,80,90,100]
                 ]
             },
-            mounted(){
-                var myChart = echarts.init(document.getElementById('main'));
-                var option = {
-                    title: {
-                        text: '各一级分类文章发文数目统计'
-                    },
-                    tooltip: {},
-                    legend: {
-                        data:['数量']
-                    },
-                    xAxis: {
-                        data: ["JAVAEE","JAVASE","DATABASE","WEBPAGE"]
-                    },
-                    yAxis: {},
-                    series: [{
-                        name: '数量',
-                        type: 'bar',
-                        data: this.count,
-                    }]
-                };
 
-                // 使用刚指定的配置项和数据显示图表。
-                myChart.setOption(option);
-
-
-
-                var myChart1 = echarts.init(document.getElementById('main1'));
-                option1 = {
-                    xAxis: {
-                        type: 'category',
-                        data: this.monthCount[0]
-                    },
-                    yAxis: {
-                        type: 'value'
-                    },
-                    series: [{
-                        data: this.monthCount[1],
-                        type: 'line'
-                    }]
-                };
-
-                myChart1.setOption(option1)
-
-
-                var myChart2 = echarts.init(document.getElementById('main2'));
-
-                app.title = '技术文章排名 - 条形图';
-
-                var labelRight = {
-                    normal: {
-                        position: 'right'
+            created(){
+                // 查询发文数量
+                axios.get("/article-manager/getArticleNumber.do").then((res=>{
+                    if (res.data.flag) {
+                        this.count = res.data.data;
+                    } else {
+                        this.$message.error(res.data.message);
                     }
-                };
-                option2 = {
-                    title: {
-                        text: '技术排名',
-                        subtext: 'The Population Of Technology',
-                        sublink: 'http://e.weibo.com/1341556070/AjwF2AgQm'
-                    },
-                    tooltip : {
-                        trigger: 'axis',
-                        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-                            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-                        }
-                    },
-                    grid: {
-                        top: 80,
-                        bottom: 30
-                    },
-                    xAxis: {
-                        type : 'value',
-                        position: 'top',
-                        splitLine: {lineStyle:{type:'dashed'}},
-                    },
-                    yAxis: {
-                        type : 'category',
-                        axisLine: {show: false},
-                        axisLabel: {show: false},
-                        axisTick: {show: false},
-                        splitLine: {show: false},
-                        data :this.techonolyCount[0]
-                    },
-                    series : [
-                        {
-                            name:'发文数',
-                            type:'bar',
-                            stack: '总量',
-                            label: {
-                                normal: {
-                                    show: true,
-                                    formatter: '{b}'
+                }))
+            },
+            mounted(){
+                axios.get("/article-manager/getLastMonthCategoryNumber.do").then((res)=>{
+                    if (res.data.flag) {
+                        var myChart = echarts.init(document.getElementById('main'));
+                        var option = {
+                            title: {
+                                text: '各一级分类文章发文数目统计'
+                            },
+                            tooltip: {},
+                            legend: {
+                                data:['数量']
+                            },
+                            xAxis: {
+                                data: res.data.data.category
+                            },
+                            yAxis: {},
+                            series: [{
+                                name: '数量',
+                                type: 'bar',
+                                data: res.data.data.count,
+                            }]
+                        };
+                        // 使用刚指定的配置项和数据显示图表。
+                        myChart.setOption(option);
+                    } else {
+                        this.$message.error(res.data.message)
+                    }
+                })
+
+
+                axios.get("/article-manager/getLastWeekArticleNumber.do").then((res)=>{
+                    if (res.data.flag) {
+                        var myChart1 = echarts.init(document.getElementById('main1'));
+                        option1 = {
+                            xAxis: {
+                                type: 'category',
+                                data: res.data.data.days
+                            },
+                            yAxis: {
+                                type: 'value'
+                            },
+                            series: [{
+                                data: res.data.data.numbers,
+                                type: 'line'
+                            }]
+                        };
+
+                        myChart1.setOption(option1)
+                    }
+                })
+
+
+
+
+               axios.get("/article-manager/getPopularTechnology.do").then((res)=>{
+                    if (res.data.flag ) {
+                        var myChart2 = echarts.init(document.getElementById('main2'));
+
+                        app.title = '技术文章排名 - 条形图';
+
+                        var labelRight = {
+                            normal: {
+                                position: 'right'
+                            }
+                        };
+                        option2 = {
+                            title: {
+                                text: '技术排名',
+                                subtext: 'The Population Of Technology',
+                                sublink: 'http://e.weibo.com/1341556070/AjwF2AgQm'
+                            },
+                            tooltip : {
+                                trigger: 'axis',
+                                axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                                    type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
                                 }
                             },
-                            data:this.techonolyCount[1]
-                        }
-                    ]
-                };
+                            grid: {
+                                top: 80,
+                                bottom: 30
+                            },
+                            xAxis: {
+                                type : 'value',
+                                position: 'top',
+                                splitLine: {lineStyle:{type:'dashed'}},
+                            },
+                            yAxis: {
+                                type : 'category',
+                                axisLine: {show: false},
+                                axisLabel: {show: false},
+                                axisTick: {show: false},
+                                splitLine: {show: false},
+                                data :res.data.data.category
+                            },
+                            series : [
+                                {
+                                    name:'发文数',
+                                    type:'bar',
+                                    stack: '总量',
+                                    label: {
+                                        normal: {
+                                            show: true,
+                                            formatter: '{b}'
+                                        }
+                                    },
+                                    data:res.data.data.count
+                                }
+                            ]
+                        };
 
 
-                myChart2.setOption(option2)
+                        myChart2.setOption(option2)
+                    }else {
+                        this.$message.error(res.data.message);
+                    }
+               })
+
+
+
 
             }
         })

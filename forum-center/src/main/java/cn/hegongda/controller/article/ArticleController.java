@@ -9,12 +9,14 @@ import cn.hegongda.result.Result;
 import cn.hegongda.service.article.ArticleService;
 import cn.hegongda.service.common.SearchService;
 import com.alibaba.dubbo.config.annotation.Reference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +29,9 @@ public class ArticleController {
 
     @Reference
     private SearchService searchService;
+
+    @Autowired
+    private HttpServletResponse response ;
 
     // 查询一级分类
     @RequestMapping("/findFirstCate.do")
@@ -252,6 +257,16 @@ public class ArticleController {
             return new PageResult("查询出错",false);
         }
     }
+
+    /*
+     * 由后台查询用户的详细信息
+     */
+    @RequestMapping("/showUserDtails.do")
+    public String redirct(Integer id){
+        response.setHeader("Access-Control-Allow-Origin","*");
+        return "forward:/pages/fan-atten/attention_detail.html?id="+id;
+    }
+
 
 
 

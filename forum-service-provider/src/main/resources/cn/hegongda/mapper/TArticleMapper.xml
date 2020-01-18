@@ -457,4 +457,17 @@
     ORDER  BY  a.pub_time ASC
   </select>
 
+  <select id="getYearsToday" parameterType="java.lang.String" resultType="java.lang.Integer">
+       SELECT COUNT(*) FROM t_article WHERE status=2 AND DATE_FORMAT(pub_time,'%Y-%m-%d')=#{value}
+  </select>
+
+  <select id="getLastWeekArticleNumber" resultType="java.lang.Integer">
+    SELECT COUNT(*) FROM t_article WHERE  status=2 AND DATE_FORMAT(pub_time,'%Y-%m-%d') &gt;= #{monday} AND DATE_FORMAT(pub_time,'%Y-%m-%d') &lt;= #{sunday}
+  </select>
+
+  <select id="getLastMonthCategoryArticleNumber" resultType="java.lang.Integer">
+     SELECT COUNT(a.id)
+     FROM t_article  a , t_article_category c
+     WHERE a.cid=c.id AND c.parent_id=#{id} AND DATE_FORMAT(a.pub_time,'%Y-%m')=#{month}
+  </select>
 </mapper>

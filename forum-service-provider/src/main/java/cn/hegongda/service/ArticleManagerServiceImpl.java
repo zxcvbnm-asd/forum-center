@@ -136,4 +136,26 @@ public class ArticleManagerServiceImpl implements ArticleManagerService {
         }
         return new Result( false, MessageConstant.OPERATION_FAIL );
     }
+
+
+    /*
+     * 文章下线，修改文章状态值
+     */
+
+    @Override
+    @Transactional
+    public Result offLineArticle(Integer id) {
+        if (id == null ) {
+            return new Result(false, MessageConstant.PARAM_NULL_MESSAGE);
+        }
+
+        // 先查再改
+        TArticle article = articleMapper.selectByPrimaryKey(id);
+        if (article != null) {
+            article.setStatus(4);
+            articleMapper.updateByPrimaryKey(article);
+            return new Result(true, MessageConstant.OPERATION_SUCCESS);
+        }
+        return new Result( false, MessageConstant.OPERATION_FAIL);
+    }
 }

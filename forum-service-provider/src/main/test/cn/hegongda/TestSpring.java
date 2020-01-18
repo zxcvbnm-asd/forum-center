@@ -3,17 +3,16 @@ package cn.hegongda;
 import cn.hegongda.constant.RedisConstant;
 import cn.hegongda.mapper.*;
 import cn.hegongda.pojo.*;
-import cn.hegongda.result.PageResult;
 import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
 import cn.hegongda.service.*;
 import cn.hegongda.service.article.ArticleManagerService;
 import cn.hegongda.service.article.ArticleReportService;
 import cn.hegongda.service.fan_atten.FanAttenService;
+import cn.hegongda.service.report.ReportService;
+import cn.hegongda.service.user.UserManagerService;
 import cn.hegongda.utils.DateUtils;
 import cn.hegongda.utils.JsonUtils;
-import cn.hegongda.utils.QiniuUtils;
-import com.alibaba.druid.support.json.JSONUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +22,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring-dao.xml","classpath:spring-service.xml"
@@ -65,25 +60,57 @@ public class TestSpring {
     @Autowired
     private ArticleManagerService articleManagerService;
 
+    @Autowired
+    private ReportMapper reportMapper ;
+
+    @Autowired
+    private ReportService reportService;
+
+
+
+
      @Test
      public void test(){
-         Result result = articleReportService.getPreMonthsTotal(11);
-         Map data = (Map) result.getData();
+        QueryPageBean queryPageBean = new QueryPageBean();
+        queryPageBean.setCurrentPage(1);
+        queryPageBean.setPageSize(4);
+        reportService.getCommentReport(0,1,queryPageBean);
+     }
+
+
+     @Test
+     public void test05(){
+
+     }
+     // 构造被投诉文章的数据
+     @Test
+     public void testInsertinto(){
+         List<TArticle> articles = articleMapper.findPublished();
+         for (TArticle article : articles) {
+             Report report = new Report();
+             report.setCate(0);
+             report.setCid(article.getId());
+             report.setStatus(0);
+             report.setUid(11);
+             report.setType(2);
+             report.setReportTime(new Date());
+             report.setContent("辱骂他人");
+             reportMapper.addReport(report);
+         }
      }
 
      // 测试查询待审核文章
      @Test
      public void testCheck() throws InterruptedException {
-         /*QueryPageBean queryPageBean = new QueryPageBean();
+        /* QueryPageBean queryPageBean = new QueryPageBean();
          queryPageBean.setPageSize(8);
          queryPageBean.setCurrentPage(1);
-         queryPageBean.setQueryString("2020-01-04");
-         PageResult checkArticles = articleManagerService.getCheckArticles(queryPageBean);
-         System.out.println(checkArticles.getRows());*/
-       /*  Result approved = articleManagerService.approved(19);
-         System.out.println(approved.isFlag());*/
-       articleManagerService.autoCheckArticle();
-         TimeUnit.SECONDS.sleep(20);
+         queryPageBean.setQueryString("刘伟东");
+         reportService.getReport(1, 0,queryPageBean);*/
+
+        reportService.changeStatus(26);
+
+
      }
 
     // 向logstash的数据库表中添加数据
@@ -180,7 +207,7 @@ public class TestSpring {
         commentReport.setMark("打情骂俏");
         commentReport.setUid(11);
         commentReport.setCommentId(3L);
-        commentService.reportComment(commentReport);
+
     }
 
 

@@ -34,6 +34,14 @@
 
         }
 
+        body {
+            overflow: hidden;
+        }
+
+        img {
+            width: 1109px;
+            height: 220px;
+        }
 
     </style>
 
@@ -73,7 +81,10 @@
                         </div>
                     </div>
                 </div>
+                <img src="../../img/6666.jpg">
             </div>
+
+
         </div>
     </template>
 </body>
@@ -93,10 +104,33 @@
                       cname:''
                   }
               },
+
+              created(){
+                  // 查询一级分类
+                  axios.get("/article-manager/findOneCategory.do").then((res)=>{
+                      if (res.data.flag) {
+                          this.categories = res.data.data;
+                      } else {
+                          this.$message.error(res.data.message);
+                      }
+                  })
+              },
+
               methods:{
                   // 添加二级分类
                   add(){
-                    alert("添加了")
+                     var category = {
+                         parentId : this.id,
+                         cname:this.cname
+                     }
+
+                     axios.post("/article-manager/addCategory.do", category).then((res)=>{
+                         if (res.data.flag) {
+                             this.cname='';
+                         } else {
+                             this.$message.error(res.data.message);
+                         }
+                     })
                   }
               }
           })

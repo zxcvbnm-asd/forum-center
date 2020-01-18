@@ -17,6 +17,16 @@
     <script src="../../js/axios-0.18.0.js"></script>
 
 </head>
+<style>
+    .tda:hover{
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .font-color{
+        color: red;
+    }
+</style>
 <body>
     <div id="app">
        <mk-page></mk-page>
@@ -34,15 +44,18 @@
                     <div id="list_form">
                      <div class="btn-group" role="group" aria-label="...">
                       <!--  <button type="button" class="btn btn-default btn-sm">新建</button>-->
-                        <button type="button" class="btn btn-default btn-sm">刷新</button>
+                         <button type="button" @click="flush" class="btn btn-default btn-sm">刷新</button>
+                         <button type="button" id="btn1" @click="solved" class="btn btn-default btn-sm">已处理</button>
+                         <button type="button" id="btn2" @click="notSolved"class="btn btn-default btn-sm">未处理</button>
                     </div>
 
-                      <!--  <div class="input-group" style="width: 300px;height:20px;margin-left: 780px">
-                            <input type="text" class="form-control" placeholder="输入时间段：xxxx-xx-xx">
+
+                        <div class="input-group" style="width: 300px;height:20px;margin-left: 780px">
+                            <input type="text" class="form-control" v-model="pagination.queryString" placeholder="请输入被投诉人的姓名">
                             <span class="input-group-btn">
-                                <button class="btn btn-default" type="button">搜索</button>
+                                <button class="btn btn-default" @click="search" type="button">搜索</button>
                             </span>
-                        </div>-->
+                        </div>
                     </div>
 
                     <div id="list">
@@ -58,24 +71,28 @@
 
                             <tr v-for="(list,index) in lists" @key="index">
                                 <td>{{index+1}}</td>
-                                <td>{{list.title}}</td>
-                                <td>{{list.writer}}</td>
-                                <td>{{list.time}}</td>
-                                <td>{{list.comper}}</td>
-                                <td>
-                                    <a href="#" @click="showArticle(list.id)">文章详情</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <a href="#" @click="show(list.id)">查看</a>
+                                <td width="350px"><a class="tda" @click="showDetail(list.aid,list.writer)">{{list.title}}</a></td>
+                                <td width="180px">{{list.writer}}</td>
+                                <td>{{list.reportTime}}</td>
+                                <td width="150px"><a class="tda" @click="showReport(list.uid)">{{list.reporter}}</a></td>
+                                <td width="150px">
+                                    <span v-if="status == 1">
+                                        已处理
+                                    </span>
+                                    <span v-if="status == 0">
+                                        <a href="#" @click="show(index,list.id)">查看</a>
+                                    </span>
                                     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                                         <div class="modal-dialog" role="document">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h4>投诉信息</h4>
+                                                    <h4 id="h4" style="color: red">投诉信息</h4>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <p id="content"></p>
+                                                    <p id="content" style="font-size: 16px;"></p>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-success" data-dismiss="modal" @click="normal">问题不大</button>
+                                                    <button type="button" class="btn btn-success" data-dismiss="modal" @click="normal">正常</button>
                                                     <button type="button" class="btn btn-primary" data-dismiss="modal" @click="warn">警告</button>
                                                     <button type="button" class="btn btn-info" data-dismiss="modal" @click="offline">下线</button>
                                                     <button type="button" class="btn btn-warning" data-dismiss="modal" @click="gag">禁言</button>
@@ -110,75 +127,194 @@
 </body>
       <script>
 
+
+
+          var arr = ['内容涉黄','政治相关','内容抄袭','涉嫌广告','内容侵权','侮辱谩骂','其他方面'];
           Vue.component("mkPage",{
               template:"#temp",
               data(){
                   return{
                       pagination: {//分页相关模型数据
                           currentPage: 1,//当前页码
-                          pageSize:10,//每页显示的记录数
+                          pageSize:13,//每页显示的记录数
                           total:0,//总记录数
                           queryString:null//查询条件
                       },
 
-                      markId:'',
+                      status:0,  // 查询未被处理的文章
+
+                      id:-1,   // 记录要修改的文章的id
+
+                      index:-1, // 记录lists的下标
 
                       lists:[
-                          {id:1,title:'钢铁是怎样练成的',writer:'刘一水',time:'2012-25-7',comper:'账单',content:'会使人合同'},
-                          {id:2,title:'钢铁是怎样练成的',writer:'刘一水',time:'2012-25-7',comper:'账单',content:'此文章文不对题'},
-                          {id:3,title:'钢铁是怎样练成的',writer:'刘一水',time:'2012-25-7',comper:'账单',content:'含有广告信息'},
-                          {id:25,title:'钢铁是怎样练成的',writer:'刘一水',time:'2012-25-7',comper:'账单',content:'含有违法信息'},
+                          {id:1,aid:1,title:'钢铁是怎样练成的',writer:'刘一水',reportTime:'2012-25-7',uid:1,reporter:'账单',content:'会使人合同',type:1},
+                          {id:2,aid:1,title:'钢铁是怎样练成的',writer:'刘一水',reportTime:'2012-25-7',uid:1,reporter:'账单',content:'此文章文不对题',type:2},
+                          {id:3,aid:1,title:'钢铁是怎样练成的',writer:'刘一水',reportTime:'2012-25-7',uid:1,reporter:'账单',content:'含有广告信息',type:3},
+                          {id:25,aid:1,title:'钢铁是怎样练成的',writer:'刘一水',reportTime:'2012-25-7',uid:1,reporter:'账单',content:'含有违法信息',type:4},
                       ],
                       // 点击查看，查询具体的举报信息
-                      reportInformation:{id:1,category:0,mark:'辱骂作者'}
+                      notice:{},
+                      rule:{},    // 禁言
                   }
               },
+
+              created(){
+                  this.findPage();
+              },
               methods:{
+                  findPage(){
+                      var param = {
+                          currentPage:this.pagination.currentPage,
+                          pageSize:this.pagination.pageSize,
+                          queryString:this.pagination.queryString
+                      };
+                      axios.post("/report/getReport.do?status="+this.status+"&cate=0", param).then((res)=>{
+                          if (res.data.flag) {
+                              this.lists = res.data.rows;
+                              this.pagination.total = res.data.total;
+                          } else {
+                              this.$message.error(res.data.message);
+                          }
+                      })
+
+                  },
                   // 切换页码
                   handleCurrentChange:function(currentPage) {
                       this.pagination.currentPage = currentPage;
                       this.findPage();
                   },
 
-                  show(id){
-                      this.markId = id
-                      // 通过axios发送异步请求，获取举报表中的数据将content进行置换
+                  search(){
+                      this.pagination.currentPage = 1;
+                      this.findPage();
+                  },
+
+                  show(index,id){
+                      this.index = index ;
+                      this.id = id;
                       $('#myModal').modal('show')
-                      $('#content').text(content)
+                      $('#h4').text(arr[this.lists[index].type]);
+                      $('#content').text(this.lists[index].content)
 
                   },
 
-                  // 直接删除该条投诉
+                  flush(){
+                      this.pagination.currentPage = 1;
+                      this.findPage();
+                  },
+
+                  // 查看被投诉文章的详情
+                  showDetail(id,username){
+                      window.open("article-detail.html?id="+id+"&writerName="+username+"&mark=1");
+                  },
+
+                  // 展示投诉者详细信息
+                  showReport(id){
+                      window.open("http://localhost:8082/article/showUserDtails.do?id="+id);
+                  },
+
+                  solved(){
+                      $("#btn1").css("color","red");
+                      $("#btn2").css("color","black")
+                      this.pagination.currentPage = 1;
+                      this.status = 1;
+                      this.findPage();
+                  },
+
+                  notSolved(){
+                      $("#btn1").css("color","black");
+                      $("#btn2").css("color","red")
+                      this.pagination.currentPage = 1;
+                      this.status = 0;
+                      this.findPage();
+                  },
+                  // 举报已经处理，修改其状态值即可
+                  changeStatus(){
+                      axios.get("/report/changeStats.do?id="+this.id).then((res)=>{
+                          if (res.data.flag) {
+                              this.findPage();
+                          } else {
+                              this.$message.error(res.data.message);
+                          }
+                      })
+                  },
+
+                  // 用户向用户发送通知
+                  sendNotice(){
+                      axios.post("/article-manager/failPublish.do",this.notice).then((res)=>{
+                          if ( res.data.flag) {
+                              this.changeStatus();
+                          } else {
+                              this.$message.error(res.data.message)
+                          }
+                      })
+                  },
+
+                  // 文章下线
+                  offLineArticle(){
+                      // 删除该篇文章（将文章设置为发布失败即可）
+                      axios.get("/article-manager/offline.do?id="+this.lists[this.index].aid).then((res)=>{
+                          if (res.data.flag) {
+                              this.$message.success("文章已经下线")
+                              this.sendNotice();
+                          } else {
+                              this.$message.error(res.data.message)
+                          }
+                      })
+                  },
+
+                  // 设置其状态值
                   normal() {
-                      alert(this.markId)
-                      alert("已删除");
+                      this.changeStatus();
                   },
                   warn(){
                       // 发送通知警告作者
-                      alert("通知已发送")
+                      this.notice.title = "警告：文章存在问题，下次请认真审核后发布";
+                      this.notice.content = "您的文章《"+ this.lists[this.index].title +"》存在<span style='color: blue'>"+arr[this.lists[this.index].type]+"</span>行为，下次发布文章时，请仔细审查,否则将被封号";
+                      this.notice.uid=this.lists[this.index].wid;
+                      this.sendNotice();
                   },
                   offline(){
                       // 通知
-
-                      // 删除该篇文章
-                      alert("已删除")
+                      // 发送通知警告作者
+                      this.notice.title = "文章下线通知";
+                      this.notice.content = "您的文章《"+ this.lists[this.index].title +"》存在<span style='color: blue'>"+arr[this.lists[this.index].type]+"</span>行为，已经下线";
+                      this.notice.uid=this.lists[this.index].wid;
+                      this.offLineArticle();
                   },
 
+                  // 禁言
                   gag(){
                       // 通知
-
-                      // 下线
-
-                      // 禁言
-                      alert("已经禁言")
+                      this.notice.title = "账号禁言通知";
+                      this.notice.content = "由于您的文章《"+ this.lists[this.index].title +"》存在<span style='color: blue'>"+arr[this.lists[this.index].type]+"</span>不良行为，账号已经被禁言，7天后登陆<a href='#'>河工程JAVA论坛管理中心</a>申请解禁，在此期间您将不能发表文章和相关言论";
+                      this.notice.uid=this.lists[this.index].wid;
+                      this.rule.uid  = this.lists[this.index].wid;
+                      this.rule.status = 1;
+                      axios.post("/user-manager/againstRule.do", this.rule).then((res)=> {
+                          if ( res.data.flag ) {
+                              this.offLineArticle();
+                          } else {
+                              this.$message.error(res.data.message)
+                          }
+                      });
                   },
 
+                  // 封号
                   tick(){
-                      // 短信封号
-
-
+                      this.rule.uid  = this.lists[this.index].wid;
+                      this.rule.status = 2;
+                      /*var title = this.lists[this.index].title;
+                      var type = arr[this.lists[this.index].type];*/
                       // 封号
-                      alert("已经封号");
+                      axios.post("/user-manager/closeAccount.do", this.rule).then((res)=>{
+                          if (res.data.flag) {
+                              this.offLineArticle();
+                          } else {
+                              this.$message.error( res.data.message );
+                          }
+                      })
                   }
 
               }

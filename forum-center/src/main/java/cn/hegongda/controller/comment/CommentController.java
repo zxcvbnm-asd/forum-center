@@ -3,6 +3,7 @@ package cn.hegongda.controller.comment;
 
 import cn.hegongda.constant.MessageConstant;
 import cn.hegongda.pojo.CommentExpan;
+import cn.hegongda.pojo.Report;
 import cn.hegongda.pojo.TComment;
 import cn.hegongda.pojo.TCommentReport;
 import cn.hegongda.result.PageResult;
@@ -73,13 +74,13 @@ public class CommentController {
 
 
     /*
-     * 投诉评论
+     * 投诉评论,文章等
      */
     @RequestMapping("/report.do")
     @ResponseBody
-    public Result reportComment(@RequestBody TCommentReport commentReport){
+    public Result reportComment(@RequestBody Report report){
         try {
-            Result result = commentService.reportComment(commentReport);
+            Result result = commentService.reportComment(report);
             return result;
         } catch (Exception e) {
             e.printStackTrace();

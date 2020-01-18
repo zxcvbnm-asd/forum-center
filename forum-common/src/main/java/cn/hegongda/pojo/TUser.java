@@ -30,7 +30,9 @@ public class TUser implements Serializable {
 
     private String avatarName;
 
-    private Integer status;
+    private Integer status;  // 0  正常  1 禁言  2 封号
+
+    private Integer type ;   // 0 普通用户   1 会员  0
 
     public Integer getId() {
         return id;

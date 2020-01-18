@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface NoticeMapper {
 
-    @Select("select * from t_notice where uid=#{id} order by time")
+    @Select("select * from t_notice where uid=#{id} order by time desc")
     List<TNotice> getNotices(Integer id);
 
     @Select("select * from t_notice where id=#{id}")

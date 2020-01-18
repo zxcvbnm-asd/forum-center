@@ -1,8 +1,7 @@
 package cn.hegongda.service;
 
 import cn.hegongda.pojo.CommentExpan;
-import cn.hegongda.pojo.TComment;
-import cn.hegongda.pojo.TCommentReport;
+import cn.hegongda.pojo.Report;
 import cn.hegongda.result.PageResult;
 import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
@@ -16,7 +15,7 @@ public interface CommentService {
     // 根据id删除评论
     Result deleteById(Long id);
     // 投诉评论
-    Result reportComment(TCommentReport commentReport);
+    Result reportComment(Report report);
     //分页查询评论
     PageResult getCommentsByPage(Integer customerId, QueryPageBean queryPageBean, Integer type);
     // 为评论进行点赞

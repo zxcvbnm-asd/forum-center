@@ -118,8 +118,7 @@
                             </h4>
                         </div>
                         <div :id="id" class="panel-collapse collapse" >
-                            <div class="panel-body">
-                               {{content.content}}
+                            <div class="panel-body" v-html="content.content">
                             </div>
                         </div>
 

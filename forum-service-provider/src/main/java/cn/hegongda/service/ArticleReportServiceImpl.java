@@ -1,6 +1,9 @@
 package cn.hegongda.service;
 
+import cn.hegongda.constant.MessageConstant;
+import cn.hegongda.mapper.TArticleCategoryMapper;
 import cn.hegongda.mapper.TArticleMapper;
+import cn.hegongda.pojo.TArticleCategory;
 import cn.hegongda.result.PageResult;
 import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
@@ -19,6 +22,9 @@ public class ArticleReportServiceImpl implements ArticleReportService {
 
     @Autowired
     private TArticleMapper articleMapper;
+
+    @Autowired
+    private TArticleCategoryMapper tArticleCategoryMapper;
 
     /*
      * 获取每日的阅读量
@@ -148,5 +154,105 @@ public class ArticleReportServiceImpl implements ArticleReportService {
         map.put("months",monthList);
         map.put("number",numberList);
         return new Result(true,"查询成功",map);
+    }
+
+    /*
+     * 后台管理人员查询昨天、上周、上月发文总数
+     */
+    @Override
+    public Result getArticleNumber() {
+        List<Integer> list = new ArrayList<>();
+        // 获取昨天日期
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        String dateStr = DateUtils.format(calendar.getTime());
+        Integer dnumber= articleMapper.getYearsToday(dateStr);
+        list.add(dnumber == null ? 0 : dnumber);
+
+        // 获取上周发文总数
+        String monday = DateUtils.format(DateUtils.geLastWeekMonday(date));
+        String sunday = DateUtils.format(DateUtils.getLastWeekSunday(date));
+        Integer wnumber = articleMapper.getLastWeekArticleNumber(monday, sunday);
+        list.add(wnumber == null ? 0 : wnumber);
+
+        // 获取上月发文总数
+        String month = DateUtils.format(DateUtils.getFirstDay4LastMonth());
+        month = month.substring(0,7);
+        Integer mnumber = articleMapper.getLastMonthArticleNumber(month);
+        list.add(mnumber == null ? 0 : mnumber);
+        return new Result(true, MessageConstant.OPERATION_SUCCESS, list);
+    }
+
+    /*
+     * 获取上月个一级分类发文数量
+     */
+
+    @Override
+    public Result getLastMonthCategoryNumber() {
+        // 获取上月
+        String month = DateUtils.format(DateUtils.getFirstDay4LastMonth()).substring(0,7);
+        // 查询一级分类
+        List<TArticleCategory> categories = tArticleCategoryMapper.findAll();
+        Map<String, Object> map = new HashMap<>();
+        List<String> cateList = new ArrayList<>();
+        List<Integer> numberList = new ArrayList<>();
+        for (TArticleCategory category : categories) {
+            cateList.add(category.getCname());
+            Integer number = articleMapper.getLastMonthCategoryArticleNumber(month,category.getId());
+            numberList.add(number == null ? 0 : number);
+        }
+
+        map.put("count",numberList);
+        map.put("category",cateList);
+        return new Result(true, MessageConstant.OPERATION_SUCCESS, map);
+    }
+
+    /*
+     * 获取上周发文情况
+     */
+    @Override
+    public Result getLastWeekArticleNumber() {
+        Date date = new Date();
+        List<Integer> days = new ArrayList<>();
+        List<Integer> numbers = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(DateUtils.geLastWeekMonday(date));
+        Map<String, Object> map = new HashMap<>();
+        for(int i = 0; i < 7; i++){
+            days.add(i + 1);
+            String day = DateUtils.format(calendar.getTime());
+            Integer number = articleMapper.getYearsToday(day);
+            numbers.add(number == null ? 0 : number);
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        map.put("days",days);
+        map.put("numbers", numbers);
+        return new Result(true, MessageConstant.OPERATION_SUCCESS, map);
+    }
+
+    /*
+     * 技术欢迎程度排名
+     */
+
+    @Override
+    public Result getPopularTechnology() {
+        String month = DateUtils.format(DateUtils.getFirstDay4LastMonth()).substring(0,7);
+        List<Map> maps =  articleMapper.getPopularTechonolgy(month);
+        List<String> cateList = new ArrayList<>();
+        List<Long> counList = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+        for (Map mp : maps) {
+            Long total = (Long) mp.get("total");
+            counList.add(total);
+            Integer cid = (Integer) mp.get("cid");
+            TArticleCategory category = tArticleCategoryMapper.getCategoryNameById(cid);
+            cateList.add(category.getCname());
+        }
+        map.put("category", cateList);
+        map.put("count",counList);
+        return new Result( true, MessageConstant.OPERATION_SUCCESS, map);
     }
 }

@@ -50,6 +50,9 @@
         }
 
 
+        body{
+
+        }
 
 
     </style>
@@ -101,7 +104,7 @@
                     </el-menu>
                 </el-aside>
                 <el-container>
-                    <iframe name="right"  class="el-main" src="./picture.html" width="400px" height="700px" frameborder="0"></iframe>
+                    <iframe name="right" scrolling="yes" class="el-main" src="./picture.html"  width="400px" height="700px" frameborder="0"></iframe>
                 </el-container>
             </el-container>
         </el-container>
@@ -113,6 +116,7 @@
 <script type="text/javascript" src="../js/jquery.min.js"></script>
 <script type="text/javascript" src="../js/axios-0.18.0.js"></script>
 <script>
+
     new Vue({
         el: '#app',
         data:{
@@ -185,23 +189,23 @@
                             "linkUrl":"article/hot-topic.html",
                             "children":[]
                         },
+                        {
+                            "path": "/2-6",
+                            "title": "综合数据分析",
+                            "linkUrl":"article/analyze-article.html",
+                            "children":[]
+                        },
                     ]
                 },
                 {
                     "path": "3",
-                    "title": "文章统计",
+                    "title": "评论管理",
                     "icon":"fa-cog",
                     "children": [
                         {
                             "path": "/3-1",
-                            "title": "违规文章",
-                            "linkUrl":"article/breach-article.html",
-                            "children":[]
-                        },
-                        {
-                            "path": "/3-2",
-                            "title": "综合数据分析",
-                            "linkUrl":"article/analyze-article.html",
+                            "title": "违规评论",
+                            "linkUrl":"article/breach-comment.html",
                             "children":[]
                         },
                     ]
@@ -239,7 +243,7 @@
                 },
                 {
                     "path": "5",     //菜单项所对应的路由路径
-                    "title": "公告通知",     //菜单项名称
+                    "title": "页面管理",     //菜单项名称
                     "icon":"fa-envelope-square",
                     "children":[
                         {
@@ -250,6 +254,20 @@
                         },
                     ]
                 },
+                {
+                    "path": "6",     //菜单项所对应的路由路径
+                    "title": "公告通知",     //菜单项名称
+                    "icon":"fa-envelope-square",
+                    "children":[
+                        {
+                            "path": "/6-1",
+                            "title": "发布公告",
+                            "linkUrl":"announce/release-announce.html",
+                            "children":[]
+                        },
+                    ]
+                },
+
             ]
         },
         created(){

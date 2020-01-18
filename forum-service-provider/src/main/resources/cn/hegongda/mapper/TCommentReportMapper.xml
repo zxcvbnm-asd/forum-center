@@ -11,9 +11,9 @@
   </resultMap>
 
 
-  <insert id="save" parameterType="cn.hegongda.pojo.TCommentReport">
-      INSERT  INTO  t_comment_report (mark, `type`,report_time,status,comment_id,uid)
-      VALUES (#{mark}, #{type},#{reportTime},#{status},#{commentId},#{uid})
+  <insert id="save" parameterType="cn.hegongda.pojo.Report">
+      INSERT  INTO  t_report (content, `type`,report_time,status,cate,cid,uid)
+      VALUES (#{content}, #{type},#{reportTime},#{status},#{cate},#{cid},#{uid})
   </insert>
 
 

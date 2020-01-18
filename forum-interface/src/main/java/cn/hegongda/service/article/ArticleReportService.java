@@ -17,4 +17,16 @@ public interface ArticleReportService {
     Result getLastWeek(Integer id);
 
     Result getPreMonthsTotal(Integer id);
+
+    // 查询昨天、上周、上月发文总数
+    Result getArticleNumber();
+
+   // 获取上月个一级分类发文数量
+    Result getLastMonthCategoryNumber();
+
+    // 获取上周发文情况
+    Result getLastWeekArticleNumber();
+
+    // 技术受欢迎程度排名
+    Result getPopularTechnology();
 }

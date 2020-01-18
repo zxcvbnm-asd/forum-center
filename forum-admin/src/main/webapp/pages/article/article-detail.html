@@ -95,9 +95,9 @@
                             <p id="content" v-html="article.content"></p>
                             <br>
                             <div id="label" v-if="article.labels != null"><span class="first">标签:</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="second" v-for="label in article.labels.split('，')">{{label}}&nbsp;&nbsp;&nbsp;</span></div>
-                            <div class="pull-right" style="margin-right: 30px; font-size: 20px"><a href="#">作者：{{article.writerName}}</a></div>
+                            <div class="pull-right" style="margin-right: 30px; font-size: 20px"><a href="#" @click="showWriter(article.uid)">作者：{{article.writerName}}</a></div>
                             <br><br><br>
-                            <p id="btns"><a href="#" class="btn btn-success bs" @click="success(article.id)">审核通过</a>
+                            <p id="btns" v-if="this.mark != 1"><a href="#" class="btn btn-success bs" @click="success(article.id)">审核通过</a>
                                 &nbsp;&nbsp;&nbsp;&nbsp;
                                 <a href="#" class="btn btn-danger bs" data-toggle="modal" data-target="#myModal"  >审核不通过</a>
                             </p>
@@ -154,10 +154,12 @@
                   article:{id:1,content:'',title:'射雕英雄传',time:'2017-12-25',writer:'liuweidong'
                   },
                   notice:{id:1,content:'您的文章《》存在违规行为，请改正后重新发布，如有疑问到<a href="www.baidu.com">河工程管理中心</a>咨询',title:'',uid:11},
-                  type:-1
+                  type:-1,
+                  mark:-1
               },
 
               created(){
+                  this.mark=parseInt(getParam("mark"));
                   var id = getParam("id")
                   // 根据id查询出文章的内容
                   axios.get("/article-manager/getArticleById.do?id="+id).then((res)=>{
@@ -178,6 +180,11 @@
                               this.$message.error(res.data.message);
                           }
                       })
+                  },
+
+                  // 展示作者详细信息
+                  showWriter(id){
+                      window.open("http://localhost:8082/article/showUserDtails.do?id="+id);
                   },
 
                   rescind(){

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.hegongda.mapper.ReportMapper" >
+    <select id="getReport" resultType="java.util.Map">
+        SELECT a.id AS id, a.reportTime AS reportTime, a.content AS content, a.type AS `type`,a.wid AS wid,
+        a.uid AS uid , a.reporter AS reporter , a.title AS title, a.aid AS aid ,b.username AS writer
+        FROM
+            (SELECT r.id AS id, r.report_time AS reportTime, r.content AS content, r.type AS `type`,
+            u.id AS uid , u.username AS reporter , a.title AS title, a.id AS aid, a.uid AS wid
+            FROM t_report r, t_user u, t_article a
+            WHERE r.uid=u.id AND r.cid=a.id AND r.status=#{status} AND r.cate=#{cate}) a, t_user b
+        WHERE a.wid=b.id
+        <if test="queryString != null">
+            AND b.username LIKE "%"#{queryString}"%"
+        </if>
+        ORDER BY a.reportTime DESC
+    </select>
+
+    <update id="updateRepoert" parameterType="cn.hegongda.pojo.Report">
+        UPDATE  t_report
+        <set>
+            <if test="id != null">
+                id=#{id},
+            </if>
+            <if test="content != null">
+                content=#{content},
+            </if>
+            <if test="type != null">
+                `type`=#{type},
+            </if>
+            <if test="reportTime != null">
+                reportTime=#{reportTime},
+            </if>
+            <if test="status != null">
+                status=#{status},
+            </if>
+            <if test="cate != null">
+                cate=#{cate},
+            </if>
+            <if test="cid != null">
+                cid=#{cid},
+            </if>
+            <if test="uid != null">
+                uid=#{uid},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <select id="getCommentReport" resultType="java.util.Map">
+        SELECT r.id AS id, u.username AS reporter ,r.uid AS rid, r.type AS `type`, r.report_time AS reportTime ,
+        r.content AS content1, c.content AS content2, c.customer_id AS pid,r.cid AS cid
+        FROM t_report r , t_user u , t_comment c
+        WHERE r.uid=u.id AND r.cate=#{cate} AND r.cid=c.id  AND r.status=#{status}
+        ORDER BY r.report_time ASC
+    </select>
+</mapper>

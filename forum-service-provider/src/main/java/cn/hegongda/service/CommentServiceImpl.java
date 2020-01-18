@@ -1,7 +1,6 @@
 package cn.hegongda.service;
 
 import cn.hegongda.constant.MessageConstant;
-import cn.hegongda.constant.RedisConstant;
 import cn.hegongda.mapper.TArticleMapper;
 import cn.hegongda.mapper.TCommentMapper;
 import cn.hegongda.mapper.TCommentReportMapper;
@@ -10,12 +9,10 @@ import cn.hegongda.pojo.*;
 import cn.hegongda.result.PageResult;
 import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
-import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.AbstractTransactionManagementConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -180,13 +177,13 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public Result reportComment(TCommentReport commentReport) {
-        if (commentReport == null ){
+    public Result reportComment(Report report) {
+        if (report == null ){
             return new Result(false, MessageConstant.PARAM_NULL_MESSAGE);
         }
-        commentReport.setReportTime(new Date());
-        commentReport.setStatus(0);   // 代表没有读取
-        Integer number = commentReportMapper.save(commentReport);
+        report.setReportTime(new Date());
+        report.setStatus(0);   // 代表没有读取
+        Integer number = commentReportMapper.save(report);
         if (number < 1){
             return new Result(false, "投诉失败");
         }

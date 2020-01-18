@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.hegongda.mapper.RuleMapper" >
+
+    <update id="updateRule" parameterType="cn.hegongda.pojo.Rule" >
+        UPDATE t_rule
+        <set>
+            <if test="beginTime != null">
+                begin_time = #{beginTime},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime},
+            </if>
+            <if test="num != null">
+                num = #{num},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="uid != null">
+                uid = #{uid},
+            </if>
+            <if test="mark != null">
+                mark = #{mark},
+            </if>
+        </set>
+        where id=#{id}
+
+    </update>
+
+</mapper>
