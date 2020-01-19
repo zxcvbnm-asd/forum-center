@@ -2,6 +2,8 @@ package cn.hegongda.controller;
 
 import cn.hegongda.constant.MessageConstant;
 import cn.hegongda.pojo.Rule;
+import cn.hegongda.result.PageResult;
+import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
 import cn.hegongda.service.user.UserManagerService;
 import com.alibaba.dubbo.config.annotation.Reference;
@@ -45,6 +47,51 @@ public class UserManagerController {
     public Result closeAccount(@RequestBody Rule rule){
         try {
             Result result = userManagerService.closeAccount(rule);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, MessageConstant.EXCEPTION_MESSAGE);
+        }
+    }
+
+    /*
+     * 通过type字段或者条件查找相关的用户信息
+     */
+    @RequestMapping("/findUserByType.do")
+    @ResponseBody
+    public PageResult findUserByType(Integer type, @RequestBody QueryPageBean queryPageBean){
+        try {
+            PageResult pageResult = userManagerService.findUserByTypr(type, queryPageBean);
+            return pageResult;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new PageResult(MessageConstant.EXCEPTION_MESSAGE,false);
+        }
+    }
+
+    /*
+     * 根据用户status查询用户相关的信息
+     */
+    @RequestMapping("/findUserByStatus.do")
+    @ResponseBody
+    public PageResult findUserByStatus(Integer status, @RequestBody QueryPageBean queryPageBean){
+        try {
+            PageResult pageResult = userManagerService.findUserByStatus(status, queryPageBean);
+            return pageResult;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new PageResult(MessageConstant.EXCEPTION_MESSAGE,false);
+        }
+    }
+
+    /*
+     * 解除禁言
+     */
+    @RequestMapping("/lift.do")
+    @ResponseBody
+    public Result lift(Integer id){
+        try {
+            Result result = userManagerService.lift(id);
             return result;
         } catch (Exception e) {
             e.printStackTrace();

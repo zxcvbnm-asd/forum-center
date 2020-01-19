@@ -15,6 +15,7 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service(interfaceClass = AnnounceService.class)
@@ -99,5 +100,22 @@ public class AnnounceServiceImpl implements AnnounceService {
             return new Result( true , MessageConstant.OPERATION_SUCCESS);
         }
         return new Result(false , MessageConstant.OPERATION_FAIL);
+    }
+
+    /*
+     * 发布公告
+     */
+
+    @Override
+    @Transactional
+    public Result publish(TAnnounce announce) {
+        if (announce == null ) {
+            return new Result(false, MessageConstant.OPERATION_FAIL);
+        }
+        // 补充相关的属性
+        announce.setStatus(0);
+        announce.setTime(new Date());
+        announceMapper.insert(announce);
+        return new Result(true, MessageConstant.OPERATION_SUCCESS);
     }
 }

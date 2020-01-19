@@ -15,6 +15,7 @@
     <script src="../../js/vue.js"></script>
     <script src="../../plugins/elementui/index.js"></script>
     <script src="../../js/axios-0.18.0.js"></script>
+    <script src="../../js/prefix.js"/>
 
 
     <style>
@@ -187,7 +188,7 @@
           <div id="commnet">
                <div class="comment" v-for="(comment,index) in comments" @key="index">
                    <div class="one">
-                       <img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+comment.avatarName" class="img-circle" width="40px" height="40px"/>
+                       <img :src="'http://'+prefix+'/'+comment.avatarName" class="img-circle" width="40px" height="40px"/>
                        <div class="first" style="font-size: 18px">
                            <span style="font-weight:bold" v-cloak>{{comment.customerName}}</span> <span style="color: #bebfbf;">评论了你的文章</span>
                            <span class="pull-right" style="margin-left: 544px;padding-top: 1px;color: #bebfbf;" v-cloak>{{comment.commentDate}}</span>
@@ -225,7 +226,7 @@
                    </div>
                    <div class="five" :id="index+'show'">
                        <div class="fifth" v-for="(rcomment,rindex) in comment.replyComments" @key="rindex">
-                           <img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+ rcomment.avatarName" class="img-circle" width="25px" height="25px"/>
+                           <img :src="'http://'+prefix+'/'+ rcomment.avatarName" class="img-circle" width="25px" height="25px"/>
                            <span style="color: #6bb10a;font-weight: bold" v-cloak>{{rcomment.replyCustomerName}}</span>
                            <div class="pull-right" style="margin-right: 10px;font-size: 15px;color:#bebfbf ">
                                <span v-cloak>{{rcomment.commentDate}}</span>
@@ -328,6 +329,7 @@
             newCommnent1:{},   // 二级评论的回复
             user:{},
             flag:true,  // 第一次点赞，然后变为false
+            prefix:'',
             comments:[
                /* {id:1,conetentId:1,content:'这篇文章真好',commentDate:'2012-25-12 12:00:00',parentId:0,customeId:1,customerName:'王五',title:'射雕英雄传',
                   replyComments:[
@@ -348,6 +350,7 @@
         },
 
         created(){
+            this.prefix = prefix;
 
             this.findPage();
 

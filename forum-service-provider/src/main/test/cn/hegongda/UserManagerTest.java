@@ -1,6 +1,7 @@
 package cn.hegongda;
 
 import cn.hegongda.pojo.Rule;
+import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
 import cn.hegongda.service.user.UserManagerService;
 
@@ -24,5 +25,14 @@ public class UserManagerTest {
         rule.setUid(11);
         rule.setStatus(1);
         Result result = userManagerService.addRule(rule);
+    }
+
+    @Test
+    public void testUserByType(){
+        QueryPageBean queryPageBean = new QueryPageBean();
+        queryPageBean.setPageSize(10);
+        queryPageBean.setCurrentPage(1);
+        queryPageBean.setQueryString("18832030387");
+        userManagerService.findUserByTypr(0, queryPageBean);
     }
 }

@@ -60,7 +60,7 @@
                             </el-form-item>
                             <el-form-item>
                                 <el-button type="primary" @click="onSubmit">发布</el-button>
-                                <el-button>取消</el-button>
+                                <el-button @click="cancle">取消</el-button>
                             </el-form-item>
                         </el-form>
                    </div>
@@ -94,7 +94,17 @@
                           this.$message.error("公告内容不能为空")
                           return false
                       }
-                      alert(this.announce.title)
+                      axios.post("/report/publishAnnounce.do",this.announce).then((res)=>{
+                          if (res.data.flag) {
+                              this.$message.success(res.data.message);
+                              this.announce={}
+                          } else {
+                              this.$message.error(res.data.message)
+                          }
+                      })
+                  },
+                  cancle(){
+                      this.announce = {};
                   }
               }
           })

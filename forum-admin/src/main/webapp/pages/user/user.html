@@ -3,17 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+   <!-- <link rel="stylesheet" href="../../plugins/elementui/index.css">
     <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="../../css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="../../css/bootstrap.min.css">
     <link rel="stylesheet" href="../../css/component.css">
-    <!-- 引入组件库 -->
+    &lt;!&ndash; 引入组件库 &ndash;&gt;
     <script type="text/javascript" src="../../js/jquery.min.js"></script>
-    <script src="../../js/vue.js"></script>
+    <script type="text/javascript" src="../../js/vue.js"></script>
+    <script type="text/javascript" src="../../plugins/elementui/index.js"></script>
+    <script type="text/javascript" src="../../js/axios-0.18.0.js"></script>-->
+
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="../../css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../../css/component.css">
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../js/vue.js"></script>
     <script src="../../plugins/elementui/index.js"></script>
-    <script src="../../js/axios-0.18.0.js"></script>
+    <script type="text/javascript" src="../../js/axios-0.18.0.js"></script>
+
+
+
 
     <style>
 
@@ -31,6 +46,7 @@
         tr th{
             border: 1px red solid;
         }
+
 
 
     </style>
@@ -53,7 +69,7 @@
                     <div id="list_form">
                      <div class="btn-group" role="group" aria-label="...">
                       <!--  <button type="button" class="btn btn-default btn-sm">新建</button>-->
-                        <button type="button" class="btn btn-default btn-sm" @click="flush">刷新</button>
+                        <button type="button" class="btn btn-default btnsm btn-sm" @click="flush">刷新</button>
                     </div>
 
                         <div class="input-group" style="width: 300px;height:20px;margin-left: 780px">
@@ -79,17 +95,40 @@
                                 <td>{{user.username}}</td>
                                 <td>{{user.mobile}}</td>
                                 <td>{{user.email}}</td>
-                                <td>{{user.count}}</td>
+                                <td>{{user.total}}</td>
                                 <td width="240px">
                                     <a class="detail" @click="showDetail(user.id)" >详情</a>&nbsp;&nbsp;&nbsp;&nbsp;
                                    <a class="detail" @click="taboo(user.id)" >禁言</a>&nbsp;&nbsp;&nbsp;&nbsp;
                                    <a class="detail" @click="gag(user.id)" >封号</a>
                                 </td>
+                                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+
+                                            <div class="modal-body">
+                                                <h4 style="font-weight: bold">禁言原因</h4>
+                                                <div style="margin-top: 10px">
+                                                    <div style="margin-top: 10px">
+                                                        <textarea id="textarea" v-model="notice.content" cols="86" placeholder="请填写附加的补充内容" ></textarea>
+                                                    </div>
+                                                </div>
+                                                <div style="margin-left: 467px;margin-top: 15px">
+                                            <span>
+                                                <button class="btn btn-sm btn-info " type="" @click="rescind">取消</button>
+                                                <button class="btn btn-sm btn-danger" @click="sure">确定</button>
+                                            </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </tr>
                         </table>
+
                     </div>
 
-                    <div id="page">
+
+                    <div id="page" class="pull-right">
                         <div class="pagination-container">
                             <el-pagination
                                     class="pagiantion"
@@ -103,10 +142,12 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </template>
 </body>
       <script>
+
 
           //<!--:href="'article-detail.html?id='+article.id"-->
           Vue.component("mkPage",{
@@ -120,16 +161,60 @@
                           queryString:null//查询条件
                       },
                       users:[
-                          {id:1,username:'liu',mobile:'18832030387',email:'1198423961@qq.com',count:36},
-                          {id:1,username:'liu',mobile:'18832030387',email:'1198423961@qq.com',count:36},
-                          {id:1,username:'liu',mobile:'18832030387',email:'1198423961@qq.com',count:36},
-                          {id:1,username:'liu',mobile:'18832030387',email:'1198423961@qq.com',count:36},
-                      ]
+                          {id:1,username:'liu',mobile:'18832030387',email:'1198423961@qq.com',total:36},
+                          {id:1,username:'liu',mobile:'18832030387',email:'1198423961@qq.com',total:36},
+                          {id:1,username:'liu',mobile:'18832030387',email:'1198423961@qq.com',total:36},
+                          {id:1,username:'liu',mobile:'18832030387',email:'1198423961@qq.com',total:36},
+                      ],
+                      notice:{},
+                      rule:{},
                   }
               },
-              methods:{
-                  findPage(){
 
+              created(){
+                  this.findPage();
+              },
+              methods:{
+                  sendNotice(){
+                      axios.post("/article-manager/failPublish.do",this.notice).then((res)=>{
+                          if ( res.data.flag) {
+                              this.findPage();
+                          } else {
+                              this.$message.error(res.data.message)
+                          }
+                      })
+                  },
+                  // 取消
+                  rescind(){
+                      $('#myModal').modal('hide')
+                  },
+                  // 确定
+                  sure(){
+                      $('#myModal').modal('hide')
+                      this.notice.title = "账号禁言通知";
+                      this.rule.status = 1;
+                      axios.post("/user-manager/againstRule.do", this.rule).then((res)=> {
+                           if ( res.data.flag ) {
+                               this.sendNotice();
+                           } else {
+                               this.$message.error(res.data.message)
+                           }
+                       });
+                  },
+                  findPage(){
+                      var param = {
+                          currentPage:this.pagination.currentPage,
+                          pageSize:this.pagination.pageSize,
+                          queryString:this.pagination.queryString
+                      };
+                      axios.post("/user-manager/findUserByType.do?type=0",param).then((res)=>{
+                          if (res.data.flag ) {
+                              this.users = res.data.rows;
+                              this.pagination.total = res.data.total;
+                          } else {
+                              this.$message.error( res.data.message );
+                          }
+                      })
                   },
 
                   // 切换页码
@@ -139,22 +224,33 @@
                   },
 
                   search(){
-                      // 按照时间进行搜索为审核的文章
-                      alert(this.pagination.queryString)
+                      this.pagination.currentPage=1;
+                      this.findPage();
                   },
                   flush(){
-                      alert("进行刷新")
+                      this.findPage();
                   },
                   taboo(id){
-                      alert(id)
-                      // 禁言
+                      this.notice.uid=id;
+                      this.rule.uid  = id;
+                      $('#myModal').modal('show')
+
                   },
                   gag(id){
-                      alert("封号")
+                      this.rule.uid  = id;
+                      this.rule.status = 2;
+
                       // 封号
+                      axios.post("/user-manager/closeAccount.do", this.rule).then((res)=>{
+                          if (res.data.flag) {
+                              this.findPage()
+                          } else {
+                              this.$message.error( res.data.message );
+                          }
+                      })
                   },
                   showDetail(id){
-                      window.open('user-member-detail.html?id='+id,'','')
+                      window.open("http://localhost:8082/article/showUserDtails.do?id="+id);
                   }
 
               }

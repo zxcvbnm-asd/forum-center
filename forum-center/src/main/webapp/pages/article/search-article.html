@@ -44,7 +44,7 @@
         <img src="../../images/logo_right.jpg" class="pull-right" style="margin-right:120px">
         <div class="pic"  v-if="JSON.stringify(user)!='{}'">
 
-            <img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+user.avatarName" id="headPic" class="img-circle" style="margin-left: -21px;margin-bottom: 5px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            <img :src="'http://'+prefix+'/'+user.avatarName" id="headPic" class="img-circle" style="margin-left: -21px;margin-bottom: 5px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
             <span v-cloak class='item' style="font-size: 13px"  data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">{{user.username}}</span>
         </div>
         <div class="collapse" style="margin-left: 1233px;margin-top: -62px;position: absolute" id="collapseExample">
@@ -83,7 +83,7 @@
                     <div class="media" v-for="article in articles">
                         <div class="media-left">
                             <a href="#" @click.prevent="articleDetail(article.id)">
-                                <img class="tic_img" :src="'http://q2rcyhwpl.bkt.clouddn.com/'+article.coverUrl"  alt="...">
+                                <img class="tic_img" :src="'http://'+prefix+'/'+article.coverUrl"  alt="...">
                             </a>
                         </div>
                         <div class="media-body">
@@ -172,6 +172,7 @@
                 {id:1,linkName:'博客园',link_href:'http://www.baidu.com'},
                 {id:1,linkName:'Git Hub',link_href:'http://www.baidu.com'},
             ],
+            prefix:'',
 
              // 查询的文章信息
             articles:[  // 查询的文章信息
@@ -208,6 +209,8 @@
         },
 
         created(){
+
+            this.prefix = prefix;
 
             // 在token中获取user
             axios.get("/user/getUserByToken.do").then((res)=>{

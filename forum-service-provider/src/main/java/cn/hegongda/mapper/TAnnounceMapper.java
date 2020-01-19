@@ -37,7 +37,7 @@ public interface TAnnounceMapper {
 
     int updateByPrimaryKey(TAnnounce record);
 
-    @Select("select * from t_announce")
+    @Select("select * from t_announce order by time desc")
     List<TAnnounce> getAnnouncesByPage();
 
     @Select("select status from t_user_announce where uid=#{id} and aid=#{aid}")

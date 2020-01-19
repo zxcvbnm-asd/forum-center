@@ -2,9 +2,11 @@ package cn.hegongda.controller;
 
 
 import cn.hegongda.constant.MessageConstant;
+import cn.hegongda.pojo.TAnnounce;
 import cn.hegongda.result.PageResult;
 import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
+import cn.hegongda.service.AnnounceService;
 import cn.hegongda.service.CommentService;
 import cn.hegongda.service.report.ReportService;
 import com.alibaba.dubbo.config.annotation.Reference;
@@ -27,6 +29,9 @@ public class ReportController {
 
     @Reference
     private CommentService commentService;
+
+    @Reference
+    private AnnounceService announceService;
 
     /*
      *  查询举报信息
@@ -82,6 +87,21 @@ public class ReportController {
     public Result deleteCommentById(Long id){
         try {
             Result result = commentService.deleteById(id);
+            return result;
+        }  catch ( Exception e ) {
+            e.printStackTrace();
+            return new Result(true, MessageConstant.EXCEPTION_MESSAGE);
+        }
+    }
+
+    /*
+     * 发布公告
+     */
+    @RequestMapping("/publishAnnounce.do")
+    @ResponseBody
+    public Result publishAnnounce(@RequestBody TAnnounce announce){
+        try {
+            Result result = announceService.publish(announce);
             return result;
         }  catch ( Exception e ) {
             e.printStackTrace();

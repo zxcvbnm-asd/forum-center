@@ -14,6 +14,8 @@
     <script src="../../plugins/elementui/index.js"></script>
     <script type="text/javascript" src="../../js/axios-0.18.0.js"></script>
     <script type="text/javascript" src="../../js/link-param.js"></script>
+    <script type="text/javascript" src="../../js/prefix.js"></script>
+
 
     <style>
 
@@ -33,7 +35,7 @@
         <img src="../../images/logo_right.jpg" class="pull-right" style="margin-right:120px">
         <div class="pic"  v-if="JSON.stringify(user)!='{}'">
 
-            <img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+user.avatarName"  id="headPic" width="40px" height="40px" class="img-circle" style="margin-left: -21px;margin-bottom: 5px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            <img :src="'http://'+prefix+'/'+user.avatarName"  id="headPic" width="40px" height="40px" class="img-circle" style="margin-left: -21px;margin-bottom: 5px" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
             <span v-cloak class='item' style="font-size: 13px"  data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">{{user.username}}</span>
         </div>
         <div class="collapse" style="margin-left: 1233px;margin-top: -62px;position: absolute" id="collapseExample">
@@ -76,7 +78,7 @@
                     <div class="media" v-for="article in articles">
                         <div class="media-left">
                             <a href="#" @click.prevent="articleDetail(article.id)">
-                                <img class="tic_img" :src="'http://q2rcyhwpl.bkt.clouddn.com/'+article.coverUrl"  alt="...">
+                                <img class="tic_img" :src="'http://'+prefix+'/'+article.coverUrl"  alt="...">
                             </a>
                         </div>
                         <div class="media-body">
@@ -185,10 +187,12 @@
             },
 
             parentId:-1,
-            childId:-1
+            childId:-1,
+            prefix:''
         },
 
         created(){
+            this.prefix = prefix;
             // 赋值一级分类
             var id = getParam("id");
             this.parentId = parseInt(id);

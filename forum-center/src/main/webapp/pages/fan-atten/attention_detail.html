@@ -13,6 +13,7 @@
     <script src="../../plugins/elementui/index.js"></script>
     <script src="../../js/axios-0.18.0.js"></script>
     <script src="../../js/link-param.js"></script>
+    <script src="../../js/prefix.js"></script>
     <style>
         body {
             background-color: #e6f1fe;
@@ -112,7 +113,7 @@
 <div class="container" >
     <div id="head">
         <h3 class="page-header">作者详细信息:</h3>
-        <img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+writer.avatarName" class="img-circle" height="40px" width="40px" id="picture">
+        <img :src="'http://'+prefix+'/'+writer.avatarName" class="img-circle" height="40px" width="40px" id="picture">
     </div>
 
 
@@ -143,7 +144,7 @@
             <el-tab-pane label="Ta关注的人" name="first">
                 <ul class="attens" >
                     <li v-for="atten in attentions">
-                        <a @click="detail(atten.id)"><img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+atten.avatarName" width="25px" height="25px">
+                        <a @click="detail(atten.id)"><img :src="'http://'+prefix+'/'+atten.avatarName" width="25px" height="25px">
                         <div>{{atten.username}}</div></a>
                     </li>
                 </ul>
@@ -151,7 +152,7 @@
             <el-tab-pane label="Ta的粉丝" name="second">
                 <ul class="attens" >
                     <li v-for="fan in fans">
-                        <a @click="detail(fan.id)"><img :src="'http://q2rcyhwpl.bkt.clouddn.com/'+fan.avatarName" width="25px" height="25px">
+                        <a @click="detail(fan.id)"><img :src="'http://'+prefix+'/'+fan.avatarName" width="25px" height="25px">
                             <div>{{fan.username}}</div></a>
                     </li>
                 </ul>
@@ -167,7 +168,7 @@
             <div class="media" >
                 <div class="media-left">
                     <a href="#">
-                        <img class="media-object" :src="'http://q2rcyhwpl.bkt.clouddn.com/'+article.coverUrl" width="100px" height="75px" alt="NO PICTURE">
+                        <img class="media-object" :src="'http://'+prefix+'/'+article.coverUrl" width="100px" height="75px" alt="NO PICTURE">
                     </a>
                 </div>
                 <div class="media-body">
@@ -210,9 +211,11 @@
             fans:[
                 {id:1,username:'张三',avatarName:'../img/9.png'},
             ],
+            prefix:''
         },
 
         created(){
+            this.prefix=prefix;
             var id = getParam("id");
             // 根据此Id查询作者详细信息
             axios.get("/fan-atten/writerDetail.do?id="+id).then((res)=>{

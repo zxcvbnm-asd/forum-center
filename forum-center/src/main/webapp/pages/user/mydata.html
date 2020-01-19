@@ -84,7 +84,7 @@
                  <tr>
                      <th>头像</th>
                      <td>
-                         <img class="img-circle" v-if="!flag"  :src="'http://q2rcyhwpl.bkt.clouddn.com/'+user.avatarName" width="25px" height="25px"/>
+                         <img class="img-circle" v-if="!flag"  :src="'http://'+prefix+'/'+user.avatarName" width="25px" height="25px"/>
                          <img class="img-circle"  v-if="flag"  src="../../img/avatar5.png" width="25px" height="25px"/>
                      </td>
                  </tr>
@@ -139,12 +139,13 @@
         el:"#app",
         data:{
             user:{},
-            flag:false
+            flag:false,
+            prefix:''
 
         },
 
         created(){
-
+            this.prefix = 'q4c8e7e7f.bkt.clouddn.com';
             var id = getId();
 
             //发送请求获取当前登录用户的用户名

@@ -372,4 +372,26 @@
   <select id="findUserByMobile" parameterType="java.lang.String" resultMap="BaseResultMap">
      select * from t_user where mobile=#{value}
   </select>
+
+  <select id="findUserByType" resultType="java.util.Map">
+      SELECT u.id AS id,u.type AS `type`, u.username AS username, u.mobile AS mobile , u.email AS email,
+            COUNT(a.id) AS total, u.status as `status`, u.begin_tme AS beginTime, u.end_time AS endTime
+      FROM t_user u LEFT JOIN t_article a
+      ON u.id = a.uid
+      GROUP BY u.id
+      HAVING `type`=#{type} AND `status`=-1
+      <if test="queryString != null and queryString != ''">
+        AND  (username=#{queryString} OR mobile=#{queryString} OR email=#{queryString})
+      </if>
+  </select>
+
+  <select id="findUserByStatus" resultType="java.util.Map">
+      SELECT u.id AS id, u.username AS username, u.mobile AS mobile, u.email AS email ,r.begin_time AS beginTime,
+         r.end_time AS endTime
+      FROM t_user u , t_rule r
+      WHERE u.id=r.uid AND u.status=#{status}
+      <if test="queryString != null and queryString != ''">
+        AND  (u.username=#{queryString} OR u.mobile=#{queryString} OR u.email=#{queryString})
+      </if>
+  </select>
 </mapper>

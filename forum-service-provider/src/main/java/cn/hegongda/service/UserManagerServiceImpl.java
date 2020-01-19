@@ -1,13 +1,19 @@
 package cn.hegongda.service;
 
 import cn.hegongda.constant.MessageConstant;
+import cn.hegongda.mapper.NoticeMapper;
 import cn.hegongda.mapper.RuleMapper;
 import cn.hegongda.mapper.TUserMapper;
 import cn.hegongda.pojo.Rule;
+import cn.hegongda.pojo.TNotice;
 import cn.hegongda.pojo.TUser;
+import cn.hegongda.result.PageResult;
+import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
 import cn.hegongda.service.user.UserManagerService;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service(interfaceClass = UserManagerService.class)
 public class UserManagerServiceImpl implements UserManagerService {
@@ -24,6 +32,9 @@ public class UserManagerServiceImpl implements UserManagerService {
 
     @Autowired
     private RuleMapper ruleMapper ;
+
+    @Autowired
+    private NoticeMapper noticeMapper;
 
     /*
      * 用于用户违规时，进行禁言或者封号
@@ -111,5 +122,70 @@ public class UserManagerServiceImpl implements UserManagerService {
         // 向用户发送短信
 
         return  new Result( true, MessageConstant.OPERATION_SUCCESS);
+    }
+
+    /*
+     * 通过type或者条件进行分页查询
+     */
+    @Override
+    public PageResult findUserByTypr(Integer type,   QueryPageBean queryPageBean) {
+        if(type == null || queryPageBean == null ) {
+            return new PageResult( MessageConstant.PARAM_NULL_MESSAGE, false);
+        }
+        PageHelper.startPage(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
+        List<Map> mapList = userMapper.findUserByType(type, queryPageBean.getQueryString());
+        PageInfo info = new PageInfo(mapList);
+        return new PageResult(info.getTotal(), mapList, MessageConstant.OPERATION_SUCCESS, true);
+    }
+
+    /*
+     * 通过status进行查询用户信息
+     */
+    @Override
+    public PageResult findUserByStatus(Integer status, QueryPageBean queryPageBean) {
+        if(status == null || queryPageBean == null ) {
+            return new PageResult( MessageConstant.PARAM_NULL_MESSAGE, false);
+        }
+        PageHelper.startPage(queryPageBean.getCurrentPage(), queryPageBean.getPageSize()) ;
+        List<Map> mapList = userMapper.findUserByStatus(status, queryPageBean.getQueryString());
+        PageInfo info = new PageInfo(mapList);
+        return new PageResult(info.getTotal(), mapList, MessageConstant.OPERATION_SUCCESS, true);
+    }
+
+    /*
+     * 解除禁言
+     */
+
+    @Override
+    @Transactional
+    public Result lift(Integer id) {
+        // 修改rule中状态
+        Rule rule = ruleMapper.getRuleByUid(id);
+        int status = rule.getStatus();
+        if (rule != null ) {
+            rule.setStatus(-1);
+            // 将新的rule插入数据库中
+            ruleMapper.updateRule(rule);
+            // 修改user中的状态
+            TUser user = userMapper.selectByPrimaryKey(id);
+            if (user != null) {
+                user.setStatus(-1);
+                userMapper.updateByPrimaryKey(user);
+                if (status == 1) {
+                    // 发送通知 （此时是解除禁言）
+                    TNotice notice = new TNotice();
+                    notice.setTime(new Date());
+                    notice.setStatus(0);
+                    notice.setTitle("解除禁言通知");
+                    notice.setContent("您好，您的账号已经解除禁言，您可以继续使用相关功能");
+                    notice.setUid(id);
+                    noticeMapper.addNotice(notice);
+                } else {
+                    // 此时说明是解除封号限制，发送短信提示用户即可
+                }
+                return new Result( true, MessageConstant.OPERATION_SUCCESS);
+            }
+        }
+        return new Result(false, MessageConstant.OPERATION_FAIL);
     }
 }

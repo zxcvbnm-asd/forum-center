@@ -80,10 +80,10 @@
                                 <td>{{user.username}}</td>
                                 <td>{{user.mobile}}</td>
                                 <td>{{user.email}}</td>
-                                <td>{{user.gag_begin_time}}</td>
-                                <td>{{user.gag_end_time}}</td>
+                                <td>{{user.beginTime}}</td>
+                                <td>{{user.endTime}}</td>
                                 <td width="240px">
-                                   <a class="detail" @click="un_aga(user.id)">立刻解封</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                   <a class="detail" @click="remove(user.id)">立刻解封</a>&nbsp;&nbsp;&nbsp;&nbsp;
                                 </td>
                             </tr>
                         </table>
@@ -127,7 +127,25 @@
                       ]
                   }
               },
+              created(){
+                  this.findPage();
+              },
               methods:{
+                  findPage(){
+                      var param = {
+                          currentPage:this.pagination.currentPage,
+                          pageSize:this.pagination.pageSize,
+                          queryString:this.pagination.queryString
+                      }
+                      axios.post("/user-manager/findUserByStatus.do?status=2",param).then((res)=>{
+                          if (res.data.flag ) {
+                              this.users = res.data.rows;
+                              this.pagination.total = res.data.total
+                          } else {
+                              this.$message.error(res.data.message)
+                          }
+                      })
+                  },
                   // 切换页码
                   handleCurrentChange:function(currentPage) {
                       this.pagination.currentPage = currentPage;
@@ -135,15 +153,21 @@
                   },
 
                   search(){
-                      // 按照时间进行搜索为审核的文章
-                      alert(this.pagination.queryString)
+                      this.pagination.currentPage=1;
+                      this.findPage();
                   },
                   flush(){
-                      alert("进行刷新")
+                      this.findPage();
                   },
-                  un_aga(){
-                      alert("已经解封")
-                 }
+                  remove(id){
+                      axios.get("/user-manager/lift.do?id="+id).then((res)=>{
+                          if (res.data.flag) {
+                              this.findPage();
+                          } else {
+                              this.$message.error(res.data.message)
+                          }
+                      })
+                  }
 
               }
           })

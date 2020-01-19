@@ -1,5 +1,6 @@
 package cn.hegongda.service;
 
+import cn.hegongda.pojo.TAnnounce;
 import cn.hegongda.result.PageResult;
 import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
@@ -17,4 +18,7 @@ public interface AnnounceService {
 
     // 修改通知状态
     Result changeNoticeStatus(Integer id);
+
+    // 发布公告
+    Result publish(TAnnounce announce);
 }

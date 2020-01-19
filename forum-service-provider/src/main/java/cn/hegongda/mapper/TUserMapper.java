@@ -3,6 +3,8 @@ package cn.hegongda.mapper;
 import cn.hegongda.pojo.TUser;
 import cn.hegongda.pojo.TUserExample;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -41,4 +43,9 @@ public interface TUserMapper {
 
     @Select("select * from t_user where username=#{username}")
     TUser findByUsername(String  username);
+
+
+    List<Map> findUserByType(@Param("type") Integer type, @Param("queryString") String queryString);
+
+    List<Map> findUserByStatus(@Param("status") Integer status, @Param("queryString") String queryString);
 }
