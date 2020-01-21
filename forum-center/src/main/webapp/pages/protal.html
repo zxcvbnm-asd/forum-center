@@ -76,8 +76,8 @@
        </div>
        <div id="curous">
            <div class="window">
-               <div v-for="carousel in carousels">
-                    <a href="http://www.baidu.com"><img :src="carousel.imgUrl"></a>
+               <div v-for="carousel in img">
+                    <a href="#"><img :src="'http://'+prefix+'/'+carousel.imgUrl"></a>
                </div>
 
            </div>
@@ -206,7 +206,7 @@
                   [],
               ],
 
-              carousels:[               // 轮播图
+              img:[               // 轮播图
                   {id:1,imgUrl:'../images/kaituozhe.jpg'},
                   {id:2,imgUrl:'../images/4.jpg'},
                   {id:3,imgUrl:'../images/computer3.jpg'},
@@ -252,6 +252,8 @@
                       this.$message.error(res.data.message);
                   }
               })
+
+              this.findCarousel();
           },
 
 
@@ -261,6 +263,16 @@
                   window.location.href='user/login.html'
               },
               show(){
+              },
+              // 查询出轮播图
+              findCarousel(){
+                  axios.get("/findCarousel.do?cid=1&num=3").then((res)=>{
+                      if (res.data.flag) {
+                          this.img = res.data.data;
+                      } else {
+                          this.$message.error(res.data.message)
+                      }
+                  })
               },
 
               // 按照条件进行文章查询

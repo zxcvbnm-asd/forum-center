@@ -27,4 +27,9 @@ public class RedisConstant {
 
     // 文章当天阅读数统计前缀
     public static final String ARTICLE_READ_RECODER = "ARTICLE_READ_RECODER";
+
+    // 轮播图前缀
+    public static final String PIC_CAROUSEL = "PIC_CAROUSEL";
+
+
 }

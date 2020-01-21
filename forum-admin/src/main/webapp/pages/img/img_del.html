@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+
+
+
+    <style>
+
+        body{
+
+        }
+
+        .table{
+            border: 1px red solid;
+        }
+        a:hover{
+            cursor: pointer;
+        }
+
+        #form{
+            margin-top: 20px;
+            margin-left: 20px;
+            width:273px;
+            height: 65px;
+        }
+
+
+
+        #box{
+            width: 100%;
+            height: 900px;
+            background-color: #d2d6de;
+        }
+
+        #inner_box{
+            margin-left: 20px;
+            margin-right: 20px;
+
+        }
+
+
+
+        #one_title{
+            font-size: 25px;
+        }
+
+        #right{
+            font-size: 10px;
+            margin-top: 15px;
+            margin-right: 20px;
+        }
+
+        #table{
+            width: 100%;
+            height: 801px;
+            background-color: #ffffff;
+            margin-top: 10px;
+            border-top: 3px #3c8dbc solid;
+        }
+
+        #select{
+            margin-left: 20px;
+            margin-top: 15px;
+        }
+
+
+        .head_pic{
+            height: 71px;
+            width: 150px;
+        }
+
+        #myBtn {
+            display: none;
+            position: fixed;
+            bottom: 315px;
+            right: 30px;
+            z-index: 99;
+            cursor: pointer;
+
+        }
+
+        #myBtn:hover {
+            background-color: #555;
+        }
+
+    </style>
+
+</head>
+<body>
+<div id="app">
+    <mk-page></mk-page>
+</div>
+
+<img src="../../img/ccc.jpg" width="40px" height="40px" onclick="topFunction()" id="myBtn" title="回顶部"></img>
+
+<template id="temp">
+    <div id="box">
+        <div id="inner_box">
+            <div id="one_tip">
+                <span id="one_title">页面管理</span>
+                <span class="pull-right" id="right">首页&nbsp;&nbsp;>&nbsp;&nbsp;页面管理&nbsp;&nbsp;>&nbsp;&nbsp;图片删减</span>
+            </div>
+
+            <div id="table">
+                <div id="select">
+                    <span style="font-family: DFKai-SB">请选择相关的图片分类:</span>
+                    <el-select v-model="value" placeholder="请选择" size="mini" @change="change">
+                        <el-option
+                                v-for="item in options"
+                                :key="item.id"
+                                :label="item.cname"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </div>
+                <div style="border-bottom: 2px red solid; margin-top: 10px"></div>
+                <div>
+                    <el-table
+                            :data="tableData"
+                            style="width: 100%">
+                        <el-table-column label="图片" width="390px">
+                            <template slot-scope="scope">
+                                <img :src="'http://'+prefix+'/'+scope.row.imgUrl" class="head_pic"/>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="createTiime" label="添加日期" width="350px"></el-table-column>
+                        <el-table-column label="操作" width="350px" >
+                            <template slot-scope="scope">
+                                <el-button size="medium" type="danger" @click="delPic(scope.row.id)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                <div id="page">
+                    <div class="pagination-container">
+                        <el-pagination
+                                class="pagiantion"
+                                @current-change="handleCurrentChange"
+                                :current-page="pagination.currentPage"
+                                :page-size="pagination.pageSize"
+                                layout="total, prev, pager, next, jumper"
+                                :total="pagination.total">
+                        </el-pagination>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</template>
+</body>
+<script>
+    window.onscroll = function() {scrollFunction()};
+
+    function scrollFunction() {console.log(121);
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("myBtn").style.display = "block";
+        } else {
+            document.getElementById("myBtn").style.display = "none";
+        }
+    }
+
+    // 点击按钮，返回顶部
+    function topFunction() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    }
+
+    //<!--:href="'article-detail.html?id='+article.id"-->
+    Vue.component("mkPage",{
+        template:"#temp",
+        data(){
+            return{
+                pagination: {//分页相关模型数据
+                    currentPage: 1,//当前页码
+                    pageSize:6,//每页显示的记录数
+                    total:0,//总记录数
+                    queryString:null//查询条件
+                },
+                prefix:'q4c8e7e7f.bkt.clouddn.com',
+                options: [],
+                value: "请选择",
+                tableData: []
+
+
+            }
+        },
+        created(){
+            this.findCategory();
+        },
+        methods: {
+            // 查询出图片的分类
+            findCategory(){
+                axios.get("/img/findImgCategory.do").then((res)=>{
+                    if (res.data.flag) {
+                        this.options = res.data.data;
+                    } else {
+                        this.$message.error(res.data.message)
+                    }
+                })
+            },
+
+            delPic(id) {
+                axios.get("/img/delImgById.do?id="+id).then((res)=>{
+                    if (res.data.flag) {
+                        this.findPage();
+                    } else {
+                        this.$message.error(res.data.message)
+                    }
+                })
+            },
+
+            // 切换页码
+            handleCurrentChange:function(currentPage) {
+                this.pagination.currentPage = currentPage;
+                this.findPage();
+            },
+
+            findPage(){
+                var param = {
+                    currentPage:this.pagination.currentPage,
+                    pageSize:this.pagination.pageSize
+                }
+                axios.post("/img/findImgByCid.do?cid="+this.value,param).then((res)=>{
+                    if (res.data.flag) {
+                        this.tableData = res.data.rows;
+                        this.pagination.total = res.data.total
+                    } else {
+                        this.$message.error(res.data.message)
+                    }
+                })
+            },
+            // 监听改变事件，查询相关分类下的图片
+            change(){
+                this.pagination.currentPage = 1;
+                this.findPage();
+            }
+        }
+    })
+    var vm = new Vue({
+        el:'#app',
+        data:{
+
+        },
+        methods:{
+
+        }
+    })
+</script>
+</html>

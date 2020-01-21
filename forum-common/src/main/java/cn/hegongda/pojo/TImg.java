@@ -3,12 +3,14 @@ package cn.hegongda.pojo;
 import java.io.Serializable;
 import java.util.Date;
 
-public class TCarousel implements Serializable {
+public class TImg implements Serializable{
     private Integer id;
 
     private String imgUrl;
 
     private Date createTiime;
+
+    private Integer cid;
 
     public Integer getId() {
         return id;
@@ -32,5 +34,13 @@ public class TCarousel implements Serializable {
 
     public void setCreateTiime(Date createTiime) {
         this.createTiime = createTiime;
+    }
+
+    public Integer getCid() {
+        return cid;
+    }
+
+    public void setCid(Integer cid) {
+        this.cid = cid;
     }
 }

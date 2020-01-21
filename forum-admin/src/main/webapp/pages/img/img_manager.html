@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+
+
+
+    <style>
+
+        body{
+
+        }
+
+        .table{
+            border: 1px red solid;
+        }
+        a:hover{
+            cursor: pointer;
+        }
+
+        #form{
+            margin-top: 20px;
+            margin-left: 20px;
+            width:273px;
+            height: 65px;
+        }
+
+
+
+        #box{
+            width: 100%;
+            height: 900px;
+            background-color: #d2d6de;
+        }
+
+        #inner_box{
+            margin-left: 20px;
+            margin-right: 20px;
+
+        }
+
+
+
+        #one_title{
+            font-size: 25px;
+        }
+
+        #right{
+            font-size: 10px;
+            margin-top: 15px;
+            margin-right: 20px;
+        }
+
+        #table{
+            width: 100%;
+            height: 801px;
+            background-color: #ffffff;
+            margin-top: 10px;
+            border-top: 3px #3c8dbc solid;
+        }
+
+        #list_form{
+            margin-top: 5px;
+            margin-left: 14px;
+            font-size: 20px;
+            padding-bottom: 5px;
+        }
+
+        .btn-group{
+            margin-left: -6px;
+            margin-bottom: -13px;
+        }
+        .btn-sm{
+            width: 80px;
+            background-color: #f4f4f4;
+
+        }
+        .el-input__inner{
+            height: 34px;
+        }
+
+        #imgload{
+            font-size: 16px;
+            color: blue;
+        }
+
+        #tip{
+            font-size: 12px;
+            color: red;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="app">
+       <mk-page></mk-page>
+    </div>
+
+    <template id="temp">
+        <div id="box">
+            <div id="inner_box">
+                <div id="one_tip">
+                    <span id="one_title">页面管理</span>
+                    <span class="pull-right" id="right">首页&nbsp;&nbsp;>&nbsp;&nbsp;页面管理&nbsp;&nbsp;>&nbsp;&nbsp;图片管理</span>
+                </div>
+
+                <div id="table">
+                    <div id="list_form">
+                         <div class="btn-group" role="group" aria-label="...">
+                             <button type="button" class="btn btn-default btn-sm" @click="isForm=!isForm">新建</button>
+                        </div>
+                    </div>
+                    <form id="form" v-show="isForm">
+                        <span style="font-family: DFKai-SB">图片类型名称：</span><input type="text" v-model="cname">
+
+                        <div style="margin-left: 65px; margin-top: 15px">
+                            <input type="button" value="提交" @click="submit">&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="button" value="重置" @click="reset">
+                        </div>
+                    </form>
+                    <div style="border-bottom: 1px grey solid;margin-top: 20px"></div>
+                    <div style="margin-top: 10px;margin-left: 20px">
+                        <span id="imgload">请选择要上传图片的类型<span id="tip">(最多只能上传6张)</span>:</span>
+                        <el-select v-model="value" placeholder="请选择" size="mini" @change="change">
+                            <el-option
+                                    v-for="item in options"
+                                    :key="item.id"
+                                    :label="item.cname"
+                                    :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </div>
+                    <div style="width: 300px;margin-left: 400px;margin-top: 20px">
+                        <el-upload
+                                class="upload-demo"
+                                action="/img/load.do"
+                                :on-preview="handlePreview"
+                                :on-remove="handleRemove"
+                                :on-success="handleAvatarSuccess"
+                                :file-list="fileList"
+                                :limit="6"
+                                name="imgFile"
+                                list-type="picture">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button size="small" type="primary"  style="margin-left: 49px" v-show="flag2">点击选取要上传的图片</button>
+                        </el-upload>
+                    </div>
+                    <div v-show="flag" style="margin-left: 515px;margin-top: 20px"><button type="success" @click="save">确定上传</button></div>
+                </div>
+            </div>
+        </div>
+    </template>
+</body>
+      <script>
+
+
+          //<!--:href="'article-detail.html?id='+article.id"-->
+          Vue.component("mkPage",{
+              template:"#temp",
+              data(){
+                  return{
+                      pagination: {//分页相关模型数据
+                          currentPage: 1,//当前页码
+                          pageSize:10,//每页显示的记录数
+                          total:0,//总记录数
+                          queryString:null//查询条件
+                      },
+                      flag:false,
+                      flag2:false,
+                      isForm:false,
+                      cname:'',
+                      imgs:[
+
+                      ],
+                      options: [{
+                          id: 1,
+                          cname: '黄金糕'
+                      }, {
+                          id: 2,
+                          cname: '双皮奶'
+                      }, {
+                          id: 3,
+                          cname: '蚵仔煎'
+                      }, {
+                          id: 4,
+                          cname: '龙须面'
+                      }, {
+                          id: 5,
+                          cname: '北京烤鸭'
+                      }],
+                      value: "请选择",
+                      fileList: []
+
+                  }
+              },
+              created(){
+                this.findCategory();
+              },
+              methods:{
+                  // 查询出图片的分类
+                  findCategory(){
+                      axios.get("/img/findImgCategory.do").then((res)=>{
+                          if (res.data.flag) {
+                              this.options = res.data.data;
+                          } else {
+                              this.$message.error(res.data.message)
+                          }
+                      })
+                  },
+
+                  //文件上传成功后的钩子，response为服务端返回的值，file为当前上传的文件封装成的js对象
+                  handleAvatarSuccess(response, file,fileList) {
+                      if(response.flag){
+                          this.flag = true;
+                          // 设置模型数据图片名称，以便后续保存到数据库中
+                          this.$message.success(response.message);
+                          var imgUrl = response.data;
+                          var img = {"imgUrl":imgUrl,"cid":this.value};
+                          this.imgs.push(img);
+                          this.fileList.push(file)
+                      }else{
+                          // 设置模型数据图片名称，以便后续保存到数据库中
+                          this.$message.error(response.message+",请手动删除");
+                      }
+                  },
+
+                  // 长传图片
+                  save(){
+                      axios.post("/img/saveImg.do", this.imgs).then((res)=>{
+                          if (res.data.flag) {
+                              this.flag = false;
+                              this.imgs = [];
+                              this.fileList = [];
+                              this.$message.success("上传成功")
+                          } else {
+                              this.$message.error(res.data.message)
+                          }
+                      })
+                  },
+
+                  handleRemove(){
+
+                  },
+
+                  handlePreview(){
+
+                  },
+
+                  submit(){
+                     axios.get("/img/addCategory.do?cname="+this.cname).then((res)=>{
+                         if (res.data.flag) {
+                             this.cname='';
+                             this.$confirm("是否要继续添加","已添加成功",{type:"warning"}).then(()=>{
+                                 this.isForm=true;
+                             }).catch(()=>{
+                                 this.isForm=false;
+                             })
+                         } else {
+                             this.$message.error(res.data.message)
+                         }
+                     })
+                  },
+
+                  reset(){
+                      this.cname='';
+                  },
+
+                  // change事件
+                  change(){
+                      this.flag2 = true
+                      this.flag = false
+                      this.fileList=[];
+                      this.imgs=[];
+                  }
+              }
+          })
+          var vm = new Vue({
+              el:'#app',
+              data:{
+
+              },
+              methods:{
+
+              }
+          })
+      </script>
+</html>

@@ -72,7 +72,7 @@
 
                 </ul>
             </div>
-            <img src="../../images/li.jpg" width="200px" height="350px">
+            <img :src="'http://'+prefix+'/'+leftImg[0].imgUrl" width="200px" height="350px">
         </div>
         <div id="main">
             <div id="search">
@@ -173,6 +173,7 @@
                 {id:1,linkName:'Git Hub',link_href:'http://www.baidu.com'},
             ],
             prefix:'',
+            leftImg:[{}],
 
              // 查询的文章信息
             articles:[  // 查询的文章信息
@@ -212,6 +213,7 @@
 
             this.prefix = prefix;
 
+            this.findLeftImg();
             // 在token中获取user
             axios.get("/user/getUserByToken.do").then((res)=>{
                if (res.data.flag) {
@@ -235,6 +237,18 @@
         },
 
         methods:{
+
+            // 查询出轮播图
+            findLeftImg(){
+                axios.get("/findCarousel.do?cid=2&num=1").then((res)=>{
+                    if (res.data.flag) {
+                        this.leftImg = res.data.data;
+                    } else {
+                        this.$message.error(res.data.message)
+                    }
+                })
+            },
+
             findPage(){
 
                 var param = {

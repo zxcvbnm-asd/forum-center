@@ -66,15 +66,20 @@ public class TestSpring {
     @Autowired
     private ReportService reportService;
 
+    @Autowired
+    private TImgMapper imgMapper;
+
+    @Autowired
+    private TImgCategoryMapper categoryMapper;
+
 
 
 
      @Test
      public void test(){
-        QueryPageBean queryPageBean = new QueryPageBean();
-        queryPageBean.setCurrentPage(1);
-        queryPageBean.setPageSize(4);
-        reportService.getCommentReport(0,1,queryPageBean);
+       TImgCategory imgCategory = new TImgCategory();
+       imgCategory.setCname("北京图片");
+       categoryMapper.insert(imgCategory);
      }
 
 
