@@ -1,37 +1,61 @@
 package cn.hegongda.mapper;
 
+import cn.hegongda.pojo.AdminUserInfo;
 import cn.hegongda.pojo.TAdmin;
-import cn.hegongda.pojo.TAdminExample;
-import cn.hegongda.pojo.TAdminWithBLOBs;
+
 import java.util.List;
+
+import cn.hegongda.pojo.TPermission;
+import cn.hegongda.pojo.TRole;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 public interface TAdminMapper {
-    int countByExample(TAdminExample example);
 
-    int deleteByExample(TAdminExample example);
+    List<TAdmin> findAdminUser(@Param("queryString") String queryString);
 
-    int deleteByPrimaryKey(Integer id);
+    TAdmin findAdminUserById(@Param("id") Integer id);
 
-    int insert(TAdminWithBLOBs record);
+    void update(TAdmin admin);
 
-    int insertSelective(TAdminWithBLOBs record);
+    void deleteUserRole(Integer id);
 
-    List<TAdminWithBLOBs> selectByExampleWithBLOBs(TAdminExample example);
+    @Delete("delete from t_admin where id=#{id}")
+    void deleteAdminUserById(Integer id);
 
-    List<TAdmin> selectByExample(TAdminExample example);
+    @Select("select id,username as roleName from t_admin where id=#{id}")
+    AdminUserInfo findUserInfo(Integer id);
 
-    TAdminWithBLOBs selectByPrimaryKey(Integer id);
+    @Select("SELECT  id, role_name AS roleName , keyword FROM t_role  \n" +
+            "WHERE id IN (SELECT role_id FROM t_admin_role WHERE admin_id=#{id})")
+    List<AdminUserInfo> findUserRoleById(Integer id);
 
-    int updateByExampleSelective(@Param("record") TAdminWithBLOBs record, @Param("example") TAdminExample example);
+    @Select("SELECT  id, permission_name AS roleName , keyword FROM t_permission  \n" +
+            "WHERE id IN (SELECT permission_id FROM t_role_permission WHERE role_id=#{id})")
+    List<AdminUserInfo> findUserPermission(Integer id);
 
-    int updateByExampleWithBLOBs(@Param("record") TAdminWithBLOBs record, @Param("example") TAdminExample example);
+    @Delete("delete from t_role_permission where permission_id=#{id} and role_id=#{rid}")
+    void deletePermission(@Param("id") Integer id, @Param("rid") Integer rid);
 
-    int updateByExample(@Param("record") TAdmin record, @Param("example") TAdminExample example);
+    @Delete("delete from t_admin_role where role_id=#{id} and admin_id=#{rid}")
+    void deleteRole(@Param("id") Integer id, @Param("rid") Integer rid);
 
-    int updateByPrimaryKeySelective(TAdminWithBLOBs record);
+    @Select("select role_name as roleName, id as id, keyword, description\n" +
+            "from t_role\n" +
+            "where id not in (select role_id from t_admin_role where admin_id=#{id})")
+    List<TRole> getAdminRole(Integer id);
 
-    int updateByPrimaryKeyWithBLOBs(TAdminWithBLOBs record);
+    @Insert("insert into t_admin_role (admin_id, role_id) values (#{id},#{role_id})")
+    void insertAdminRole(@Param("id") Integer id, @Param("role_id") Integer role_id);
 
-    int updateByPrimaryKey(TAdmin record);
+    List<TRole> findRole(@Param("queryString") String queryString);
+
+    void insert(TAdmin admin);
+
+    @Select("SELECT id as id, permission_name as permissionName,keyword  FROM t_permission " +
+            "WHERE id NOT IN " +
+            "(SELECT permission_id FROM t_role_permission WHERE role_id=#{id})")
+    List<TPermission> findPermissionOfRole(Integer id);
 }

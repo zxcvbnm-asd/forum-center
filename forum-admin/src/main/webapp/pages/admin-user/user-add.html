@@ -94,12 +94,12 @@
 
 						<div class="col-md-2 title">用户名称</div>
 						<div class="col-md-4 data">
-							<input type="text" class="form-control" name="username" v-model="admin.aname"
+							<input type="text" class="form-control" name="username" v-model="admin.username"
 								placeholder="用户名称" value="">
 						</div>
 						<div class="col-md-2 title">密码</div>
 						<div class="col-md-4 data">
-							<input type="password" class="form-control" name="password" v-model="admin.pass"
+							<input type="password" class="form-control" name="password" v-model="admin.password"
 								placeholder="密码" value="">
 						</div>
 						<div class="col-md-2 title">邮箱</div>
@@ -109,15 +109,15 @@
 						</div>
 						<div class="col-md-2 title">联系电话</div>
 						<div class="col-md-4 data">
-							<input type="text" class="form-control" name="phoneNum"   v-model="admin.phoneNum"
+							<input type="text" class="form-control" name="phoneNum"   v-model="admin.mobile"
 								placeholder="联系电话" value="">
 						</div>
 						<div class="col-md-2 title">用户状态</div>
 						<div class="col-md-4 data">
-							<select class="form-control select2" style="width: 100%"  v-model="admin.status"
-								name="status">
-								<option value="0" selected="selected">关闭</option>
-								<option value="1">开启</option>
+							<select class="form-control select2" style="width: 100%"  v-model="value"
+									name="status">
+								<option value="0">开启</option>
+								<option value="1">关闭</option>
 							</select>
 						</div>
 					</div>
@@ -243,11 +243,20 @@
 		var vm = new Vue({
 			el:"#app",
 			data:{
-			    admin:{}
+			    admin:{},
+				value:-1
 			},
 			methods:{
 			    save(){
+			        this.admin.status = $(".select2").val();
 			        // 发送ajax请求保存数据
+					axios.post("/admin/addAdminUser.do", this.admin).then((res)=>{
+					    if (res.data.flag) {
+					        window.location.href = document.referrer;
+						} else {
+					        this.$message.error(res.data.message)
+						}
+					})
 				}
 			}
 

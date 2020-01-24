@@ -1,8 +1,10 @@
 package cn.hegongda;
 
 import cn.hegongda.pojo.Rule;
+import cn.hegongda.result.PageResult;
 import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
+import cn.hegongda.service.admin.AdminUserService;
 import cn.hegongda.service.user.UserManagerService;
 
 import org.junit.Test;
@@ -19,6 +21,23 @@ public class UserManagerTest {
     @Autowired
     private UserManagerService userManagerService;
 
+    @Autowired
+    private AdminUserService adminUserService;
+
+    @Test
+    public void test2(){
+
+    }
+
+    @Test
+    public void test3(){
+        QueryPageBean queryPageBean = new QueryPageBean();
+        queryPageBean.setQueryString("zhaosi");
+        queryPageBean.setCurrentPage(1);
+        queryPageBean.setPageSize(5);
+        PageResult result = adminUserService.findAdminUser(queryPageBean);
+        System.out.println(result.getTotal());
+    }
     @Test
     public void test1(){
         Rule rule = new Rule();

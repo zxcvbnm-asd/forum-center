@@ -102,7 +102,7 @@
 								<tr>
 									<th class="sorting">
 									请选择</th>
-									<th class="sorting_asc">ID</th>
+									<th class="sorting_asc">序号</th>
 									<th class="sorting">角色名称</th>
 									<th class="sorting">角色描述</th>									
 								</tr>
@@ -114,7 +114,7 @@
 										<input name="ids"   type="checkbox" v-model="ids" :value="role.id">
 										</td>
 										<td>{{index+1}}</td>
-										<td>{{role.name}}</td>
+										<td>{{role.roleName}}</td>
 										<td>{{role.keyword}}</td>
 									</tr>
 
@@ -231,9 +231,11 @@
 		src="../../adminal/plugins/bootstrap-slider/bootstrap-slider.js"></script>
 	<script
 		src="../../adminal/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
+
 	  <script type="text/javascript" src="../../js/vue-2.4.0.js"/>
 	  <script>Vue.config.productionTip = false</script>
 	  <script src="../../js/axios-0.18.0.js"></script>
+
   </div>
 	<script>
 
@@ -241,32 +243,45 @@
             var qs = location.search.substr(1), // 获取url中"?"符后的字串
                 args = {}, // 保存参数数据的对象
                 items = qs.length ? qs.split("&") : [], // 取得每一个参数项,
-                item = null,
                 len = items.length;
             var id = items[0].split("=")[1];
+
             return id;
         }
-
 
         var vm = new Vue({
             el:"#app",
             data:{
                 roleList:[
-					{id:1,name:'用户管理人员',keyword:'USER_ADMIN',flag:'checked'},
-                    {id:2,name:'文章管理人员',keyword:'ARTICLE_ADMIN',flag:false},
-                    {id:6,name:'公告管理人员',keyword:'ANNOUNCE_ADMIN',flag:true},
+					{id:1,roleName:'用户管理人员',keyword:'USER_ADMIN'},
+                    {id:2,roleName:'文章管理人员',keyword:'ARTICLE_ADMIN'},
+                    {id:6,roleName:'公告管理人员',keyword:'ANNOUNCE_ADMIN'},
 				],
 				ids:[]  // 选中的roleId
             },
 
-			mounted(){
-
+			created(){
+				var id = getId();
+				// 根据用户id查询出其没有的角色
+				axios.get("/admin/getAdminRole.do?id="+id).then((res)=>{
+				    if (res.data.flag) {
+						this.roleList = res.data.data;
+					} else {
+				        this.$message.error(res.data.message);
+					}
+				})
 			},
             methods:{
                 add(){
-                    // 获取用户id
-					var id = getId();
-					// 将IDS出入到后台
+                    var id = getId();
+                    // 添加用户的角色
+					axios.post("/admin/addRoleForAdmin.do?id="+id, this.ids).then((res)=>{
+					    if (res.data.flag) {
+					        window.location.href='/pages/admin-user/admin-detail.html?id='+id;
+						} else {
+                            alert(res.data.message)
+						}
+					})
                 }
             }
         })

@@ -63,7 +63,7 @@
                                 <td>{{role.roleName}}</td>
                                 <td>{{role.keyword}}</td>
                                 <td class="text-center">
-                                    <a href="#">详情</a>
+                                    <a href="#" @click="showDetail(role.id)">详情</a>
                                     <a href="#" @click.prevent="addPermission(role.id)">添加权限</a>
                                 </td>
                             </tr>
@@ -102,12 +102,32 @@
                       pagination: {//分页相关模型数据
                           currentPage: 1,//当前页码
                           pageSize:10,//每页显示的记录数
-                          total:100,//总记录数
+                          total:0,//总记录数
                           queryString:null//查询条件
                       },
                   }
               },
+
+              created(){
+                  this.findPage();
+              },
               methods:{
+
+                  findPage(){
+                      var param = {
+                          currentPage:this.pagination.currentPage,
+                          pageSize:this.pagination.pageSize,
+                          queryString:this.pagination.queryString
+                      }
+                      axios.post("/admin/findRole.do", param).then((res)=>{
+                          if (res.data.flag) {
+                              this.roles = res.data.rows;
+                              this.pagination.total = res.data.total;
+                          } else {
+                              this.$message.error(res.data.message)
+                          }
+                      })
+                  },
                   // 切换页码
                   handleCurrentChange:function(currentPage) {
                       this.pagination.currentPage = currentPage;
@@ -119,7 +139,7 @@
                   },
 
                   flush(){
-
+                      this.findPage();
                   },
 
                   add(){
@@ -127,7 +147,11 @@
                       window.location.href='role-add.html'
                   },
                   search(){
-
+                      this.pagination.currentPage = 1;
+                      this.findPage();
+                  },
+                  showDetail(id){
+                      window.location.href="/pages/admin-user/role-detail.html?id="+id;
                   }
               }
           })

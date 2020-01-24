@@ -11,7 +11,7 @@ public class TPermission implements Serializable {
 
     private String description;
 
-    private String column5;
+
 
     public Integer getId() {
         return id;
@@ -43,13 +43,5 @@ public class TPermission implements Serializable {
 
     public void setDescription(String description) {
         this.description = description == null ? null : description.trim();
-    }
-
-    public String getColumn5() {
-        return column5;
-    }
-
-    public void setColumn5(String column5) {
-        this.column5 = column5 == null ? null : column5.trim();
     }
 }

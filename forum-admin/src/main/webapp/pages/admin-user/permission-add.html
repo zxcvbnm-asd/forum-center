@@ -144,11 +144,17 @@
         var vm = new Vue({
             el: '#app',
             data: {
-                permission: {id: 1, permissionName: '用户管理员', keyword: 'USSER_ADMIN'},
+                permission: {},
             },
 			methods:{
                 add(){
-                    alert(this.permission.permissionName)
+                   axios.post("/admin/addPermission.do", this.permission).then((res)=>{
+                       if (res.data.flag) {
+                           window.location.href = document.referrer;
+					   } else {
+                           alert(res.data.message) ;
+					   }
+				   })
                 }
 			}
 

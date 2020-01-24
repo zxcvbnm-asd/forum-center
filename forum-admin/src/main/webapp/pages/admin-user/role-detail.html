@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/component.css">
+    <!-- 引入组件库 -->
+    <script src="../../js/link-param.js"></script>
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+
+    <style>
+        a:hover{
+            cursor: pointer;
+        }
+
+        #dsc{
+            margin-left: 25px;
+            margin-top: 8px;
+            border-bottom: 1px grey solid;
+            padding-bottom: 4px;
+        }
+
+        .dsc{
+            font-size: 19px;
+            color: #4cae4c;
+            font-family: DFKai-SB;
+        }
+
+        .dc{
+            color: red;
+            letter-spacing: 1.9px;
+        }
+
+        #one_title{
+            margin-left: 595px;
+            color: firebrick;
+        }
+
+        #show{
+            margin-left: 25px;
+            margin-top: 10px;
+            font-size: 15px;
+            color: blue;
+
+        }
+        .table{
+            width: 96%;
+            margin-left: 2%;
+        }
+
+        #back{
+            margin-left: 517px;
+            margin-top: 52px;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="app">
+       <mk-page></mk-page>
+    </div>
+
+    <template id="temp">
+        <div id="box">
+            <div id="inner_box">
+                <div id="one_tip">
+                    <span id="one_title">角色信息详情</span>
+                </div>
+
+                <div id="table">
+
+                    <div id="dsc">
+                        <span class="dsc">角色名称: &nbsp; </span><span class="dc">{{role.roleName}}</span>
+                        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                        <span class="dsc">角色描述: &nbsp;</span><span class="dc">{{role.keyword}}</span>
+                    </div>
+                    <div id="show">
+                         <span>其拥有的权限列表如下：</span>
+                    </div>
+                    <div id="list">
+                        <table class="table table-hover table-bordered table-striped">
+                            <tr>
+                                <th class="sorting_asc">序号</th>
+                                <th class="sorting_desc">角色名称</th>
+                                <th class="sorting_asc sorting_asc_disabled">描述</th>
+                                <th class="text-center">操作</th>
+                            </tr>
+                            <tr v-for="(permission,index) in permissions" @key="index">
+                                <td>{{index+1}}</td>
+                                <td>{{permission.permissionName}}</td>
+                                <td>{{permission.keyword}}</td>
+                                <td class="text-center">
+                                    <a href="#" @click.prevent="del(permission.id)">删除</a>
+                                </td>
+                            </tr>
+                        </table>
+                        <div id="back">
+                            <el-button type="danger" size="small" @click="back">返回</el-button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </template>
+</body>
+      <script>
+
+          //<!--:href="'article-detail.html?id='+article.id"-->
+          Vue.component("mkPage",{
+              template:"#temp",
+              data(){
+                  return{
+                      permissions:[
+
+                      ],
+                      pagination: {//分页相关模型数据
+                          currentPage: 1,//当前页码
+                          pageSize:10,//每页显示的记录数
+                          total:0,//总记录数
+                          queryString:null//查询条件
+                      },
+
+                      role:{roleName:'页面管理',keyword:"PAGE_MANAGER"}
+                  }
+              },
+
+              created(){
+                    var id = getParam("id");
+                    // 根据id查询角色
+                    axios.get("/admin/findRoleById.do?id="+id).then((res)=>{
+                        if (res.data.flag) {
+                            this.role = res.data.data;
+                        } else {
+                            this.$message.error(res.data.message)
+                        }
+                    })
+
+                    this.find();
+              },
+              methods:{
+                   find(){
+                       //查询该角色下拥有的权限
+                       var id = getParam("id");
+                       axios.get("/admin/getPermissionByRid.do?id="+id).then((res)=>{
+                           if (res.data.flag) {
+                               this.permissions = res.data.data;
+                           } else {
+                               this.$message.error(res.data.message)
+                           }
+                       })
+                   },
+
+                   back(){
+                     window.location.href = document.referrer;
+                   },
+
+                   del(pid){
+                       var id = getParam("id");
+                       axios.get("/admin/delRolePermission.do?rid="+id+"&pid="+pid).then((res)=>{
+                           if (res.data.flag) {
+                               this.find();
+                           } else {
+                               this.$message.error(res.data.message)
+                           }
+                       })
+                   },
+              }
+          })
+          var vm = new Vue({
+              el:'#app',
+              data:{
+
+              },
+              methods:{
+
+              }
+          })
+      </script>
+</html>

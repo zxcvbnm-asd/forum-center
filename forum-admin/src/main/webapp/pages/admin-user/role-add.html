@@ -231,11 +231,17 @@
         var vm = new Vue({
             el: '#app',
             data: {
-                role: {id: 1, roleName: '用户管理员', keyword: 'USSER_ADMIN'},
+                role: {},
             },
 			methods:{
                 add(){
-                    alert(this.role.roleName)
+                    axios.post("/admin/addRole.do",this.role).then((res)=>{
+                        if (res.data.flag) {
+                            window.location.href = document.referrer;
+                        } else {
+                            this.$message.error(res.data.message)
+						}
+					})
                 }
 			}
 

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/component.css">
+    <!-- 引入组件库 -->
+    <script src="../../js/link-param.js"/>
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script src="../../js/vue.js"></script>
+    <script src="../../plugins/elementui/index.js"></script>
+    <script src="../../js/axios-0.18.0.js"></script>
+
+    <style>
+        a:hover{
+            cursor: pointer;
+        }
+
+        .demo-table-expand {
+            font-size: 0;
+        }
+        .demo-table-expand label {
+            width: 90px;
+            color: #99a9bf;
+        }
+        .demo-table-expand .el-form-item {
+            margin-right: 0;
+            margin-bottom: 0;
+            width: 50%;
+        }
+
+        .level1, .level2, .level3 {
+            display: inline-block;
+            width: 20px;
+        }
+
+        .level1 {
+            margin-left: 5px;
+        }
+
+        .level2 {
+            margin-left: 20px;
+        }
+
+        .level3 {
+            margin-left: 35px;
+        }
+        #one_title{
+            margin-left: 565px;
+        }
+    </style>
+
+</head>
+<body>
+<div id="app">
+    <mk-page></mk-page>
+</div>
+
+<template id="temp">
+    <div id="box">
+        <div id="inner_box">
+            <div id="one_tip">
+                <span id="one_title">管理人员角色权限表</span>
+            </div>
+
+            <div id="table">
+                <div class="menus-tree">
+                    <el-table ref="menusTable" :row-style="showRow" :data="menusTable" v-bind="$attrs">
+                        <el-table-column
+                                prop="name"
+                                label="用户名称">
+                            <template slot-scope="scope">
+          <span :class="['level'+scope.row.level]">
+          <i v-if="scope.row.children" @click="openToggle(scope.row)"
+             :class="[scope.row.open?'fa fa-chevron-down':'fa fa-chevron-right']"></i>
+            </span>
+                                {{scope.row.title}}
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="roleName"
+                                label="角色或权限信息">
+
+                        </el-table-column>
+                        <el-table-column
+                                prop="keyword"
+                                label="描述">
+                        </el-table-column>
+                        <el-table-column
+                                prop="operation"
+                                label="操作">
+                            <template slot-scope="scope">
+                                <!-- 判断下面是否有子菜单，有子菜单不能是有删除按钮 -->
+                                <el-button v-if="!scope.row.children" type="text" size="small" @click="del(scope.row.id,scope.row.level,scope.row.rid)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+</body>
+<script>
+
+    //<!--:href="'article-detail.html?id='+article.id"-->
+    Vue.component("mkPage",{
+        template:"#temp",
+        data(){
+            return{
+                menusTree: [ ],
+                defaultProps: {
+                    children: 'children',
+                    label: 'title'
+                },
+                // 菜单表格结构数据
+                menusTable: [],
+                id:-1
+
+            }
+        },
+        created(){
+
+            this.id = getParam("id");
+            this.find();
+        },
+        methods:{
+            find(){
+                axios.get("/admin/getAdminUserInfoById.do?id="+this.id).then((res)=>{
+                    if (res.data.flag) {
+                        this.menusTree = [];
+                        this.menusTree.push(res.data.data);
+                        this.menusTable = this.menusTree;
+                    } else {
+                        this.$message.error(res.data.message);
+                    }
+                })
+            },
+            showRow: function (row) {
+                const show = row.row.parent
+                    ? row.row.parent._expanded && row.row.parent._show
+                    : true;
+                row.row._show = show;
+                return show
+                    ? "animation:treeTableShow 1s;-webkit-animation:treeTableShow 1s;"
+                    : "display:none;";
+            },
+
+            del(id,level,rid){
+                // 删除角色或者权限
+                axios.get("/admin/deleteAdminAuthority.do?id="+id+"&level="+level+"&rid="+rid).then((res)=>{
+                    if (res.data.flag) {
+                        this.find();
+                    } else {
+                        this.$message.error(res.data.flag);
+                    }
+                })
+            },
+
+            // 树节点开关操作
+            openToggle: function (item) {
+                // 这里只是展开和关闭样式的变换方法
+                Vue.set(item, 'open', !item.open);
+                // 展开的时候，显示子节点，关闭的时候隐藏子节点
+                // 遍历所有的子节点，加入到menuTable中
+                for (let j = 0; j < this.menusTable.length; j++) {
+                    // 找到父节点的id，然后依次把子节点放到数组里面父节点后面
+                    if (this.menusTable[j].ids !== item.ids) {
+                        continue;
+                    }
+                    if (item.open) { // open => close
+                        console.log(item.children);
+                        let menusTable = this.menusTable;
+                        item.children.forEach(function (child, index) {
+                            menusTable.splice(j + index + 1, 0, child); // 添加子节点
+                        })
+                    } else {
+                        this.menusTable.splice(j + 1, item.children.length); // 删除子节点
+                    }
+                    break;
+                }
+            }
+        }
+    })
+    var vm = new Vue({
+        el:'#app',
+        data:{
+
+        },
+        methods:{
+
+        }
+    })
+</script>
+</html>

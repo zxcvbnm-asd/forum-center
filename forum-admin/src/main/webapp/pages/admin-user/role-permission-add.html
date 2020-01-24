@@ -76,14 +76,14 @@
 			<!-- 内容头部 -->
 			<section class="content-header">
 			<h1>
-				用户管理 <small>添加角色表单</small>
+				用户管理 <small>添加权限表单</small>
 			</h1>
 			<ol class="breadcrumb">
 				<li><a href="../../adminal/index.jsp"><i
 						class="fa fa-dashboard"></i> 首页</a></li>
 				<li><a
 					href="../../adminal/user/findAll.do">用户管理</a></li>
-				<li class="active">添加角色表单</li>
+				<li class="active">添加权限表单</li>
 			</ol>
 			</section>
 			<!-- 内容头部 /-->
@@ -102,7 +102,7 @@
 								<tr>
 									<th class="sorting">
 									请选择</th>
-									<th class="sorting_asc">ID</th>
+									<th class="sorting_asc">序号</th>
 									<th class="sorting">权限名称</th>
 									<th class="sorting">权限描述</th>
 								</tr>
@@ -167,22 +167,39 @@
             el:"#app",
             data:{
                 permissionList:[
-					{id:1,permissionName:'用户管理人员',keyword:'USER_ADMIN',flag:'checked'},
-                    {id:2,permissionName:'文章管理人员',keyword:'ARTICLE_ADMIN',flag:false},
-                    {id:6,permissionName:'公告管理人员',keyword:'ANNOUNCE_ADMIN',flag:true},
+					{id:1,permissionName:'用户管理人员',keyword:'USER_ADMIN'},
+                    {id:2,permissionName:'文章管理人员',keyword:'ARTICLE_ADMIN'},
+                    {id:6,permissionName:'公告管理人员',keyword:'ANNOUNCE_ADMIN'},
 				],
 				ids:[]  // 选中的roleId
             },
 
-			mounted(){
-
+			created(){
+				this.find();
 			},
             methods:{
+			    // 查询该角色没有的权限
+			    find(){
+			        var id = getId();
+			        axios.get("/admin/getPermissionOfRole.do?id="+id).then((res)=>{
+			            if (res.data.flag) {
+			                this.permissionList = res.data.data;
+						} else {
+			                this.$message.error(res.data.message)
+						}
+					})
+		        },
                 add(){
                     // 获取角色id
 					var id = getId();
 					// 将IDS出入到后台
-					alert(this.ids.length)
+					axios.post("/admin/addPermissionOfRole.do?id="+id,this.ids).then((res)=>{
+                        if (res.data.flag) {
+                            window.location.href = '/pages/admin-user/role-detail.html?id='+id;
+                        } else {
+                            alert(res.data.message)
+                        }
+					})
                 }
             }
         })

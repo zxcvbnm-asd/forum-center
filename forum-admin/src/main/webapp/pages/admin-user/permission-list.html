@@ -106,7 +106,27 @@
                       },
                   }
               },
+              created(){
+                  // 查询所有权限
+                  this.findPage();
+              },
               methods:{
+                  findPage(){
+                      var param = {
+                          currentPage:this.pagination.currentPage,
+                          pageSize:this.pagination.pageSize,
+                          queryString:this.pagination.queryString
+                      }
+
+                      axios.post("/admin/getAllPermission.do",param).then((res)=>{
+                          if (res.data.flag) {
+                              this.permissions = res.data.rows;
+                              this.pagination.total = res.data.total;
+                          } else {
+                              alert(res.data.message)
+                          }
+                      })
+                  },
                   // 切换页码
                   handleCurrentChange:function(currentPage) {
                       this.pagination.currentPage = currentPage;
@@ -115,6 +135,13 @@
                   // 传递的是roleId
                   del(id){
                      // 删除权限
+                      axios.get("/admin/deletePermission.do?id="+id).then((res)=>{
+                          if (res.data.flag) {
+                              this.findPage();
+                          } else {
+                              alert(res.data.message) ;
+                          }
+                      })
                   },
 
                   flush(){
@@ -126,7 +153,8 @@
                       window.location.href='permission-add.html'
                   },
                   search(){
-                      alert(this.pagination.queryString)
+                     this.pagination.currentPage = 1;
+                     this.findPage();
                   }
               }
           })
