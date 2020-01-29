@@ -43,6 +43,17 @@
             height: 220px;
         }
 
+        #ss{
+            position: absolute;
+            margin-left: 679px;
+            margin-top: -312px;
+        }
+
+        #ss tr td{
+            font-weight: bold;
+            color: #2aabd2;
+        }
+
     </style>
 
 </head>
@@ -60,12 +71,12 @@
                     <span class="pull-right" id="right">首页&nbsp;&nbsp;>&nbsp;&nbsp;文章管理&nbsp;&nbsp;>&nbsp;&nbsp;添加分类</span>
                 </div>
 
-                <div id="table" style="height: 300px">
+                <div id="table" style="height: 374px">
                     <div id="list_form">
                         <div style="margin-top: 30px;margin-left: 300px">
                             <template>
                                 <span class="tip" >选择一级分类:</span><br>
-                                <el-select v-model="id" placeholder="请选择一级分类" size="medium">
+                                <el-select v-model="id" placeholder="请选择一级分类" size="medium" @change="change">
                                     <el-option
                                             v-for="category in categories"
                                             :key="category.id"
@@ -80,6 +91,16 @@
                             <button class="btn btn-primary" @click="add">添&nbsp;&nbsp;&nbsp;&nbsp;加</button>
                         </div>
                     </div>
+                </div>
+                <div id="ss">
+                    <table class="table table-bordered table-striped">
+                        <tr>
+                           <th>已有子分类</th>
+                        </tr>
+                        <tr v-for="cate in cate2">
+                            <td>{{cate.cname}}</td>
+                        </tr>
+                    </table>
                 </div>
                 <img src="../../img/6666.jpg">
             </div>
@@ -101,7 +122,8 @@
                           {id:4,cname:'WEBPAGE'}
                       ],
                       id: '',
-                      cname:''
+                      cname:'',
+                      cate2:[]
                   }
               },
 
@@ -117,6 +139,16 @@
               },
 
               methods:{
+                  // 查询子分类
+                  change(){
+                     axios.get("/article-manager/findSecondCate.do?parentId="+this.id).then((res)=>{
+                         if (res.data.flag) {
+                             this.cate2 = res.data.data;
+                         } else {
+                             this.$message.error(res.data.message)
+                         }
+                     })
+                  },
                   // 添加二级分类
                   add(){
                      var category = {

@@ -105,6 +105,14 @@
             cursor: pointer;
         }
 
+        li.number{
+            width: 62px;
+        }
+
+        #page{
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
 
     </style>
 </head>
@@ -172,15 +180,25 @@
                     </a>
                 </div>
                 <div class="media-body">
-                    <h4 class="media-heading"><a href="#" @click="showDetail(article.id)">{{article.title}}</a></h4>
+                    <h5 class="media-heading"><a href="#" @click="showDetail(article.id)">{{article.title}}</a></h5>
                     <p style="margin-top: 8px">发布时间：<span class="mark">{{article.pubTime}}</span></p>
                     <p style="margin-top: 6px">阅读量：<code>{{article.num}}</code> &nbsp;&nbsp;&nbsp;&nbsp;分类：<span class="label">{{article.category}}</span></p>
                 </div>
             </div>
         </li>
     </ul>
-</div>
 
+</div>
+<div id="page" style="margin-left: 526px">
+    <el-pagination
+            class="pagiantion"
+            @current-change="handleCurrentChange"
+            :current-page="pagination.currentPage"
+            :page-size="pagination.pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="pagination.total">
+    </el-pagination>
+</div>
 </div>
 </body>
 <script>
@@ -199,6 +217,12 @@
                 count:36,
                 attention:36,
                 fan:25
+            },
+            pagination: {//分页相关模型数据
+                currentPage: 1,//当前页码
+                pageSize:30,//每页显示的记录数
+                total:0,//总记录数
+                queryString:null//查询条件
             },
             articles:[
                 {id:1,coverUrl:'../img/9.png',pubTime:'2012-6-5',num:6555,category:'JAVASE',title:'射雕英雄传重复的设计费好滴哦输入覅瓯都市'},
@@ -224,19 +248,30 @@
                 }else{
                     this.$message.error(res.data.message)
                 }
-            })
+            });
 
+            this.findPage();
 
-            // 根据id查询作者已发布的文章
-            axios.get("/fan-atten/getArticleList.do?id="+id).then((res)=>{
-                if (res.data.flag){
-                    this.articles = res.data.data
-                }else {
-                    this.$message.error(res.data.message)
-                }
-            })
         },
         methods:{
+
+            findPage(){
+                var id = getParam("id");
+
+                var param = {
+                    currentPage:this.pagination.currentPage,
+                    pageSize:this.pagination.pageSize
+                }
+                // 根据id查询作者已发布的文章
+                axios.post("/fan-atten/getArticleList.do?id="+id, param).then((res)=>{
+                    if (res.data.flag){
+                        this.articles = res.data.rows;
+                        this.pagination.total = res.data.total;
+                    }else {
+                        this.$message.error(res.data.message)
+                    }
+                })
+            },
 
             handleClick(tab, event) {
                 // 用于查询其关注的人以及粉丝
@@ -259,6 +294,12 @@
                     })
                 }
 
+            },
+
+            // 切换页码
+            handleCurrentChange:function(currentPage) {
+                this.pagination.currentPage = currentPage;
+                this.findPage()
             },
 
             showDetail(id){

@@ -85,6 +85,16 @@
                   }
               },
               methods:{
+                  showMessage(r){
+                      if(r == 'Error: Request failed with status code 403'){
+                          //权限不足.
+                          this.$message.error('无访问权限');
+                          return;
+                      }else{
+                          this.$message.error('未知错误');
+                      }
+                      return;
+                  },
                   onSubmit() {
                       if(this.announce.title == ''){
                           this.$message.error("公告名称不能为空")
@@ -101,6 +111,8 @@
                           } else {
                               this.$message.error(res.data.message)
                           }
+                      }).catch((r)=>{
+                          this.showMessage(r);
                       })
                   },
                   cancle(){

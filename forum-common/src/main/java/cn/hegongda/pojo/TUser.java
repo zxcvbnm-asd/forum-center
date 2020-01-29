@@ -34,6 +34,14 @@ public class TUser implements Serializable {
 
     private Integer type ;   // 0 普通用户   1 会员  0
 
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
     public Integer getId() {
         return id;
     }

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:security="http://www.springframework.org/schema/security"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd          
+    http://www.springframework.org/schema/security          
+    http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<!-- 配置不拦截的资源 -->
+	<security:http security="none" pattern="/adminal/**"/>
+	<security:http security="none" pattern="/css/**"/>
+	<security:http security="none" pattern="/img/**"/>
+	<security:http security="none" pattern="/plugins/**"/>
+	<security:http security="none" pattern="/js/**"/>
+	<security:http security="none" pattern="/fonts/**"/>
+	<security:http security="none" pattern="/pages/login.html"/>
+
+
+
+	<!--
+        配置具体的规则
+        auto-config="true"	不用自己编写登录的页面，框架提供默认登录页面
+        use-expressions="fa使用SPEL表达式
+        如果use-expressions="true" 则使用SPEL表达式  access="hasRole('ROLE_ADMIN','ROLE_USER')"
+
+    -->
+	<security:http auto-config="true" use-expressions="true">
+		<security:headers> <!--设置在页面可以通过iframe访问受保护的页面，默认为不允许访问-->
+			<security:frame-options policy="SAMEORIGIN"/>
+		</security:headers>
+		<!-- 只要认证通过就可以访问相关的页面 -->
+		<security:intercept-url pattern="/pages/**" access="isAuthenticated()"/>
+		<!--指定登录的页面-->
+		<security:form-login
+				login-page="/pages/login.html"
+				username-parameter="username"
+				password-parameter="password"
+				login-processing-url="/login.do"
+				default-target-url="/pages/work.html"
+				authentication-failure-url="/pages/login.html"
+		/>
+
+		<!-- 关闭跨域请求 -->
+		<security:csrf disabled="true"/>
+
+		<!-- 退出 -->
+		<security:logout invalidate-session="true" logout-url="/logout.do" logout-success-url="/pages/login.html" />
+
+	</security:http>
+
+	<!-- 切换成数据库中的用户名和密码 -->
+	<security:authentication-manager>
+		<security:authentication-provider user-service-ref="springSecurityUserService">
+			<!-- 配置加密的方式 -->
+			<!--<security:password-encoder ref="passwordEncoder"/>-->
+		</security:authentication-provider>
+	</security:authentication-manager>
+
+
+	<!-- 配置加密类 -->
+	<bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+	<!--
+        <bean id="springSecurityUserService" class="cn.hegongda.controllers.SpringSecurityUserService"/>
+    -->
+	<!--开启注解方式权限控制-->
+	<security:global-method-security pre-post-annotations="enabled"/>
+
+</beans>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

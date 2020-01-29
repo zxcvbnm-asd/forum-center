@@ -113,10 +113,6 @@
                           queryString:null//查询条件
                       },
                       admins:[
-                          {id:1,username:'张啊',mobile:'18832030387',email:'1198423961@qq.com',createTime:'2012-12-25 12:00:00',status:1},
-                          {id:2,username:'张啊',mobile:'18832030387',email:'1198423961@qq.com',createTime:'2012-12-25 12:00:00',status:0},
-                          {id:3,username:'张啊',mobile:'18832030387',email:'1198423961@qq.com',createTime:'2012-12-25 12:00:00',status:0},
-                          {id:4,username:'张啊',mobile:'18832030387',email:'1198423961@qq.com',createTime:'2012-12-25 12:00:00',status:1},
 
                       ]
                   }
@@ -127,6 +123,16 @@
               },
               methods:{
 
+                  showMessage(r){
+                      if(r == 'Error: Request failed with status code 403'){
+                          //权限不足.
+                          this.$message.error('无访问权限');
+                          return;
+                      }else{
+                          this.$message.error('未知错误');
+                      }
+                      return;
+                  },
                   findPage(){
                      var param = {
                          currentPage:this.pagination.currentPage,
@@ -141,6 +147,8 @@
                          } else {
                              this.$message.error(res.data.message)
                          }
+                     }).catch((r)=>{
+                         this.showMessage(r);
                      })
                   },
                   // 切换页码
@@ -175,6 +183,8 @@
                           } else {
                               this.$message.error(res.data.message)
                           }
+                      }).catch((r)=>{
+                          this.showMessage(r);
                       })
                   },
 

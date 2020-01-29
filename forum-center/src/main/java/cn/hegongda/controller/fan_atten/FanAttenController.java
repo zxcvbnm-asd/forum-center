@@ -73,13 +73,12 @@ public class FanAttenController {
      */
     @RequestMapping("/getArticleList.do")
     @ResponseBody
-    public Result getArticleList(Integer id){
+    public PageResult getArticleList(Integer id, @RequestBody QueryPageBean queryPageBean){
         try {
-            Result result = fanAttenService.getArticleList(id);
-            return result;
+            return  fanAttenService.getArticleList(id, queryPageBean);
         } catch (Exception e){
             e.printStackTrace();
-            return new Result(false, MessageConstant.EXCEPTION_MESSAGE);
+            return new PageResult(MessageConstant.EXCEPTION_MESSAGE , false);
         }
     }
 

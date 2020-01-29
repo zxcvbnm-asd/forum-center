@@ -59,6 +59,11 @@
             font-size: 15px;
         }
 
+        .t1{
+            margin-left: 48px;
+            margin-top: 27px;
+        }
+
 
     </style>
 </head>
@@ -70,18 +75,19 @@
 
        <div id="title">河工程JAVA论坛后台管理系统</div>
 
-       <el-form :model="admin" status-icon  size="small" ref="admin" label-width="100px" id="form" class="demo-ruleForm">
-           <el-form-item label="" prop="name">
-               <span class="t2">姓名</span>&nbsp;&nbsp;&nbsp;<el-input class="item" type="text" v-model="admin.name" autocomplete="off"></el-input>
-           </el-form-item>
-           <el-form-item prop="pass">
-               <span class="t2">密码</span>&nbsp;&nbsp;&nbsp;<el-input class="item" type="password" v-model="admin.pass" autocomplete="off"></el-input>
-           </el-form-item>
-           <el-form-item>
-               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<el-button type="primary" @click="submitForm()">登陆</el-button>
-               <el-button @click="resetForm('admin')">重置</el-button>
-           </el-form-item>
-       </el-form>
+       <form action="/login.do" method="post">
+              <div class="t1">
+               <span class="t2">姓名</span>&nbsp;&nbsp;&nbsp;<input class="item" type="text" name="username"></input>
+              </div>
+               <div class="t1">
+               <span class="t2">密码</span>&nbsp;&nbsp;&nbsp;<input class="item" type="password" name="password"></input>
+               </div>
+               <div class="t1">
+               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="登陆"></input>
+                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input  type="reset" value="重置"></input>
+               </div>
+
+       </form>
    </div>
 
 </div>
@@ -91,33 +97,28 @@
         el:"#app",
         data:{
             admin:{
-                name:'',
-                pass:'',
-                pass_tip:'',
-                name_tip:'fvfdsf'
+                username:'',
+                password:'',
             }
         },
         methods:{
             submitForm(){
-                if(this.admin.name.trim() == ''){
+                if(this.admin.username.trim() == ''){
                     this.$message.error("姓名不能为空")
                     return false;
                 }
-                if(this.admin.name.length < 2){
+                if(this.admin.username.length < 2){
                     this.$message.error("姓名长度不能小于2")
                     return false;
                 }
-                if(this.admin.pass.trim() == ''){
+                if(this.admin.password.trim() == ''){
                     this.$message.error("密码不能为空")
                     return false;
                 }
 
                 // 提交表单数据
-             /*   axios.get("http://www.baidu.com").then(()=>{
+               axios.post("/login.do?username=", this.admin);
 
-                })*/
-
-                window.location.href='work.html'
 
             },
             resetForm(forName){

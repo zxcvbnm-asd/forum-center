@@ -37,6 +37,23 @@ public class AdminUserServiceImpl implements AdminUserService {
 
 
     /*
+     * 根据username查询用户（登录校验）
+     */
+    @Override
+    public TAdmin findAdminByUsername(String username) {
+        TAdmin admin = adminMapper.findAdminUserByName(username);
+        if (admin != null) {
+            List<TRole> roles = adminMapper.getAdminOfRole(admin.getId());
+            admin.setRoles(roles);
+            for (TRole role : roles) {
+                List<TPermission> permissions = roleMapper.getPermissions(role.getId());
+                role.setPermissions(permissions);
+            }
+        }
+        return admin;
+    }
+
+    /*
      * 查询后台管理员信息
      */
     @Override

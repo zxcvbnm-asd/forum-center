@@ -89,18 +89,20 @@ public class FanAttenServiceImpl implements FanAttenService {
     * 查询作者的书籍信息
     */
     @Override
-    public Result getArticleList(Integer id) {
-        if(id == null){
-            return new Result(false, MessageConstant.PARAM_NULL_MESSAGE);
+    public PageResult getArticleList(Integer id, QueryPageBean queryPageBean) {
+        if(id == null || queryPageBean == null){
+            return new PageResult(MessageConstant.PARAM_NULL_MESSAGE , false);
         }
-
+        PageHelper.startPage(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
         List<Map> list= fanAttenMapper.getArticleList(id);
         for (Map map : list) {
+            // 封面不存在时设置默认的封面
             if (StringUtils.isBlank((String) map.get("coverUrl"))){
                 map.put("coverUrl","11.png");
             }
         }
-        return new Result(true,MessageConstant.OPERATION_SUCCESS,list);
+        PageInfo info = new PageInfo(list);
+        return new PageResult(info.getTotal(), list, MessageConstant.OPERATION_SUCCESS, true);
     }
 
 

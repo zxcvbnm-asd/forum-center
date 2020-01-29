@@ -19,10 +19,25 @@
         [v-cloak]{
             display: none;
         }
+
+        #myBtn {
+            display: none;
+            position: fixed;
+            bottom: 315px;
+            right: 153px;
+            z-index: 99;
+            cursor: pointer;
+
+        }
+
+        #myBtn:hover {
+            background-color: #555;
+        }
     </style>
 
 </head>
 <body>
+<img src="../../img/jjj.jpg" width="40px" height="40px" onclick="topFunction()" id="myBtn" title="回顶部"></img>
 <div id="app">
     <div id="header">
         <a href="../protal.html"><img src="../../images/3.png"></a>
@@ -86,7 +101,7 @@
                         <div style="margin-left: 10px">
                             <div>
                                 <div style="width: 96%">
-                                    <a><img  class="head-pic img-circle" :src="'http://q2rcyhwpl.bkt.clouddn.com/'+comment.avatarName" @click="writerDetail(comment.customerId)"></a><div id="CN" v-cloak>{{comment.customerName}}</div>
+                                    <a><img  class="head-pic img-circle" :src="'http://'+prefix+'/'+comment.avatarName" @click="writerDetail(comment.customerId)"></a><div id="CN" v-cloak>{{comment.customerName}}</div>
                                     <span class="pull-right">
                                         <el-button type="text" data-toggle="modal" @click="report(comment.id,1)">举报</el-button>
                                         &nbsp;&nbsp;&nbsp;<a v-if="comment.customerId==user.id" @click="deleteCommentById(comment.id,index,comment.parentId)">删除</a>
@@ -168,7 +183,7 @@
                     <div style="margin-top: 10px">
                         <span style="font-weight: bold">补充说明（选填）</span>
                         <div style="margin-top: 10px">
-                              <textarea id="textarea" cols="86" placeholder="请填写附加的补充内容" v-model="complaint.content"></textarea>
+                              <textarea id="textarea" style="width: 556px" placeholder="请填写附加的补充内容" v-model="complaint.content"></textarea>
                         </div>
                     </div>
                     <div style="margin-left: 467px;margin-top: 15px">
@@ -186,6 +201,22 @@
 </body>
 <script>
 
+
+    window.onscroll = function() {scrollFunction()};
+
+    function scrollFunction() {console.log(121);
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("myBtn").style.display = "block";
+        } else {
+            document.getElementById("myBtn").style.display = "none";
+        }
+    }
+
+    // 点击按钮，返回顶部
+    function topFunction() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    }
 
     $("#pub").hide()
     $("#cancle").hide();   // 撤销提示显示
@@ -214,7 +245,7 @@
         data:{
             complaint:{id:1,type:-1,content:'',status:'',cate:-1,cid:0},
             comment:{content:''}, // 评论对象
-            attention_flag:false,  //判断用（测试时使用，后台会出传递回来true 或者false）
+            attention_flag:true,  //判断用（测试时使用，后台会出传递回来true 或者false）
             user:{},  // 用户数据模型
             avatarName:'',
             text:'',
@@ -253,6 +284,7 @@
            // 发送axios请求获取文章数据
             axios.get("/article/findById.do?id="+id).then((res)=>{
                 if (res.data.flag){
+                    res.data.data.content=res.data.data.content.replace(/<img/g,"<img style='max-width:100%;height:auto;'");
                     this.article = res.data.data
                     // 获取作者id查询作者头像信息
                     axios.get("/user/getWriterById.do?id="+this.article.uid).then(res=>{
@@ -267,11 +299,11 @@
                                         if (res.data.flag) {
                                             $("#atten").text('已关注');
                                             $("#atten").css({"color": 'darkblue'})
-                                            this.attention_flag = !this.attention_flag;
+                                            this.attention_flag = false;
                                         } else {
                                             $("#atten").text('关注');
                                             $("#atten").css({"color": 'blue'})
-                                            this.attention_flag = !this.attention_flag;
+                                            this.attention_flag = true;
                                         }
                                     });
                                 }else{
@@ -381,6 +413,10 @@
                     this.$message.error("登陆后方可评论");
                     return false ;
                 }
+                if (this.user.status == 1) {
+                    this.$message.error("您处于禁言状态，不能发表任何评论");
+                    return false ;
+                }
                 this.comment.parentId=this.parentId
                 this.comment.customerId = this.user.id;
                 this.comment.content_id = this.article.id;
@@ -440,6 +476,8 @@
             },
 
 
+
+
             // 点赞数，点一下加一，点第二下，减一
             add(){
                 // 先判断用户是否进行登陆，若登陆，则可以点点击，没有登陆，则提示用户登录
@@ -476,12 +514,13 @@
                     this.$message.error("登陆后才能关注")
                     return;
                 }
-                this.attention_flag = !this.attention_flag
+
                 if(this.attention_flag){
                     axios.get("/fan-atten/attenOrNot.do?fid="+this.user.id+"&tid="+this.article.uid).then((res)=>{
                         if (res.data.flag){
                             $("#atten").text('已关注');
                             $("#atten").css({"color":'grey'})
+                            this.attention_flag = false;
                         }else {
                             this.$message.error(res.data.message);
                         }
@@ -492,12 +531,14 @@
                         if (res.data.flag){
                             $("#atten").text('关注');
                             $("#atten").css({"color":'blue'})
+                            this.attention_flag = true;
                         }else {
                             this.$message.error(res.data.message);
                         }
                     })
 
                 }
+
             },
 
             // 用户退出

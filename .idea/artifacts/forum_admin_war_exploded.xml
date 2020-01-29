@@ -30,11 +30,6 @@
           <element id="library" level="project" name="Maven: org.apache.xmlbeans:xmlbeans:2.6.0" />
           <element id="library" level="project" name="Maven: stax:stax-api:1.0.1" />
           <element id="library" level="project" name="Maven: com.github.virtuald:curvesapi:1.03" />
-          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-web:5.0.5.RELEASE" />
-          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-core:5.0.5.RELEASE" />
-          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-config:5.0.5.RELEASE" />
-          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-taglibs:5.0.5.RELEASE" />
-          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-acl:5.0.5.RELEASE" />
           <element id="library" level="project" name="Maven: com.aliyun:aliyun-java-sdk-core:3.3.1" />
           <element id="library" level="project" name="Maven: com.aliyun:aliyun-java-sdk-dysmsapi:1.0.0" />
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.9.4" />
@@ -76,6 +71,11 @@
           <element id="library" level="project" name="Maven: commons-codec:commons-codec:1.9" />
           <element id="library" level="project" name="Maven: org.json:json:20140107" />
           <element id="library" level="project" name="Maven: org.apache.commons:commons-lang3:3.8.1" />
+          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-web:5.0.5.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-core:5.0.5.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-config:5.0.5.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-taglibs:5.0.5.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.security:spring-security-acl:5.0.5.RELEASE" />
         </element>
       </element>
       <element id="directory" name="META-INF">

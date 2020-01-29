@@ -15,8 +15,8 @@
     <script src="../../js/axios-0.18.0.js"></script>
     <script type="text/javascript" charset="utf-8" src="../../ueditor/ueditor.config.js"></script>
     <script type="text/javascript" charset="utf-8" src="../../ueditor/ueditor.all.min.js"> </script>
-
     <script type="text/javascript" charset="utf-8" src="../../ueditor/lang/zh-cn/zh-cn.js"></script>
+
 
     <style>
         body{
@@ -173,9 +173,11 @@
     </div>
 </div>
 </body>
+
 <script>
 
-    function getId(){
+
+    function getId() {
         var qs = location.search.substr(1), // 获取url中"?"符后的字串
             args = {}, // 保存参数数据的对象
             items = qs.length ? qs.split("&") : [], // 取得每一个参数项,
@@ -270,7 +272,8 @@
             categoryOne:[] , // 一级分类
             categoryTwo:[],  // 一级分类
             file:[],  // 跟踪上传的封面图片
-            coverUrl:[] // 暂时存放图片路径
+            coverUrl:[], // 暂时存放图片路径
+            user:{}
         },
 
         created(){
@@ -282,6 +285,16 @@
                     this.$message.error(res.data.message)
                 }
             })
+
+            var id = getId();
+            //发送请求获取当前登录用户的用户名
+            axios.get('/user/getUserById.do?id='+id).then((response)=>{
+                this.user = response.data.data;
+                if (this.user.status == 1 ){
+                    this.$message.error("您已经被禁言，将不能发表文章")
+                }
+            });
+
         },
 
         methods:{
@@ -332,7 +345,7 @@
                 var content = UE.getEditor('editor').getContent()
                 // 以html的方式获取文本，并赋值给vue中的属性
                 this.form.content = content;
-                var id = getId()
+                var id = getId();
                 this.form.uid=id
                 this.form.coverUrl = this.coverUrl.toString();
                 this.form.labels = this.dynamicTags.toString();
@@ -351,6 +364,10 @@
             // 定时发布
             scedulePublish(){
                 this.beforePrepared();
+                if (this.user.status == 1 ){
+                    this.$message.error("您已经被禁言，将不能发表文章")
+                    return false;
+                }
                 if(!this.checkForm()){
                     return false;
                 }
@@ -373,6 +390,11 @@
                 if(!this.checkForm()){
                     return false;
                 }
+                if (this.user.status == 1 ){
+                    this.$message.error("您已经被禁言，将不能发表文章")
+                    return false;
+                }
+
                 // 发送post请求
                 axios.post("/article/publish.do", this.form).then((res)=>{
                     if(res.data.flag){
@@ -420,6 +442,10 @@
                 this.beforePrepared();
                 this.centerDialogVisible=false;
                 if(!this.checkForm()){
+                    return false;
+                }
+                if (this.user.status == 1 ){
+                    this.$message.error("您已经被禁言，将不能发表文章")
                     return false;
                 }
                 // 发送post请求

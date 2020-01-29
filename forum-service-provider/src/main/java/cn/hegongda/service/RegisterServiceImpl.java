@@ -51,6 +51,10 @@ public class RegisterServiceImpl implements RegisterService {
             // 注册时为用户设置默认头像， 设置默认头像
             user.setAvatarName(MessageConstant.USER_AVATARNAME);
 
+            // 设置用户状态
+            user.setStatus(-1);  // 没有被封号或者禁言
+            user.setType(0);     // 普通用户，不是会员
+
             // 保存到数据库
             int number = userMapper.insert(user);
             if(number > 0){

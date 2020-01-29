@@ -64,4 +64,8 @@
       INSERT INTO t_admin (username,password,mobile,email,status,create_time) VALUES
       (#{username},#{password},#{mobile},#{email},#{status},#{createTime})
   </insert>
+
+  <select id="findAdminUserByName" parameterType="java.lang.String" resultMap="basicMap">
+      select * from t_admin where username=#{value}
+  </select>
 </mapper>

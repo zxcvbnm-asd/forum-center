@@ -61,4 +61,7 @@ public interface AdminUserService {
 
     // 新增权限
     Result addPermission(TPermission permission);
+
+    // 登陆时根据用户名进行查询
+    TAdmin findAdminByUsername(String username);
 }

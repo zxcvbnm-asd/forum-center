@@ -164,6 +164,7 @@
                   // 根据id查询出文章的内容
                   axios.get("/article-manager/getArticleById.do?id="+id).then((res)=>{
                       if (res.data.flag) {
+                          res.data.data.content=res.data.data.content.replace(/<img/g,"<img style='max-width:100%;height:auto;'");
                           this.article = res.data.data;
                           this.article.writerName = getParam("writerName");
                       } else {

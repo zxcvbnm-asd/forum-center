@@ -303,6 +303,6 @@ public class ArticleServiceImpl implements ArticleService {
             articleCategoryMapper.save(category);
             return new Result( true, MessageConstant.OPERATION_SUCCESS);
         }
-        return new Result(false, MessageConstant.OPERATION_FAIL);
+        return new Result(false, "该分类已经存在");
     }
 }

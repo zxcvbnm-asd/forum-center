@@ -11,6 +11,8 @@ import cn.hegongda.service.admin.AdminUserService;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +35,7 @@ public class AdminUserController {
      */
     @RequestMapping("/findAdminUser.do")
     @ResponseBody
+    @PreAuthorize("hasAnyAuthority('USER_ROLE','IS_AUTHENTICATED_ANONYMOUSLY')")
     public PageResult findAdminUser(@RequestBody QueryPageBean queryPageBean){
         try {
             return adminUserService.findAdminUser(queryPageBean);
@@ -47,6 +50,7 @@ public class AdminUserController {
      */
     @RequestMapping("/changeStatus.do")
     @ResponseBody
+    @PreAuthorize("hasAnyAuthority('ROLE_USER','IS_AUTHENTICATED_ANONYMOUSLY')")
     public Result changeStatus(Integer id){
         try {
             return adminUserService.changeStatus(id);

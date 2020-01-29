@@ -162,6 +162,19 @@ public class ArticleManagerController {
         }
     }
 
+    // 查询二级分类
+    @RequestMapping("/findSecondCate.do")
+    @ResponseBody
+    public Result findSecondCategoey(Integer parentId){
+        try{
+            List<TArticleCategory> list = articleService.findSecondCategory(parentId);
+            return new Result(true, "查询成功", list);
+        } catch (Exception e){
+            e.printStackTrace();
+            return new Result(false,"系统繁忙");
+        }
+    }
+
    /*
     * 新增分类
     */

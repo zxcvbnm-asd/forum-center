@@ -1,5 +1,6 @@
 package cn.hegongda.service;
 
+import cn.hegongda.constant.MessageConstant;
 import cn.hegongda.constant.RedisConstant;
 import cn.hegongda.mapper.TUserMapper;
 import cn.hegongda.pojo.TUser;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import javax.print.attribute.standard.MediaSize;
 import java.util.UUID;
 
 @Service(interfaceClass = LoginService.class)
@@ -40,6 +42,10 @@ public class LoginServiceImpl implements LoginService {
             // 存在则进行密码校验
             if(!user.getPassword().equals(MD5Utils.md5(password))){
                 return new Result(false,"密码不正确");
+            }
+            // 存在则进行密码校验
+            if(user.getStatus() == 2){
+                return new Result(false,"您处于封号状态，暂时不能登陆");
             }
             // 根据oldToken进行判断
             Result result = tokenService.getUserByTokenAndUsernameOrMibile(oldToken, username);
@@ -74,6 +80,9 @@ public class LoginServiceImpl implements LoginService {
         }
         // 以前未登录过重新登陆
         TUser user = userMapper.findUserByMobile(mobile);
+        if (user.getStatus() == 2) {
+            return new Result(false, "您处于封号状态，暂时不能进行登陆");
+        }
         String token = this.saveUserToRedis(user);
         return new Result(true,"短信发送成功",token);
     }

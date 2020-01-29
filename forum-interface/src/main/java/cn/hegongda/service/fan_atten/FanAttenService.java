@@ -13,7 +13,7 @@ public interface FanAttenService {
     // 查询作者的详细信息
     Result getWriterDetail(Integer id);
     // 查询作者发布的全部文章
-    Result getArticleList(Integer id);
+    PageResult getArticleList(Integer id , QueryPageBean queryPageBean);
     // 作者关注
     Result getUserAtten(Integer id);
     // 作者粉丝

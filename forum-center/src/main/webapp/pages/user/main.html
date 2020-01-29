@@ -112,8 +112,8 @@
                     "children": [
                         {
                             "path": "/1-1",
-                            "title": " Trial Begins",
-                            "linkUrl":"head.html",
+                            "title": "Trial Begins",
+                            "linkUrl":"potal.html",
                             "children":[]
                         }
                     ]
@@ -211,6 +211,7 @@
         created(){
             this.prefix = 'q4c8e7e7f.bkt.clouddn.com';
             var id = getId();
+
             //发送请求获取当前登录用户的用户名
             axios.get('/user/getUserById.do?id='+id).then((response)=>{
                 if(response.data.flag){

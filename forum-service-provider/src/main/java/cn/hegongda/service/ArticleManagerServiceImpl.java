@@ -12,6 +12,7 @@ import cn.hegongda.result.QueryPageBean;
 import cn.hegongda.result.Result;
 import cn.hegongda.service.article.ArticleManagerService;
 import cn.hegongda.task.TimerTask;
+import cn.hegongda.utils.DateUtils;
 import cn.hegongda.utils.JsonUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.PageHelper;
@@ -40,6 +41,9 @@ public class ArticleManagerServiceImpl implements ArticleManagerService {
 
     @Autowired
     private NoticeMapper noticeMapper;
+
+    @Autowired
+    private TArticleCategoryMapper articleCategoryMapper;
 
     @Autowired
     private TArticleCategoryMapper tArticleCategoryMapper;
@@ -84,6 +88,25 @@ public class ArticleManagerServiceImpl implements ArticleManagerService {
             if (article.getStatus() != 2) {
                 article.setStatus(2);
                 articleMapper.updateByPrimaryKey(article);
+
+                // 将审核通过后的文章保存到t_article_pub中，用于增量控制
+                ArticlePub articlePub = new ArticlePub();
+                articlePub.setCid(article.getCid());
+                articlePub.setUid(article.getUid());
+                articlePub.setCoverUrl(article.getCoverUrl());
+                articlePub.setLabels(article.getLabels());
+                articlePub.setNum(article.getNum());
+                articlePub.setTimestamp(new Date());
+                articlePub.setTitle(article.getTitle());
+                articlePub.setPubTime(DateUtils.format2(article.getPubTime()));
+                articlePub.setId(article.getId());
+                TUser user = userMapper.selectByPrimaryKey(article.getUid());
+                articlePub.setUsername(user.getUsername());
+                TArticleCategory category = articleCategoryMapper.getCategoryNameById(article.getCid());
+                articlePub.setParentId(category.getParentId());
+                articlePub.setCname(category.getCname());
+
+                articleMapper.addArticlePub(articlePub);
             }
         } finally {
             lock.unlock();

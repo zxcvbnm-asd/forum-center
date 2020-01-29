@@ -10,6 +10,8 @@ import cn.hegongda.service.ImgService;
 import cn.hegongda.utils.QiniuUtils;
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -117,6 +119,7 @@ public class ImgController {
     /*
      * 根据id删除图片
      */
+
     @RequestMapping("/delImgById.do")
     @ResponseBody
     public Result delImgById(Integer id){

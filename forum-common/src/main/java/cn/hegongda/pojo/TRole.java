@@ -1,6 +1,8 @@
 package cn.hegongda.pojo;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
 
 public class TRole implements Serializable {
     private Integer id;
@@ -10,6 +12,16 @@ public class TRole implements Serializable {
     private String keyword;
 
     private String description;
+
+    private List<TPermission> permissions;
+
+    public List<TPermission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<TPermission> permissions) {
+        this.permissions = permissions;
+    }
 
     public Integer getId() {
         return id;

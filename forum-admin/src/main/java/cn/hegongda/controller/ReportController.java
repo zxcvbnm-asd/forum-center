@@ -10,6 +10,8 @@ import cn.hegongda.service.AnnounceService;
 import cn.hegongda.service.CommentService;
 import cn.hegongda.service.report.ReportService;
 import com.alibaba.dubbo.config.annotation.Reference;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -97,8 +99,10 @@ public class ReportController {
     /*
      * 发布公告
      */
+
     @RequestMapping("/publishAnnounce.do")
     @ResponseBody
+    @PreAuthorize("hasAnyAuthority('ROLE_ANNOUNCE','IS_AUTHENTICATED_ANONYMOUSLY')")
     public Result publishAnnounce(@RequestBody TAnnounce announce){
         try {
             Result result = announceService.publish(announce);

@@ -47,6 +47,11 @@ public interface TAdminMapper {
             "where id not in (select role_id from t_admin_role where admin_id=#{id})")
     List<TRole> getAdminRole(Integer id);
 
+    @Select("select role_name as roleName, id as id, keyword, description\n" +
+            "from t_role\n" +
+            "where id in (select role_id from t_admin_role where admin_id=#{id})")
+    List<TRole> getAdminOfRole(Integer id);
+
     @Insert("insert into t_admin_role (admin_id, role_id) values (#{id},#{role_id})")
     void insertAdminRole(@Param("id") Integer id, @Param("role_id") Integer role_id);
 
@@ -58,4 +63,6 @@ public interface TAdminMapper {
             "WHERE id NOT IN " +
             "(SELECT permission_id FROM t_role_permission WHERE role_id=#{id})")
     List<TPermission> findPermissionOfRole(Integer id);
+
+    TAdmin findAdminUserByName(String username);
 }

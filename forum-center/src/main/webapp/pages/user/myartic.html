@@ -206,6 +206,7 @@
         var currentPage = getParam("currentPage");
 
         if (mark == null ){
+            this.mark = 1;
             this.pagination.queryString=null
             this.findPage();
         } else {

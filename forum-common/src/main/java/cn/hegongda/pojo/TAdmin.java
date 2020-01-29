@@ -2,6 +2,8 @@ package cn.hegongda.pojo;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 public class TAdmin implements Serializable {
     private Integer id;
@@ -17,6 +19,16 @@ public class TAdmin implements Serializable {
     private Integer status;
 
     private Date createTime;
+
+    private List<TRole> roles;
+
+    public List<TRole> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<TRole> roles) {
+        this.roles = roles;
+    }
 
     public String getUsername() {
         return username;
