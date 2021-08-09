@@ -37,7 +37,7 @@
         <poi.version>3.14</poi.version>
         <jedis.version>2.9.0</jedis.version>
         <quartz.version>2.2.1</quartz.version>
-        <elasticsearch.version>6.2.1</elasticsearch.version>
+        <elasticsearch.version>6.8.17</elasticsearch.version>
 
     </properties>
 
